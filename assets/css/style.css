@@ -108,15 +108,40 @@ button { cursor: pointer; }
   position: relative;
   overflow: hidden;
 }
-.brand-mark::before {
-  content: "";
-  width: 18px; height: 18px;
-  border-radius: 999px;
-  border: 2px solid var(--accent);
-  box-shadow: 0 0 24px rgba(104,240,255,.75);
+.brand-logo-box {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255, 40, 70, 0.18), transparent 55%),
+    linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 0 24px rgba(255, 30, 60, 0.18),
+    inset 0 0 22px rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  flex: 0 0 auto;
 }
-.brand-text strong { display: block; font-size: .95rem; letter-spacing: -.025em; }
-.brand-text span { display: block; margin-top: 2px; color: var(--muted); font-size: .72rem; }
+
+.brand-logo {
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
+  display: block;
+  filter:
+    drop-shadow(0 0 8px rgba(255, 50, 80, 0.35))
+    drop-shadow(0 8px 16px rgba(0, 0, 0, 0.45));
+}
+
+.brand-text strong {
+  color: #f4f7ff;
+}
+
+.brand-text span {
+  color: #aab6d4;
+}
 
 .navlinks {
   display: flex;
