@@ -75,6 +75,7 @@
     const riskLayer = L.layerGroup().addTo(map);
     const pointLayer = L.layerGroup().addTo(map);
     const labelLayer = L.layerGroup().addTo(map);
+    const crowdLayer = L.layerGroup().addTo(map);
     const layerState = { risk: true, points: true, labels: true };
 
     function getSettingsFromUI() {
@@ -136,6 +137,7 @@
       riskLayer.clearLayers();
       pointLayer.clearLayers();
       labelLayer.clearLayers();
+      crowdLayer.clearLayers();
 
       areas.forEach((area) => {
         const color = colorByRisk(area.kategori);
@@ -172,6 +174,34 @@
         }));
       });
 
+      // ===============================
+      // TITIK KERAMAIAN DARI CSV
+      // ===============================
+
+      const crowdPoints = window.CrimeScopeData.crowdPoints || [];
+
+      crowdPoints.forEach((point) => {
+
+        const marker = L.circleMarker(
+          [point.lat, point.lng],
+          {
+            radius: 6,
+            color: "#00d5ff",
+            fillColor: "#00d5ff",
+            fillOpacity: 0.8,
+            weight: 1
+          }
+        );
+
+        marker.bindPopup(`
+          <b>${point.nama}</b><br>
+          Kategori: ${point.kategori}
+        `);
+
+        crowdLayer.addLayer(marker);
+
+      });
+      
       syncLayerVisibility();
       updateStats(areas);
     }
