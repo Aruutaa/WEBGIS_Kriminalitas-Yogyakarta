@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Berita Kriminalitas | CrimeScope Yogyakarta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="berita">
+  <div class="cursor-glow" id="cursorGlow"></div>
+  <div class="shell">
+    <header class="topbar">
+      <a href="index.html" class="brand"><div class="brand-mark"></div><div class="brand-text"><strong>CrimeScope YK</strong><span>WebGIS Zona Kriminalitas</span></div></a>
+      <nav class="navlinks" id="navlinks"><a href="index.html" data-page="home">Utama</a><a href="peta.html" data-page="peta">Peta</a><a href="analisis.html" data-page="analisis">Analisis</a><a href="berita.html" data-page="berita">Berita</a></nav>
+      <div class="top-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="peta.html">Peta</a><button class="mobile-toggle" id="mobileToggle">☰</button></div>
+    </header>
+
+    <main class="container">
+      <section class="page-head">
+        <div class="breadcrumb"><a href="index.html">Halaman utama</a><span>/</span><span>Berita kriminalitas</span></div>
+        <div class="section-head">
+          <div><div class="eyebrow"><span class="pulse-dot"></span> Halaman Berita</div><h1 class="h2">Katalog berita kriminalitas dalam format poster digital.</h1></div>
+          <p>Halaman ini disiapkan untuk menampilkan berita dari berbagai sumber. Setiap kartu berisi visual/poster, sumber, tanggal, kategori, deskripsi singkat, dan tombol menuju artikel asli.</p>
+        </div>
+      </section>
+
+      <section class="section" style="padding-top:20px">
+        <div class="card wide">
+          <div class="icon">⚠️</div>
+          <h3>Catatan pengisian berita</h3>
+          <p>Karena project ini masih HTML statis, berita aktual perlu dimasukkan ke array <span class="code">newsData</span> di <span class="code">assets/js/data.js</span>. Jangan menulis ulang isi berita secara penuh; cukup gunakan ringkasan pendek, sumber, tanggal, dan link ke artikel asli.</p>
+        </div>
+      </section>
+
+      <section class="section" style="padding-top:20px">
+        <div class="news-toolbar">
+          <input class="field" id="newsSearch" type="search" placeholder="Cari judul, sumber, atau deskripsi berita..." />
+          <select class="select" id="newsType"><option value="all">Semua jenis</option><option value="Curanmor">Curanmor</option><option value="Pencurian">Pencurian</option><option value="Penganiayaan">Penganiayaan</option><option value="Narkotika">Narkotika</option><option value="Penipuan">Penipuan</option><option value="Kejahatan jalanan">Kejahatan jalanan</option></select>
+          <select class="select" id="newsSort"><option value="default">Urutan default</option><option value="source">Urut sumber</option><option value="type">Urut jenis</option></select>
+        </div>
+        <div class="news-grid" id="newsGrid"></div>
+      </section>
+
+      <footer class="footer"><div><strong>CrimeScope Yogyakarta</strong><p class="muted">Halaman katalog berita pendukung WebGIS.</p></div><div class="row-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="peta.html">Ke Peta →</a></div></footer>
+    </main>
+  </div>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/berita.js"></script>
+</body>
+</html>

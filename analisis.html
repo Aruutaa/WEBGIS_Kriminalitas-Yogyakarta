@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hasil Analisis | CrimeScope Yogyakarta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="analisis">
+  <div class="cursor-glow" id="cursorGlow"></div>
+  <div class="shell">
+    <header class="topbar">
+      <a href="index.html" class="brand"><div class="brand-mark"></div><div class="brand-text"><strong>CrimeScope YK</strong><span>WebGIS Zona Kriminalitas</span></div></a>
+      <nav class="navlinks" id="navlinks"><a href="index.html" data-page="home">Utama</a><a href="peta.html" data-page="peta">Peta</a><a href="analisis.html" data-page="analisis">Analisis</a><a href="berita.html" data-page="berita">Berita</a></nav>
+      <div class="top-actions"><a class="btn" href="peta.html">← Peta</a><a class="btn primary" href="berita.html">Berita</a><button class="mobile-toggle" id="mobileToggle">☰</button></div>
+    </header>
+
+    <main class="container">
+      <section class="page-head">
+        <div class="breadcrumb"><a href="index.html">Halaman utama</a><span>/</span><a href="peta.html">Peta</a><span>/</span><span>Hasil analisis</span></div>
+        <div class="analysis-hero">
+          <div>
+            <div class="eyebrow"><span class="pulse-dot"></span> Halaman Analisis</div>
+            <h1 class="h2">Hasil diagram, tabel, dan narasi dari parameter peta.</h1>
+            <p class="lead">Halaman ini membaca parameter dari <span class="code">peta.html</span>. Kalau belum ada parameter, sistem memakai semua data demo.</p>
+            <div class="row-actions"><a class="btn" href="peta.html">Ubah Parameter</a><button class="btn primary" id="exportCsv">Export CSV</button></div>
+          </div>
+          <div class="card"><div class="icon">🎚️</div><h3>Parameter aktif</h3><ul class="summary-list" id="settingsList"></ul></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="grid-4" id="statCards"></div>
+      </section>
+
+      <section class="section">
+        <div class="grid-2">
+          <article class="card chart-card"><div class="icon">📊</div><h3>Skor risiko per kecamatan</h3><p>Diagram batang menunjukkan urutan risiko wilayah berdasarkan filter aktif.</p><div class="chart-wrap"><canvas id="riskBarChart"></canvas></div></article>
+          <article class="card chart-card"><div class="icon">🧩</div><h3>Komposisi jenis kriminalitas</h3><p>Diagram donat menunjukkan proporsi jenis kasus dari wilayah yang masuk filter.</p><div class="chart-wrap"><canvas id="crimeDonutChart"></canvas></div></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card wide"><div class="icon">🧾</div><h3>Tabel prioritas wilayah</h3><p>Tabel ini menjadi output utama untuk membaca kecamatan prioritas berdasarkan skor risiko.</p><br><div class="table-wrap"><table id="analysisTable"><thead><tr><th>Peringkat</th><th>Kecamatan</th><th>Kasus Demo</th><th>Skor Risiko</th><th>Kategori</th><th>Indikator Dominan</th><th>Arahan Analisis</th></tr></thead><tbody></tbody></table></div></div>
+      </section>
+
+      <section class="section">
+        <div class="card wide"><div class="icon">💬</div><h3>Narasi interpretasi</h3><p id="narrative" class="muted"></p></div>
+      </section>
+
+      <footer class="footer"><div><strong>CrimeScope Yogyakarta</strong><p class="muted">Halaman hasil analisis dari parameter peta.</p></div><div class="row-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="berita.html">Ke Berita →</a></div></footer>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/analisis.js"></script>
+</body>
+</html>
