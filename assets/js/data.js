@@ -22,6 +22,37 @@
     { id: 14, kecamatan: "Wirobrajan", lat: -7.8088, lng: 110.3477, kasus: 45, risiko: 46, kategori: "Sedang", dominan: "Pencurian", kepadatan: 11200, kemiskinan: 6.0, tpt: 3.9, crimes: { curat: 14, curanmor: 10, penganiayaan: 7, narkotika: 4, penipuan: 10 } }
   ];
 
+  const crowdPoints = [];
+
+    Papa.parse("assets/data/keramaian.csv", {
+     download: true,
+     header: true,
+     complete: function(results) {
+
+       results.data.forEach((item, index) => {
+
+         if (!item.lat || !item.lng) return;
+
+         crowdPoints.push({
+           id: index + 1,
+           nama: item.nama,
+           kategori: item.kategori,
+           lat: parseFloat(item.lat),
+           lng: parseFloat(item.lng)
+         });
+
+       });
+
+    console.log("Data keramaian loaded:", crowdPoints);
+
+    // kalau mau langsung nampilin ke map
+    if (window.renderCrowdPoints) {
+      window.renderCrowdPoints(crowdPoints);
+    }
+
+  }
+});
+   
   const newsData = [
     {
       id: 1,
@@ -143,6 +174,7 @@
 
   window.CrimeScopeData = {
     demoAreas,
+    crowdPoints,
     newsData,
     colorByRisk,
     tagClass,
