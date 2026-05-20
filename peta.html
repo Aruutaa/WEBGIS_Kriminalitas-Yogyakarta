@@ -10,7 +10,6 @@
 
   <title>Peta Interaktif | GeoSafe Yogyakarta</title>
 
-  <!-- GOOGLE FONT -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 
@@ -19,16 +18,13 @@
     rel="stylesheet"
   />
 
-  <!-- LEAFLET -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   />
 
-  <!-- MAIN CSS -->
   <link rel="stylesheet" href="assets/css/style.css"/>
 
-  <!-- CUSTOM STYLE -->
   <style>
 
     *{
@@ -277,7 +273,6 @@
 
   <div class="shell">
 
-    <!-- HEADER -->
     <header class="topbar">
 
       <a href="index.html" class="brand">
@@ -324,14 +319,12 @@
 
     </header>
 
-    <!-- MAIN -->
     <main class="container">
 
       <section class="map-shell">
 
         <div class="map-layout">
 
-          <!-- LEFT PANEL -->
           <aside class="map-panel left-panel">
 
             <div class="panel-header">
@@ -350,7 +343,6 @@
 
             <div class="panel-body">
 
-              <!-- KECAMATAN -->
               <div class="control-group">
 
                 <label for="searchArea">
@@ -382,7 +374,6 @@
 
               </div>
 
-              <!-- JENIS -->
               <div class="control-group">
 
                 <label for="crimeType">
@@ -419,7 +410,6 @@
 
               </div>
 
-              <!-- RISIKO -->
               <div class="control-group">
 
                 <label for="riskFilter">
@@ -448,7 +438,6 @@
 
               </div>
 
-              <!-- RANGE -->
               <div class="control-group">
 
                 <label for="minRisk">
@@ -474,7 +463,6 @@
 
               </div>
 
-              <!-- TRANSPARANSI -->
               <div class="control-group">
 
                 <label for="overlayOpacity">
@@ -503,7 +491,6 @@
 
               </div>
 
-              <!-- LAYER -->
               <div class="control-group">
 
                 <label>
@@ -552,7 +539,6 @@
 
               </div>
 
-              <!-- BASEMAP -->
               <div class="control-group">
 
                 <label for="basemapSelect">
@@ -585,7 +571,6 @@
 
           </aside>
 
-          <!-- MAP -->
           <div class="map-center">
 
             <div class="map-topbar">
@@ -595,7 +580,7 @@
                 <span class="pulse-dot"></span>
 
                 <span id="mapStatus">
-                  OSM Standard aktif — data demo
+                  OpenStreetMap aktif — data demo
                 </span>
 
               </div>
@@ -626,7 +611,6 @@
 
           </div>
 
-          <!-- RIGHT PANEL -->
           <aside class="map-panel right-panel">
 
             <div class="panel-header">
@@ -697,18 +681,77 @@
 
   </div>
 
-  <!-- LEAFLET -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- PAPAPARSE -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
-  <!-- JS -->
   <script src="assets/js/data.js"></script>
 
   <script src="assets/js/common.js"></script>
 
   <script src="assets/js/map.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Deteksi otomatis variabel peta global yang diinisialisasi di map.js Anda
+      const currentMap = typeof map !== 'undefined' ? map : (typeof peta !== 'undefined' ? peta : null);
+      
+      if (!currentMap) return;
+
+      // 1. Inisialisasi basemap layer perbaikan
+      const fixBasemaps = {
+        'osm': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }),
+        'cartoLight': L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© CARTO' }),
+        'cartoDark': L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© CARTO' }),
+        'satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri' })
+      };
+
+      let activeBasemap = fixBasemaps['osm'];
+
+      // Handler Dropdown Basemap
+      const dropdown = document.getElementById('basemapSelect');
+      if (dropdown) {
+        dropdown.addEventListener('change', function (e) {
+          const selected = e.target.value;
+          if (fixBasemaps[selected]) {
+            currentMap.removeLayer(activeBasemap);
+            activeBasemap = fixBasemaps[selected];
+            activeBasemap.addTo(currentMap);
+            
+            const badgeText = document.getElementById('mapStatus');
+            if (badgeText) {
+              badgeText.innerText = e.target.options[e.target.selectedIndex].text + " aktif — data demo";
+            }
+          }
+        });
+      }
+
+      // 2. Handler Slider Transparansi Overlay
+      const slider = document.getElementById('overlayOpacity');
+      const label = document.getElementById('overlayOpacityValue');
+
+      if (slider) {
+        slider.addEventListener('input', function (e) {
+          const pct = e.target.value;
+          if (label) label.innerText = pct + '%';
+          
+          const opacityVal = pct / 100;
+
+          // Looping otomatis mendeteksi semua objek lingkaran (buffer risiko) di peta
+          currentMap.eachLayer(function (layer) {
+            if (layer instanceof L.Circle || (layer.options && layer.options.fillColor)) {
+              if (typeof layer.setStyle === 'function') {
+                layer.setStyle({
+                  fillOpacity: opacityVal,
+                  opacity: opacityVal
+                });
+              }
+            }
+          });
+        });
+      }
+    });
+  </script>
 
 </body>
 </html>
