@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Peta Interaktif | GeoSafe Yogyakarta</title>
+  <title>GeoSafe Yogyakarta | Peta CCTV Live YouTube</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,1616 +12,990 @@
 
   <style>
     :root{
-      --bg:#070b14;
-      --panel:rgba(10,15,30,.84);
-      --panel-2:rgba(18,25,46,.86);
+      --bg:#06101c;
+      --panel:rgba(7,12,25,.84);
+      --panel2:rgba(13,22,42,.92);
       --stroke:rgba(255,255,255,.10);
-      --text:#f3f7ff;
-      --muted:#9aa8bd;
-      --blue:#66e3ff;
-      --green:#43e58a;
+      --text:#f4f8ff;
+      --muted:#9fb0c8;
+      --cyan:#62e6ff;
+      --blue:#7aa7ff;
+      --green:#70ffb8;
       --yellow:#ffd166;
-      --red:#ff5c7a;
-      --purple:#b99cff;
-      --shadow:0 18px 44px rgba(0,0,0,.36);
-    }
-
-    *{ box-sizing:border-box; }
-
-    html,body{
-      width:100%;
-      height:100%;
-      margin:0;
-      overflow:hidden;
-      background:
-        radial-gradient(circle at 18% 0%, rgba(102,227,255,.16), transparent 28%),
-        radial-gradient(circle at 78% 8%, rgba(185,156,255,.13), transparent 28%),
-        var(--bg);
-      color:var(--text);
-      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    }
-
-    a{ color:inherit; text-decoration:none; }
-
-    .shell{
-      width:100%;
-      height:100vh;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-    }
-
-    .topbar{
-      height:86px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:18px;
-      padding:18px 24px;
-      border-bottom:1px solid var(--stroke);
-      background:rgba(7,11,20,.72);
-      backdrop-filter:blur(18px);
-      z-index:2000;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width:max-content;
-    }
-
-    .brand-mark{
-      width:42px;
-      height:42px;
-      border-radius:16px;
-      background:
-        radial-gradient(circle at 30% 30%, #fff, transparent 15%),
-        linear-gradient(135deg, var(--blue), var(--purple));
-      box-shadow:0 0 28px rgba(102,227,255,.32);
-    }
-
-    .brand-text{
-      display:flex;
-      flex-direction:column;
-      line-height:1.15;
-    }
-
-    .brand-text strong{ font-size:16px; letter-spacing:.2px; }
-    .brand-text span{ color:var(--muted); font-size:12px; margin-top:3px; }
-
-    .navlinks{
-      display:flex;
-      gap:8px;
-      align-items:center;
-    }
-
-    .navlinks a,
-    .btn{
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.04);
-      color:var(--text);
-      border-radius:999px;
-      padding:10px 14px;
-      font-size:13px;
-      font-weight:700;
-      cursor:pointer;
-      transition:.2s ease;
-    }
-
-    .navlinks a:hover,
-    .btn:hover,
-    .tool-btn:hover{
-      background:rgba(102,227,255,.11);
-      border-color:rgba(102,227,255,.28);
-    }
-
-    .btn.primary{
-      background:linear-gradient(135deg, rgba(102,227,255,.92), rgba(185,156,255,.92));
-      border-color:transparent;
-      color:#06111f;
-    }
-
-    .top-actions{
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-
-    .container{
-      width:100%;
-      height:calc(100vh - 86px);
-      padding:20px 24px 24px;
-      overflow:hidden;
-    }
-
-    .map-layout{
-      position:relative;
-      display:grid;
-      grid-template-columns:330px minmax(0,1fr) 360px;
-      gap:20px;
-      width:100%;
-      height:100%;
-      min-height:0;
-    }
-
-    .map-panel{
-      height:100%;
-      overflow:hidden;
-      border-radius:26px;
-      background:var(--panel);
-      backdrop-filter:blur(20px);
-      border:1px solid var(--stroke);
-      box-shadow:var(--shadow);
-      display:flex;
-      flex-direction:column;
-      min-height:0;
-      z-index:1200;
-    }
-
-    .panel-header{
-      padding:18px 18px 14px;
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:flex-start;
-      border-bottom:1px solid var(--stroke);
-    }
-
-    .panel-header h3{
-      margin:0;
-      font-size:16px;
-      line-height:1.2;
-    }
-
-    .panel-header span{
-      color:var(--muted);
-      font-size:12px;
-      display:block;
-      margin-top:4px;
-    }
-
-    .panel-chip{
-      margin-top:0!important;
-      color:#06111f!important;
-      background:var(--blue);
-      border-radius:999px;
-      padding:6px 9px;
-      font-weight:800;
-      white-space:nowrap;
-    }
-
-    .panel-body{
-      padding:16px 18px 18px;
-      overflow:auto;
-      min-height:0;
-    }
-
-    .map-center{
-      position:relative;
-      height:100%;
-      min-width:0;
-      min-height:0;
-    }
-
-    #map{
-      width:100%;
-      height:100%;
-      border-radius:26px;
-      overflow:hidden;
-      z-index:1;
-      background:#10182a;
-      box-shadow:var(--shadow);
-      border:1px solid var(--stroke);
-    }
-
-    .map-topbar{
-      position:absolute;
-      top:16px;
-      left:16px;
-      right:16px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      z-index:1200;
-      pointer-events:none;
-    }
-
-    .map-badge,
-    .map-toolbox{
-      pointer-events:auto;
-    }
-
-    .map-badge{
-      min-width:0;
-      max-width:70%;
-      display:flex;
-      align-items:center;
-      gap:9px;
-      color:var(--text);
-      font-size:12px;
-      font-weight:800;
-      border:1px solid var(--stroke);
-      background:rgba(7,11,20,.76);
-      border-radius:999px;
-      padding:10px 13px;
-      backdrop-filter:blur(16px);
-      box-shadow:0 12px 26px rgba(0,0,0,.22);
-    }
-
-    .map-badge span:last-child{
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-    }
-
-    .pulse-dot{
-      width:9px;
-      height:9px;
-      flex:0 0 auto;
-      border-radius:50%;
-      background:var(--green);
-      box-shadow:0 0 0 0 rgba(67,229,138,.55);
-      animation:pulse 1.8s infinite;
-    }
-
-    @keyframes pulse{
-      70%{ box-shadow:0 0 0 9px rgba(67,229,138,0); }
-      100%{ box-shadow:0 0 0 0 rgba(67,229,138,0); }
-    }
-
-    .map-toolbox{
-      display:flex;
-      gap:8px;
-    }
-
-    .tool-btn{
-      width:40px;
-      height:40px;
-      border-radius:14px;
-      border:1px solid var(--stroke);
-      color:var(--text);
-      background:rgba(7,11,20,.76);
-      cursor:pointer;
-      font-weight:900;
-      backdrop-filter:blur(16px);
-    }
-
-    .control-group{
-      margin-bottom:16px;
-    }
-
-    label{
-      display:block;
-      color:#d7e0ef;
-      font-size:12px;
-      font-weight:800;
-      margin-bottom:8px;
-      letter-spacing:.02em;
-    }
-
-    .select,
-    .input{
-      width:100%;
-      height:42px;
-      border-radius:14px;
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.045);
-      color:var(--text);
-      padding:0 12px;
-      outline:none;
-      font-family:inherit;
-      font-size:13px;
-      font-weight:700;
-    }
-
-    .select option{ color:#101525; }
-
-    .file-input{
-      width:100%;
-      border-radius:16px;
-      border:1px dashed rgba(102,227,255,.35);
-      padding:12px;
-      color:var(--muted);
-      background:rgba(102,227,255,.06);
-      font-size:12px;
-    }
-
-    .range-row{
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:10px;
-      align-items:center;
-    }
-
-    input[type="range"]{
-      width:100%;
-      accent-color:var(--blue);
-    }
-
-    .pill{
-      min-width:48px;
-      text-align:center;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      border-radius:999px;
-      padding:6px 9px;
-      background:rgba(255,255,255,.07);
-      border:1px solid var(--stroke);
-      color:#dbe7f8;
-      font-size:12px;
-      font-weight:900;
-    }
-
-    .layer-list{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .layer-item{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:12px 13px;
-      border-radius:16px;
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--stroke);
-    }
-
-    .layer-item span{
-      font-size:13px;
-      font-weight:700;
-      color:#dce7f6;
-    }
-
-    .layer-item input{
-      width:18px;
-      height:18px;
-      accent-color:var(--blue);
-    }
-
-    .stat-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-bottom:14px;
-    }
-
-    .stat-card,
-    .analysis-card,
-    .notice{
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.04);
-      border-radius:18px;
-      padding:13px;
-    }
-
-    .stat-card span{
-      color:var(--muted);
-      font-size:11px;
-      display:block;
-      margin-bottom:5px;
-      font-weight:700;
-    }
-
-    .stat-card strong{
-      font-size:22px;
-      line-height:1.1;
-      display:block;
-    }
-
-    .stat-card em{
-      display:block;
-      color:var(--muted);
-      font-size:11px;
-      font-style:normal;
-      margin-top:5px;
-    }
-
-    .analysis-card{
-      margin-top:12px;
-    }
-
-    .analysis-title{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-start;
-      margin-bottom:10px;
-    }
-
-    .analysis-title h4{
-      margin:0;
-      font-size:15px;
-      line-height:1.28;
-    }
-
-    .risk-badge{
-      white-space:nowrap;
-      border-radius:999px;
-      padding:6px 9px;
-      font-size:11px;
-      font-weight:900;
-      color:#07101d;
-    }
-
-    .risk-low{ background:var(--green); }
-    .risk-mid{ background:var(--yellow); }
-    .risk-high{ background:var(--red); color:#fff; }
-
-    .kv{
-      display:grid;
-      grid-template-columns:105px 1fr;
-      gap:8px;
-      font-size:12px;
-      margin:8px 0;
-    }
-
-    .kv b{ color:var(--muted); }
-    .kv span{ color:#edf4ff; font-weight:700; }
-
-    .analysis-list{
-      margin:11px 0 0;
-      padding-left:18px;
-      color:#d8e2f1;
-      font-size:12px;
-      line-height:1.55;
-    }
-
-    .notice{
-      color:#c8d7ea;
-      font-size:12px;
-      line-height:1.55;
-      margin-top:12px;
-    }
-
-    .notice strong{ color:#fff; }
-
-    .cctv-frame{
-      width:100%;
-      height:210px;
-      border:0;
-      border-radius:16px;
-      background:#020711;
-      margin-top:10px;
-    }
-
-    .action-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:12px;
-    }
-
-    .small-btn{
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      border-radius:999px;
-      padding:8px 10px;
-      font-size:12px;
-      font-weight:900;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:6px;
-    }
-
-    .small-btn.primary{
-      background:rgba(102,227,255,.16);
-      border-color:rgba(102,227,255,.32);
-    }
-
-    .leaflet-popup-content-wrapper,
-    .leaflet-popup-tip{
-      background:#08101e;
-      color:#eef5ff;
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:0 18px 38px rgba(0,0,0,.38);
-    }
-
-    .leaflet-popup-content{
-      margin:14px;
-      font-family:'Inter',sans-serif;
-      min-width:220px;
-    }
-
-    .popup-title{
-      font-size:14px;
-      font-weight:900;
-      margin-bottom:8px;
-    }
-
-    .popup-meta{
-      color:#aebbd0;
-      font-size:12px;
-      line-height:1.5;
-    }
-
-    .marker-dot{
-      width:18px;
-      height:18px;
-      border-radius:50%;
-      border:2px solid rgba(255,255,255,.92);
-      box-shadow:0 7px 18px rgba(0,0,0,.34);
-    }
-
-    .marker-cctv{
-      width:30px;
-      height:30px;
-      border-radius:12px;
-      display:grid;
-      place-items:center;
-      background:rgba(102,227,255,.94);
-      color:#07101d;
-      border:2px solid rgba(255,255,255,.95);
-      box-shadow:0 10px 24px rgba(0,0,0,.30);
-      font-size:16px;
-    }
-
-    .label-tag{
-      color:#fff;
-      text-shadow:0 2px 9px rgba(0,0,0,.8);
-      font-size:11px;
-      font-weight:900;
-      white-space:nowrap;
-    }
-
-    .legend{
-      position:absolute;
-      left:16px;
-      bottom:16px;
-      z-index:1200;
-      background:rgba(7,11,20,.76);
-      backdrop-filter:blur(16px);
-      border:1px solid var(--stroke);
-      border-radius:18px;
-      padding:12px;
-      font-size:12px;
-      box-shadow:0 12px 28px rgba(0,0,0,.24);
-    }
-
-    .legend-row{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      margin:7px 0;
-      color:#dce6f3;
-      font-weight:700;
-    }
-
-    .legend-dot{
-      width:11px;
-      height:11px;
-      border-radius:50%;
-    }
-
-    .mobile-toggle{ display:none; }
-
-    @media(max-width:1180px){
-      body{ overflow:auto; }
-      .shell{ height:auto; min-height:100vh; }
-      .container{ height:auto; overflow:visible; padding:16px; }
-      .map-layout{ grid-template-columns:1fr; height:auto; }
-      .map-panel{ height:auto; max-height:none; }
-      .map-center{ height:70vh; min-height:520px; }
-      .navlinks{ display:none; }
-      .mobile-toggle{ display:inline-flex; }
-    }
-
-    @media(max-width:640px){
-      .topbar{ padding:14px; height:auto; align-items:flex-start; }
-      .brand-text span{ display:none; }
-      .top-actions .btn{ display:none; }
-      .container{ padding:12px; }
-      .map-center{ height:66vh; min-height:440px; }
-      .stat-grid{ grid-template-columns:1fr; }
-      .map-badge{ max-width:calc(100% - 96px); }
-    }
+      --red:#ff6b8b;
+      --shadow:0 24px 80px rgba(0,0,0,.42);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;background:radial-gradient(circle at 20% 5%,rgba(98,230,255,.14),transparent 30%),radial-gradient(circle at 75% 15%,rgba(122,167,255,.14),transparent 32%),var(--bg);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);overflow:hidden}
+    a{color:inherit;text-decoration:none}
+    button,input,select{font:inherit}
+    .app{height:100vh;display:grid;grid-template-rows:72px minmax(0,1fr)}
+    .topbar{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--stroke);background:rgba(4,8,18,.72);backdrop-filter:blur(22px);z-index:2000}
+    .brand{display:flex;align-items:center;gap:12px;min-width:260px}
+    .brand-mark{width:42px;height:42px;border-radius:16px;background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 0 28px rgba(98,230,255,.28);position:relative}
+    .brand-mark:after{content:"";position:absolute;inset:11px;border-radius:50%;border:3px solid rgba(7,12,25,.9)}
+    .brand strong{display:block;font-size:15px;letter-spacing:.2px}
+    .brand span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+    .navlinks{display:flex;align-items:center;gap:8px}
+    .navlinks a,.btn{border:1px solid var(--stroke);background:rgba(255,255,255,.04);color:var(--text);padding:10px 14px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer}
+    .navlinks a.active,.btn.primary{background:linear-gradient(135deg,rgba(98,230,255,.22),rgba(122,167,255,.18));border-color:rgba(98,230,255,.34)}
+    .btn:hover,.navlinks a:hover{border-color:rgba(98,230,255,.35)}
+    .layout{height:calc(100vh - 72px);display:grid;grid-template-columns:340px minmax(0,1fr) 390px;gap:16px;padding:16px}
+    .panel{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(22px);min-height:0;overflow:hidden;display:flex;flex-direction:column}
+    .panel-head{padding:18px 18px 14px;border-bottom:1px solid var(--stroke);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .panel-head h2,.panel-head h3{margin:0;font-size:16px}
+    .panel-head span{font-size:12px;color:var(--muted);display:block;margin-top:4px;line-height:1.4}
+    .panel-body{padding:16px;overflow:auto;min-height:0}
+    .mapbox{position:relative;min-width:0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--stroke);box-shadow:var(--shadow)}
+    #map{width:100%;height:100%;background:#081020}
+    .map-top{position:absolute;z-index:1200;left:16px;right:16px;top:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;pointer-events:none}
+    .status-pill,.toolbox{pointer-events:auto}
+    .status-pill{max-width:620px;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;border:1px solid rgba(98,230,255,.24);background:rgba(7,12,25,.78);backdrop-filter:blur(18px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:12px;color:#dbeafe}
+    .pulse{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(112,255,184,.6);animation:pulse 1.8s infinite}
+    @keyframes pulse{70%{box-shadow:0 0 0 12px rgba(112,255,184,0)}100%{box-shadow:0 0 0 0 rgba(112,255,184,0)}}
+    .toolbox{display:flex;gap:8px}
+    .toolbox button{width:42px;height:42px;border-radius:14px;border:1px solid var(--stroke);background:rgba(7,12,25,.82);color:var(--text);cursor:pointer;font-weight:900}
+    .toolbox button:hover{border-color:rgba(98,230,255,.40)}
+    .form-group{margin-bottom:14px}
+    label{font-size:12px;font-weight:800;color:#d5e3f8;display:block;margin-bottom:7px}
+    .input,.select{width:100%;height:42px;border-radius:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);color:var(--text);outline:none;padding:0 12px}
+    .select option{background:#101827;color:#fff}
+    .mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    .stat{background:rgba(255,255,255,.045);border:1px solid var(--stroke);border-radius:18px;padding:12px}
+    .stat span{font-size:11px;color:var(--muted)}
+    .stat strong{display:block;font-size:22px;margin-top:4px}
+    .stat em{font-style:normal;font-size:11px;color:#b8c6dc;display:block;margin-top:4px}
+    .camera-list{display:flex;flex-direction:column;gap:10px}
+    .camera-card{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:18px;padding:12px;cursor:pointer;transition:.18s ease}
+    .camera-card:hover,.camera-card.active{transform:translateY(-1px);border-color:rgba(98,230,255,.38);background:rgba(98,230,255,.075)}
+    .camera-title{font-size:13px;font-weight:850;line-height:1.35;display:flex;gap:8px;justify-content:space-between}
+    .camera-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+    .tag{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);font-size:10.5px;color:#d9e7fb;font-weight:750}
+    .tag.ptz{border-color:rgba(98,230,255,.30);color:#baf6ff}
+    .tag.live{border-color:rgba(112,255,184,.30);color:#caffdf}
+    .tag.high{border-color:rgba(255,107,139,.36);color:#ffd1db}
+    .tag.med{border-color:rgba(255,209,102,.36);color:#ffe7a6}
+    .tag.low{border-color:rgba(112,255,184,.30);color:#caffdf}
+    .video-wrap{width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#020817;border:1px solid var(--stroke);margin-bottom:14px}
+    .video-wrap iframe{width:100%;height:100%;border:0;display:block}
+    .empty-video{height:100%;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font-size:13px}
+    .analysis-box{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:18px;padding:14px;margin-bottom:12px}
+    .analysis-box h4{margin:0 0 8px;font-size:13px}
+    .analysis-box p{margin:0;color:#c9d7ec;font-size:12.4px;line-height:1.55}
+    .score-row{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:8px}
+    .meter{height:9px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;flex:1}
+    .meter i{height:100%;display:block;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));border-radius:999px}
+    .quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+    .quick-actions a,.quick-actions button{text-align:center;border-radius:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);padding:10px;color:#fff;font-size:12px;font-weight:850;cursor:pointer}
+    .quick-actions a.primary{background:linear-gradient(135deg,rgba(98,230,255,.22),rgba(122,167,255,.18));border-color:rgba(98,230,255,.32)}
+    .warning{font-size:11.5px;line-height:1.5;color:#c7d4e8;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.20);border-radius:16px;padding:12px;margin-top:12px}
+    .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:rgba(7,12,25,.96);color:var(--text);border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 60px rgba(0,0,0,.45)}
+    .leaflet-popup-content{margin:14px;width:280px!important}
+    .popup-title{font-weight:900;font-size:14px;line-height:1.35;margin-bottom:8px}
+    .popup-meta{color:#b8c6dc;font-size:12px;line-height:1.45;margin-bottom:10px}
+    .popup-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+    .popup-actions a,.popup-actions button{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;border-radius:12px;padding:8px;font-size:11px;font-weight:850;text-align:center;cursor:pointer}
+    .popup-actions .primary{background:rgba(98,230,255,.14);border-color:rgba(98,230,255,.30)}
+    .cam-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;font-size:17px;color:#04111f;border:2px solid rgba(255,255,255,.72);box-shadow:0 10px 24px rgba(0,0,0,.34)}
+    .cam-icon.ptz{background:linear-gradient(135deg,#62e6ff,#7aa7ff)}
+    .cam-icon.fixed{background:linear-gradient(135deg,#70ffb8,#ffd166)}
+    .legend{position:absolute;z-index:1200;left:16px;bottom:16px;width:260px;border:1px solid var(--stroke);background:rgba(7,12,25,.82);backdrop-filter:blur(18px);border-radius:18px;padding:12px;box-shadow:0 12px 30px rgba(0,0,0,.26)}
+    .legend h4{margin:0 0 9px;font-size:12px}
+    .legend-row{display:flex;align-items:center;gap:8px;font-size:11px;color:#cbd8ed;margin:6px 0}
+    .dot{width:12px;height:12px;border-radius:50%;background:#62e6ff}
+    .dot.fixed{background:#70ffb8} .dot.buffer{background:#ffd166} .dot.safe{background:#7aa7ff}
+    .data-note{font-size:11px;color:var(--muted);line-height:1.45;margin-top:6px}
+    .hidden{display:none!important}
+    @media(max-width:1180px){html,body{overflow:auto}.app{height:auto;min-height:100vh}.layout{height:auto;grid-template-columns:1fr;padding:12px}.mapbox{height:70vh}.topbar{position:sticky;top:0}.navlinks{display:none}}
   </style>
 </head>
-
 <body>
-  <div class="shell">
+  <div class="app">
     <header class="topbar">
       <a href="index.html" class="brand">
         <div class="brand-mark"></div>
-        <div class="brand-text">
+        <div>
           <strong>GeoSafe Yogyakarta</strong>
-          <span>WebGIS zona kriminalitas, safe zone, dan CCTV</span>
+          <span>Peta CCTV Live YouTube + Analisis Zona</span>
         </div>
       </a>
-
-      <nav class="navlinks" id="navlinks">
+      <nav class="navlinks">
         <a href="index.html">Utama</a>
-        <a href="peta.html">Peta</a>
+        <a href="peta.html" class="active">Peta CCTV</a>
         <a href="analisis.html">Analisis</a>
         <a href="berita.html">Berita</a>
       </nav>
-
-      <div class="top-actions">
-        <a class="btn" href="index.html">← Utama</a>
-        <a class="btn primary" href="analisis.html">Analisis</a>
-        <button class="btn mobile-toggle" id="mobileToggle">☰</button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn" id="btnReload">Reload Data</button>
+        <a class="btn primary" href="https://www.youtube.com/@CCTVPemkotYogyakarta/streams" target="_blank" rel="noopener">YouTube CCTV</a>
       </div>
     </header>
 
-    <main class="container">
-      <section class="map-layout">
-
-        <aside class="map-panel">
-          <div class="panel-header">
-            <div>
-              <h3>Parameter Analisis</h3>
-              <span>CSV, filter, layer, dan basemap</span>
-            </div>
-            <span class="panel-chip">Filter</span>
+    <main class="layout">
+      <aside class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Data CCTV</h2>
+            <span>Filter dari <b>cctv_pemkot_yogyakarta_youtube_links.csv</b></span>
+          </div>
+          <span class="tag live" id="dataMode">CSV</span>
+        </div>
+        <div class="panel-body">
+          <div class="stat-grid">
+            <div class="stat"><span>Total CCTV</span><strong id="statTotal">0</strong><em>marker terbaca</em></div>
+            <div class="stat"><span>PTZ</span><strong id="statPTZ">0</strong><em>kamera gerak</em></div>
+            <div class="stat"><span>Fixed</span><strong id="statFixed">0</strong><em>kamera tetap</em></div>
+            <div class="stat"><span>Prioritas</span><strong id="statPriority">0</strong><em>zona waspada</em></div>
           </div>
 
-          <div class="panel-body">
-            <div class="control-group">
-              <label for="csvUpload">Upload data lokasi CSV</label>
-              <input class="file-input" id="csvUpload" type="file" accept=".csv,text/csv" />
-              <div class="notice">
-                Kolom wajib: <strong>id, nama_lokasi, kabupaten_kota, kategori, latitude, longitude</strong>.
-                File default yang akan dicari: <strong>assets/data/lokasi.csv</strong>.
-              </div>
+          <div class="form-group">
+            <label for="searchInput">Cari CCTV / lokasi</label>
+            <input class="input" id="searchInput" placeholder="contoh: Tugu, Nol KM, Galeria..." />
+          </div>
+          <div class="mini-grid">
+            <div class="form-group">
+              <label for="groupFilter">Koridor</label>
+              <select class="select" id="groupFilter"><option value="all">Semua</option></select>
             </div>
-
-            <div class="control-group">
-              <label for="searchText">Cari nama lokasi</label>
-              <input class="input" id="searchText" type="search" placeholder="Contoh: Malioboro, UMY, SMA..." />
+            <div class="form-group">
+              <label for="typeFilter">Jenis view</label>
+              <select class="select" id="typeFilter"><option value="all">Semua</option><option value="PTZ">PTZ</option><option value="Fixed">Fixed</option></select>
             </div>
-
-            <div class="control-group">
-              <label for="areaFilter">Kabupaten / Kota</label>
-              <select class="select" id="areaFilter">
-                <option value="all">Semua wilayah</option>
-              </select>
+          </div>
+          <div class="mini-grid">
+            <div class="form-group">
+              <label for="riskFilter">Zona</label>
+              <select class="select" id="riskFilter"><option value="all">Semua</option><option value="Tinggi">Waspada tinggi</option><option value="Sedang">Waspada sedang</option><option value="Rendah">Safe zone relatif</option></select>
             </div>
-
-            <div class="control-group">
-              <label for="categoryFilter">Kategori lokasi</label>
-              <select class="select" id="categoryFilter">
-                <option value="all">Semua kategori</option>
-              </select>
-            </div>
-
-            <div class="control-group">
-              <label for="safeFilter">Klasifikasi safe zone</label>
-              <select class="select" id="safeFilter">
-                <option value="all">Semua klasifikasi</option>
-                <option value="Safe Zone Relatif">Safe Zone Relatif</option>
-                <option value="Waspada">Waspada</option>
-                <option value="Prioritas Pengawasan">Prioritas Pengawasan</option>
-              </select>
-            </div>
-
-            <div class="control-group">
-              <label for="minRisk">Skor risiko minimum</label>
-              <div class="range-row">
-                <input type="range" id="minRisk" min="0" max="100" step="1" value="0" />
-                <span id="minRiskValue" class="pill">0</span>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <label for="overlayOpacity">Transparansi overlay risiko</label>
-              <div class="range-row">
-                <input type="range" id="overlayOpacity" min="0" max="100" step="1" value="62" />
-                <span id="overlayOpacityValue" class="pill">62%</span>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <label>Layer peta</label>
-              <div class="layer-list">
-                <label class="layer-item"><span>Titik lokasi</span><input type="checkbox" id="toggleMarker" checked /></label>
-                <label class="layer-item"><span>Zona risiko</span><input type="checkbox" id="toggleRisk" checked /></label>
-                <label class="layer-item"><span>Label lokasi</span><input type="checkbox" id="toggleLabel" checked /></label>
-                <label class="layer-item"><span>Titik CCTV</span><input type="checkbox" id="toggleCCTV" checked /></label>
-              </div>
-            </div>
-
-            <div class="control-group">
+            <div class="form-group">
               <label for="basemapSelect">Basemap</label>
-              <select class="select" id="basemapSelect">
-                <option value="osm">OpenStreetMap</option>
-                <option value="cartoLight">Carto Light</option>
-                <option value="cartoDark">Carto Dark</option>
-                <option value="satellite">Satellite</option>
-              </select>
+              <select class="select" id="basemapSelect"><option value="dark">Carto Dark</option><option value="light">Carto Light</option><option value="osm">OSM</option><option value="satellite">Satellite</option></select>
             </div>
           </div>
-        </aside>
-
-        <div class="map-center">
-          <div class="map-topbar">
-            <div class="map-badge">
-              <span class="pulse-dot"></span>
-              <span id="mapStatus">Menyiapkan peta dan membaca data...</span>
+          <div class="mini-grid">
+            <div class="form-group">
+              <label for="toggleBuffer">Buffer kamera</label>
+              <select class="select" id="toggleBuffer"><option value="on">Aktif</option><option value="off">Nonaktif</option></select>
             </div>
-            <div class="map-toolbox">
-              <button class="tool-btn" id="btnHome" title="Fit semua data">⌂</button>
-              <button class="tool-btn" id="btnLocate" title="Lokasi saya">◎</button>
+            <div class="form-group">
+              <label for="bufferRadius">Radius</label>
+              <select class="select" id="bufferRadius"><option value="250">250 m</option><option value="500" selected>500 m</option><option value="1000">1 km</option></select>
             </div>
           </div>
 
-          <div id="map"></div>
+          <div class="warning">
+            CSV YouTube tidak memiliki kolom koordinat, jadi script ini memakai <b>coordinateOverrides</b> di JavaScript. Jika Anda punya koordinat resmi, tambahkan kolom <b>latitude</b> dan <b>longitude</b> pada CSV agar marker menjadi presisi.
+          </div>
 
-          <div class="legend">
-            <div class="legend-row"><span class="legend-dot" style="background:var(--green)"></span> Safe Zone Relatif</div>
-            <div class="legend-row"><span class="legend-dot" style="background:var(--yellow)"></span> Waspada</div>
-            <div class="legend-row"><span class="legend-dot" style="background:var(--red)"></span> Prioritas Pengawasan</div>
-            <div class="legend-row"><span class="legend-dot" style="background:var(--blue)"></span> CCTV / portal live</div>
+          <div style="height:14px"></div>
+          <div class="camera-list" id="cameraList"></div>
+        </div>
+      </aside>
+
+      <section class="mapbox">
+        <div class="map-top">
+          <div class="status-pill"><span class="pulse"></span><span id="mapStatus">Menyiapkan peta CCTV live...</span></div>
+          <div class="toolbox">
+            <button id="btnHome" title="Kembali ke Kota Yogyakarta">⌂</button>
+            <button id="btnLocate" title="Lokasi saya">◎</button>
+            <button id="btnFit" title="Fit semua CCTV">□</button>
           </div>
         </div>
-
-        <aside class="map-panel">
-          <div class="panel-header">
-            <div>
-              <h3>Panel Analisis</h3>
-              <span>Ringkasan kriminalitas, safe zone, dan CCTV</span>
-            </div>
-            <span class="panel-chip">Live</span>
-          </div>
-
-          <div class="panel-body">
-            <div class="stat-grid">
-              <div class="stat-card">
-                <span>Lokasi tampil</span>
-                <strong id="statLokasi">0</strong>
-                <em>Mengikuti filter aktif</em>
-              </div>
-              <div class="stat-card">
-                <span>Rata-rata risiko</span>
-                <strong id="statRisk">0</strong>
-                <em>Skala 0–100</em>
-              </div>
-              <div class="stat-card">
-                <span>Zona prioritas</span>
-                <strong id="statHigh">0</strong>
-                <em>Skor ≥ 66</em>
-              </div>
-              <div class="stat-card">
-                <span>CCTV terbaca</span>
-                <strong id="statCCTV">0</strong>
-                <em>CSV / portal resmi</em>
-              </div>
-            </div>
-
-            <div id="analysisPanel" class="analysis-card">
-              <div class="analysis-title">
-                <h4>Pilih salah satu titik pada peta</h4>
-                <span class="risk-badge risk-mid">Standby</span>
-              </div>
-              <div class="notice">
-                Panel ini akan menampilkan analisis otomatis: estimasi skor risiko, klasifikasi safe zone,
-                kedekatan dengan CCTV, dan rekomendasi mitigasi. Jika data kriminal resmi belum tersedia,
-                skor bersifat indikatif berbasis kategori lokasi, kepadatan titik, dan celah pengawasan.
-              </div>
-            </div>
-
-            <div id="cctvPanel" class="analysis-card">
-              <div class="analysis-title">
-                <h4>CCTV real-time</h4>
-                <span class="risk-badge risk-low">Portal</span>
-              </div>
-              <div class="notice">
-                Viewer akan membuka portal CCTV resmi. Jika iframe kosong karena kebijakan keamanan situs,
-                gunakan tombol “Buka CCTV Resmi”.
-              </div>
-              <iframe
-                id="cctvFrame"
-                class="cctv-frame"
-                title="CCTV Pemkot Yogyakarta"
-                loading="lazy"
-                referrerpolicy="no-referrer"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-              ></iframe>
-              <div class="action-row">
-                <button class="small-btn primary" id="btnOpenCCTV">Buka CCTV Resmi</button>
-                <button class="small-btn" id="btnRefreshCCTV">Refresh Viewer</button>
-              </div>
-            </div>
-          </div>
-        </aside>
-
+        <div id="map"></div>
+        <div class="legend">
+          <h4>Legenda</h4>
+          <div class="legend-row"><span class="dot"></span> CCTV PTZ / kamera gerak</div>
+          <div class="legend-row"><span class="dot fixed"></span> CCTV fixed view</div>
+          <div class="legend-row"><span class="dot buffer"></span> Buffer estimasi jangkauan pengawasan</div>
+          <div class="legend-row"><span class="dot safe"></span> Zona aman relatif berbasis keterpantauan</div>
+          <div class="data-note">Analisis risiko bersifat heuristik untuk dashboard. Bukan data resmi kriminalitas/kepolisian.</div>
+        </div>
       </section>
+
+      <aside class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Panel Live & Analisis</h3>
+            <span id="selectedSubtitle">Klik salah satu CCTV pada peta</span>
+          </div>
+          <span class="tag" id="selectedTag">Idle</span>
+        </div>
+        <div class="panel-body">
+          <div class="video-wrap" id="videoWrap"><div class="empty-video">Pilih marker CCTV untuk menampilkan live YouTube, metadata, dan analisis zona.</div></div>
+          <div id="analysisPanel">
+            <div class="analysis-box">
+              <h4>Belum ada CCTV dipilih</h4>
+              <p>Panel ini akan menampilkan klasifikasi safe zone, prioritas pengawasan, serta rekomendasi mitigasi berdasarkan posisi CCTV, koridor, dan jenis kamera.</p>
+            </div>
+          </div>
+        </div>
+      </aside>
     </main>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
   <script>
-    "use strict";
+    // ============================================================
+    // 1) DATA FALLBACK: dipakai jika fetch CSV gagal.
+    //    Untuk GitHub Pages, file CSV tetap dibaca dari assets/data/.
+    // ============================================================
+    const FALLBACK_CCTV_ROWS = [
+  {
+    "id": 1,
+    "nama_cctv": "SIMPANG JOKTENG WETAN (PTZ)",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "PERSIMPANGAN & RUAS JALAN",
+    "jenis_view": "PTZ",
+    "video_id": "qEhhUPsW_9o",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=qEhhUPsW_9o",
+    "youtube_embed_url": "https://www.youtube.com/embed/qEhhUPsW_9o?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/qEhhUPsW_9o?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 2,
+    "nama_cctv": "SIMPANG JOKTENG WETAN V. TIMUR",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "PERSIMPANGAN & RUAS JALAN",
+    "jenis_view": "Fixed view",
+    "video_id": "J9Fo-PvJf9s",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=J9Fo-PvJf9s",
+    "youtube_embed_url": "https://www.youtube.com/embed/J9Fo-PvJf9s?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/J9Fo-PvJf9s?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 3,
+    "nama_cctv": "SIMPANG TUGU",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "TUGU - MARGO UTOMO",
+    "jenis_view": "Fixed/live",
+    "video_id": "1v52cQ1qJBA",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=1v52cQ1qJBA",
+    "youtube_embed_url": "https://www.youtube.com/embed/1v52cQ1qJBA?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/1v52cQ1qJBA?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 4,
+    "nama_cctv": "NOL KM - UTARA",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "MALIOBORO - MARGO MULYO - NOL KM",
+    "jenis_view": "Fixed view",
+    "video_id": "T-kzxf03Phw",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=T-kzxf03Phw",
+    "youtube_embed_url": "https://www.youtube.com/embed/T-kzxf03Phw?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/T-kzxf03Phw?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 5,
+    "nama_cctv": "NOL KM (PTZ)",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "MALIOBORO - MARGO MULYO - NOL KM",
+    "jenis_view": "PTZ",
+    "video_id": "V9a2vVNBx2g",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=V9a2vVNBx2g",
+    "youtube_embed_url": "https://www.youtube.com/embed/V9a2vVNBx2g?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/V9a2vVNBx2g?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 6,
+    "nama_cctv": "NOL KM - GEDUNG AGUNG",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "MALIOBORO - MARGO MULYO - NOL KM",
+    "jenis_view": "Fixed view",
+    "video_id": "y3_Ch1mbTvI",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=y3_Ch1mbTvI",
+    "youtube_embed_url": "https://www.youtube.com/embed/y3_Ch1mbTvI?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/y3_Ch1mbTvI?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_from_indexed_result_previous_search",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 7,
+    "nama_cctv": "SIMPANG BALAIKOTA V. UTARA-BARAT",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "BALAIKOTA KOTA YOGYAKARTA",
+    "jenis_view": "Fixed view",
+    "video_id": "yicTxt9-pdE",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=yicTxt9-pdE",
+    "youtube_embed_url": "https://www.youtube.com/embed/yicTxt9-pdE?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/yicTxt9-pdE?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 8,
+    "nama_cctv": "SIMPANG WIROBRAJAN (PTZ)",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "PERSIMPANGAN & RUAS JALAN",
+    "jenis_view": "PTZ",
+    "video_id": "RDxKd5xLclU",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=RDxKd5xLclU",
+    "youtube_embed_url": "https://www.youtube.com/embed/RDxKd5xLclU?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/RDxKd5xLclU?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 9,
+    "nama_cctv": "SIMPANG GRAMEDIA V. UTARA-TIMUR",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "PERSIMPANGAN & RUAS JALAN",
+    "jenis_view": "Fixed view",
+    "video_id": "uvKSTjmFxG4",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=uvKSTjmFxG4",
+    "youtube_embed_url": "https://www.youtube.com/embed/uvKSTjmFxG4?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/uvKSTjmFxG4?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 10,
+    "nama_cctv": "SIMPANG GRAMEDIA (PTZ)",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "PERSIMPANGAN & RUAS JALAN",
+    "jenis_view": "PTZ",
+    "video_id": "1REI7RE3aVE",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=1REI7RE3aVE",
+    "youtube_embed_url": "https://www.youtube.com/embed/1REI7RE3aVE?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/1REI7RE3aVE?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 11,
+    "nama_cctv": "SIMPANG GRAMEDIA V. TIMUR",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "PERSIMPANGAN & RUAS JALAN",
+    "jenis_view": "Fixed view",
+    "video_id": "D_R5EpqQIpo",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=D_R5EpqQIpo",
+    "youtube_embed_url": "https://www.youtube.com/embed/D_R5EpqQIpo?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/D_R5EpqQIpo?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_from_indexed_result_previous_search",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 12,
+    "nama_cctv": "SIMPANG MELIA PUROSANI (PTZ)",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "MALIOBORO - MARGO MULYO - NOL KM",
+    "jenis_view": "PTZ",
+    "video_id": "X_8YFIwDjhI",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=X_8YFIwDjhI",
+    "youtube_embed_url": "https://www.youtube.com/embed/X_8YFIwDjhI?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/X_8YFIwDjhI?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 13,
+    "nama_cctv": "SIMPANG MENTERI SUPENO V. TIMUR",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "PERSIMPANGAN & RUAS JALAN",
+    "jenis_view": "Fixed view",
+    "video_id": "TJSfMlqE9y8",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=TJSfMlqE9y8",
+    "youtube_embed_url": "https://www.youtube.com/embed/TJSfMlqE9y8?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/TJSfMlqE9y8?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 14,
+    "nama_cctv": "DEPAN DPRD V. UTARA",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "DEPAN DPRD KOTA YOGYAKARTA",
+    "jenis_view": "Fixed view",
+    "video_id": "-aFTJO8izno",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=-aFTJO8izno",
+    "youtube_embed_url": "https://www.youtube.com/embed/-aFTJO8izno?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/-aFTJO8izno?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 15,
+    "nama_cctv": "KOTABARU - JL. YOS SUDARSO",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "KOTABARU",
+    "jenis_view": "Fixed view",
+    "video_id": "_8Sru9lBzXI",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=_8Sru9lBzXI",
+    "youtube_embed_url": "https://www.youtube.com/embed/_8Sru9lBzXI?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/_8Sru9lBzXI?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 16,
+    "nama_cctv": "KOTABARU - JL. SAJIONO",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "KOTABARU",
+    "jenis_view": "Fixed view",
+    "video_id": "q2gARNvcNHc",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=q2gARNvcNHc",
+    "youtube_embed_url": "https://www.youtube.com/embed/q2gARNvcNHc?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/q2gARNvcNHc?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 17,
+    "nama_cctv": "KOTABARU - JL. WARDHANI",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "KOTABARU",
+    "jenis_view": "Fixed view",
+    "video_id": "-CST_3we6gY",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=-CST_3we6gY",
+    "youtube_embed_url": "https://www.youtube.com/embed/-CST_3we6gY?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/-CST_3we6gY?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 18,
+    "nama_cctv": "MARGO UTOMO - OPTIC TUGU",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "TUGU - MARGO UTOMO",
+    "jenis_view": "Fixed/live",
+    "video_id": "ghJg364QRkQ",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=ghJg364QRkQ",
+    "youtube_embed_url": "https://www.youtube.com/embed/ghJg364QRkQ?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/ghJg364QRkQ?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 19,
+    "nama_cctv": "JL. MAS SUHARTO V. SELATAN",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "PERSIMPANGAN & RUAS JALAN",
+    "jenis_view": "Fixed view",
+    "video_id": "nkmTk_0DjYM",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=nkmTk_0DjYM",
+    "youtube_embed_url": "https://www.youtube.com/embed/nkmTk_0DjYM?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/nkmTk_0DjYM?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 20,
+    "nama_cctv": "SIMPANG GALERIA (PTZ)",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "PERSIMPANGAN & RUAS JALAN",
+    "jenis_view": "PTZ",
+    "video_id": "Ls8vsOlqJ_U",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=Ls8vsOlqJ_U",
+    "youtube_embed_url": "https://www.youtube.com/embed/Ls8vsOlqJ_U?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/Ls8vsOlqJ_U?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  },
+  {
+    "id": 21,
+    "nama_cctv": "SIMPANG BOROBUDUR PLAZA V. UTARA",
+    "wilayah": "Kota Yogyakarta",
+    "playlist_group": "PERSIMPANGAN & RUAS JALAN",
+    "jenis_view": "Fixed view",
+    "video_id": "FCuHGm6VMHs",
+    "youtube_watch_url": "https://www.youtube.com/watch?v=FCuHGm6VMHs",
+    "youtube_embed_url": "https://www.youtube.com/embed/FCuHGm6VMHs?autoplay=1&mute=1&playsinline=1",
+    "youtube_nocookie_embed_url": "https://www.youtube-nocookie.com/embed/FCuHGm6VMHs?autoplay=1&mute=1&playsinline=1",
+    "channel_streams_url": "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
+    "official_cctv_portal": "https://cctv.jogjakota.go.id/",
+    "status_verifikasi": "verified_search_result",
+    "catatan_integrasi_web": "Gunakan youtube_embed_url untuk iframe. Jika iframe gagal karena kebijakan browser/YouTube, gunakan youtube_watch_url sebagai tombol buka tab baru.",
+    "retrieved_at": "2026-05-20"
+  }
+];
 
-    // =========================================================
-    // KONFIGURASI
-    // =========================================================
-    const CONFIG = {
-      defaultCenter: [-7.7956, 110.3695],
-      defaultZoom: 12,
-      defaultCsvPaths: [
-        "assets/data/lokasi.csv",
-        "data/lokasi.csv",
-        "lokasi.csv"
-      ],
-      cctvCsvPaths: [
-        "assets/data/cctv.csv",
-        "data/cctv.csv",
-        "cctv.csv"
-      ],
-      officialCctvUrl: "https://cctv.jogjakota.go.id/",
-      fallbackYoutubeUrl: "https://www.youtube.com/@CCTVPemkotYogyakarta/streams",
-      overlayOpacity: 0.62
-    };
+    // ============================================================
+    // 2) KOORDINAT OVERRIDE
+    //    CSV YouTube tidak punya latitude/longitude. Edit bagian ini
+    //    jika Anda punya koordinat resmi setiap CCTV.
+    // ============================================================
+    const CCTV_COORDS = {
+  "SIMPANG JOKTENG WETAN (PTZ)": {
+    "lat": -7.813764,
+    "lng": 110.370091,
+    "accuracy": "estimasi lokasi simpang"
+  },
+  "SIMPANG JOKTENG WETAN V. TIMUR": {
+    "lat": -7.813693,
+    "lng": 110.370222,
+    "accuracy": "estimasi lokasi simpang"
+  },
+  "SIMPANG TUGU": {
+    "lat": -7.78293,
+    "lng": 110.36707,
+    "accuracy": "estimasi landmark"
+  },
+  "NOL KM - UTARA": {
+    "lat": -7.801372,
+    "lng": 110.364775,
+    "accuracy": "estimasi kawasan nol kilometer"
+  },
+  "NOL KM (PTZ)": {
+    "lat": -7.80135,
+    "lng": 110.36472,
+    "accuracy": "estimasi kawasan nol kilometer"
+  },
+  "NOL KM - GEDUNG AGUNG": {
+    "lat": -7.80113,
+    "lng": 110.36412,
+    "accuracy": "estimasi sisi Gedung Agung"
+  },
+  "SIMPANG BALAIKOTA V. UTARA-BARAT": {
+    "lat": -7.79815,
+    "lng": 110.39379,
+    "accuracy": "estimasi kompleks Balai Kota"
+  },
+  "SIMPANG WIROBRAJAN (PTZ)": {
+    "lat": -7.80127,
+    "lng": 110.34986,
+    "accuracy": "estimasi lokasi simpang"
+  },
+  "SIMPANG GRAMEDIA V. UTARA-TIMUR": {
+    "lat": -7.78374,
+    "lng": 110.37789,
+    "accuracy": "estimasi lokasi simpang"
+  },
+  "SIMPANG GRAMEDIA (PTZ)": {
+    "lat": -7.78369,
+    "lng": 110.37782,
+    "accuracy": "estimasi lokasi simpang"
+  },
+  "SIMPANG GRAMEDIA V. TIMUR": {
+    "lat": -7.78379,
+    "lng": 110.37796,
+    "accuracy": "estimasi lokasi simpang"
+  },
+  "SIMPANG MELIA PUROSANI (PTZ)": {
+    "lat": -7.79528,
+    "lng": 110.36715,
+    "accuracy": "estimasi sekitar Melia Purosani"
+  },
+  "SIMPANG MENTERI SUPENO V. TIMUR": {
+    "lat": -7.81318,
+    "lng": 110.37536,
+    "accuracy": "estimasi koridor Menteri Supeno"
+  },
+  "DEPAN DPRD V. UTARA": {
+    "lat": -7.79755,
+    "lng": 110.39495,
+    "accuracy": "estimasi depan DPRD/Balai Kota"
+  },
+  "KOTABARU - JL. YOS SUDARSO": {
+    "lat": -7.7865,
+    "lng": 110.3744,
+    "accuracy": "estimasi ruas Kotabaru"
+  },
+  "KOTABARU - JL. SAJIONO": {
+    "lat": -7.7861,
+    "lng": 110.3731,
+    "accuracy": "estimasi ruas Kotabaru"
+  },
+  "KOTABARU - JL. WARDHANI": {
+    "lat": -7.78655,
+    "lng": 110.3729,
+    "accuracy": "estimasi ruas Kotabaru"
+  },
+  "MARGO UTOMO - OPTIC TUGU": {
+    "lat": -7.78424,
+    "lng": 110.36692,
+    "accuracy": "estimasi koridor Margo Utomo"
+  },
+  "JL. MAS SUHARTO V. SELATAN": {
+    "lat": -7.78835,
+    "lng": 110.36946,
+    "accuracy": "estimasi ruas Mas Suharto"
+  },
+  "SIMPANG GALERIA (PTZ)": {
+    "lat": -7.78272,
+    "lng": 110.37866,
+    "accuracy": "estimasi Simpang Galeria"
+  },
+  "SIMPANG BOROBUDUR PLAZA V. UTARA": {
+    "lat": -7.77268,
+    "lng": 110.36367,
+    "accuracy": "estimasi koridor utara kota"
+  }
+};
 
-    /**
-     * Catatan format cctv.csv opsional:
-     * id,nama_cctv,latitude,longitude,stream_url,source_url
-     *
-     * Jika tidak ada cctv.csv, sistem tetap menampilkan tombol ke portal CCTV resmi.
-     * Untuk kamera spesifik, isi stream_url dengan URL embed yang legal/resmi, misalnya URL embed YouTube.
-     */
+    const CSV_PATH = "assets/data/cctv_pemkot_yogyakarta_youtube_links.csv";
+    const CENTER_JOGJA = [-7.7956, 110.3695];
 
-    const SAMPLE_CSV = `id,nama_lokasi,kabupaten_kota,kategori,latitude,longitude
-1,Universitas Muhammadiyah Yogyakarta,Kabupaten Bantul,Kampus dan sekolah,-7.8098455,110.3218608
-2,Institut Seni Indonesia Yogyakarta,Kabupaten Bantul,Kampus dan sekolah,-7.8507711,110.3567486
-3,Universitas Ahmad Dahlan Kampus 4,Kabupaten Bantul,Kampus dan sekolah,-7.8328242,110.3832271
-4,SMA Negeri 1 Bantul,Kabupaten Bantul,Kampus dan sekolah,-7.8961578,110.3228892
-5,SMA Negeri 1 Kasihan,Kabupaten Bantul,Kampus dan sekolah,-7.818078,110.3493516
-6,SMA Negeri 1 Wonosari,Kabupaten Gunungkidul,Kampus dan sekolah,-7.9648835,110.5991408
-7,Universitas Gunungkidul,Kabupaten Gunungkidul,Kampus dan sekolah,-7.9531495,110.5897172
-8,Titik Portal CCTV Kota Yogyakarta,Kota Yogyakarta,CCTV dan pengawasan,-7.7956,110.3695`;
-
-    let map;
-    let activeBasemap;
-    let locations = [];
-    let cctvPoints = [];
-    let visibleLocations = [];
-    let selectedLocation = null;
-
-    const layers = {
-      markers: L.layerGroup(),
-      risk: L.layerGroup(),
-      labels: L.layerGroup(),
-      cctv: L.layerGroup()
-    };
+    let map, activeBasemap, cctvRows = [], markersLayer, buffersLayer;
+    let currentFiltered = [];
+    let selectedId = null;
 
     const basemaps = {
-      osm: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 20,
-        attribution: "© OpenStreetMap"
-      }),
-      cartoLight: L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-        maxZoom: 20,
-        attribution: "© CARTO © OpenStreetMap"
-      }),
-      cartoDark: L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-        maxZoom: 20,
-        attribution: "© CARTO © OpenStreetMap"
-      }),
-      satellite: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-        maxZoom: 20,
-        attribution: "© Esri"
-      })
+      dark: L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {maxZoom:19, attribution:"© OpenStreetMap © CARTO"}),
+      light: L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {maxZoom:19, attribution:"© OpenStreetMap © CARTO"}),
+      osm: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom:19, attribution:"© OpenStreetMap"}),
+      satellite: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {maxZoom:19, attribution:"Tiles © Esri"})
     };
 
-    // =========================================================
-    // UTILITAS
-    // =========================================================
-    function $(id){ return document.getElementById(id); }
+    function cleanText(v){ return String(v ?? "").trim(); }
+    function isPTZ(row){ return /ptz/i.test(cleanText(row.nama_cctv) + " " + cleanText(row.jenis_view)); }
+    function getEmbed(row){ return cleanText(row.youtube_nocookie_embed_url || row.youtube_embed_url || ""); }
+    function getWatch(row){ return cleanText(row.youtube_watch_url || row.channel_streams_url || "https://www.youtube.com/@CCTVPemkotYogyakarta/streams"); }
+    function safeId(row){ return cleanText(row.id || row.video_id || row.nama_cctv); }
 
-    function cleanKey(key){
-      return String(key || "").trim().toLowerCase().replace(/\s+/g, "_");
+    function inferCoord(row, index){
+      const latCsv = Number(row.latitude || row.lat);
+      const lngCsv = Number(row.longitude || row.lng || row.lon);
+      if(Number.isFinite(latCsv) && Number.isFinite(lngCsv)){
+        return { lat: latCsv, lng: lngCsv, accuracy: "koordinat dari CSV" };
+      }
+      const key = cleanText(row.nama_cctv);
+      if(CCTV_COORDS[key]) return CCTV_COORDS[key];
+      // fallback agar titik tetap muncul, tetapi akan ditandai perlu validasi
+      const angle = (index / Math.max(FALLBACK_CCTV_ROWS.length,1)) * Math.PI * 2;
+      return { lat: CENTER_JOGJA[0] + Math.sin(angle) * .012, lng: CENTER_JOGJA[1] + Math.cos(angle) * .012, accuracy: "fallback otomatis - perlu validasi" };
     }
 
-    function cleanText(value){
-      return String(value ?? "").trim();
+    function computeAnalysis(row){
+      const name = cleanText(row.nama_cctv).toUpperCase();
+      const group = cleanText(row.playlist_group).toUpperCase();
+      let risk = 52;
+      let crowd = "rendah-sedang";
+      let reason = "Titik berada pada koridor kota yang terpantau CCTV publik.";
+
+      if(group.includes("MALIOBORO") || name.includes("NOL KM") || name.includes("MELIA")){ risk = 83; crowd = "tinggi"; reason = "Kawasan wisata, pejalan kaki, aktivitas ekonomi, dan simpul pergerakan tinggi."; }
+      else if(group.includes("TUGU") || name.includes("TUGU") || name.includes("MARGO UTOMO")){ risk = 76; crowd = "tinggi"; reason = "Koridor ikonik dan pintu masuk kawasan pusat kota dengan intensitas pergerakan tinggi."; }
+      else if(group.includes("PERSIMPANGAN") || name.includes("SIMPANG")){ risk = 70; crowd = "sedang-tinggi"; reason = "Persimpangan memiliki risiko konflik lalu lintas, kerumunan, dan insiden jalan."; }
+      else if(group.includes("BALAI") || group.includes("DPRD") || name.includes("DPRD")){ risk = 66; crowd = "sedang"; reason = "Kawasan pemerintahan membutuhkan pengawasan akses, arus kendaraan, dan aktivitas publik."; }
+      else if(group.includes("KOTABARU")){ risk = 59; crowd = "sedang"; reason = "Koridor permukiman-komersial dengan aktivitas sedang dan sebaran titik pengawasan lokal."; }
+
+      if(isPTZ(row)) risk += 3; // PTZ sering dipasang pada titik prioritas
+      risk = Math.max(0, Math.min(100, risk));
+      const coverage = isPTZ(row) ? 92 : 76;
+      const safeScore = Math.max(0, Math.min(100, Math.round((100 - risk) * .55 + coverage * .45)));
+      const riskClass = risk >= 78 ? "Tinggi" : risk >= 62 ? "Sedang" : "Rendah";
+      const safeLabel = riskClass === "Tinggi" ? "Zona Waspada Terpantau" : riskClass === "Sedang" ? "Zona Aman Bersyarat" : "Safe Zone Relatif";
+      const recommendation = riskClass === "Tinggi"
+        ? "Prioritaskan patroli berkala, penerangan, respons cepat, dan pemantauan aktif pada jam ramai."
+        : riskClass === "Sedang"
+          ? "Pertahankan monitoring, cek blind spot, dan integrasikan CCTV dengan titik laporan warga."
+          : "Pertahankan sebagai zona terpantau; cukup lakukan monitoring rutin dan validasi kondisi lapangan.";
+      return { risk, coverage, safeScore, riskClass, safeLabel, crowd, reason, recommendation };
     }
 
-    function parseNumber(value){
-      if (typeof value === "number") return value;
-      const n = Number(String(value ?? "").replace(",", ".").trim());
-      return Number.isFinite(n) ? n : NaN;
-    }
-
-    function escapeHTML(value){
-      return String(value ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    function clamp(num, min, max){
-      return Math.max(min, Math.min(max, num));
-    }
-
-    function toRad(value){
-      return value * Math.PI / 180;
-    }
-
-    function distanceMeters(a, b){
-      const R = 6371000;
-      const dLat = toRad(b.latitude - a.latitude);
-      const dLon = toRad(b.longitude - a.longitude);
-      const lat1 = toRad(a.latitude);
-      const lat2 = toRad(b.latitude);
-      const x = Math.sin(dLat/2) ** 2 +
-        Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon/2) ** 2;
-      return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
-    }
-
-    function formatDistance(meters){
-      if (!Number.isFinite(meters)) return "Tidak tersedia";
-      return meters >= 1000 ? `${(meters/1000).toFixed(2)} km` : `${Math.round(meters)} m`;
-    }
-
-    function uniqueValues(arr, key){
-      return [...new Set(arr.map(item => item[key]).filter(Boolean))].sort((a,b) => a.localeCompare(b, "id"));
-    }
-
-    function setStatus(text){
-      $("mapStatus").textContent = text;
-    }
-
-    // =========================================================
-    // NORMALISASI DATA
-    // =========================================================
-    function normalizeCsvRows(rows){
-      return rows.map(raw => {
-        const row = {};
-        Object.keys(raw || {}).forEach(key => {
-          row[cleanKey(key)] = raw[key];
+    function enrichRows(rows){
+      return rows
+        .filter(r => cleanText(r.nama_cctv) && cleanText(r.video_id))
+        .map((r, idx) => {
+          const coord = inferCoord(r, idx);
+          const analysis = computeAnalysis(r);
+          return { ...r, _id: safeId(r), _lat: coord.lat, _lng: coord.lng, _coordNote: coord.accuracy, _analysis: analysis };
         });
-
-        const loc = {
-          id: cleanText(row.id) || crypto.randomUUID(),
-          nama_lokasi: cleanText(row.nama_lokasi || row.nama || row.lokasi || row.name),
-          kabupaten_kota: cleanText(row.kabupaten_kota || row.kabupaten || row.kota || row.wilayah),
-          kategori: cleanText(row.kategori || row.category || "Lokasi umum"),
-          latitude: parseNumber(row.latitude || row.lat),
-          longitude: parseNumber(row.longitude || row.lng || row.lon),
-          jumlah_kasus: parseNumber(row.jumlah_kasus || row.total_kasus || row.kasus),
-          curanmor: parseNumber(row.curanmor),
-          curat: parseNumber(row.curat),
-          penganiayaan: parseNumber(row.penganiayaan),
-          narkotika: parseNumber(row.narkotika),
-          penipuan: parseNumber(row.penipuan),
-          cctv_url: cleanText(row.cctv_url || row.stream_url || row.url_cctv),
-          raw: row
-        };
-
-        return loc;
-      }).filter(loc =>
-        loc.nama_lokasi &&
-        Number.isFinite(loc.latitude) &&
-        Number.isFinite(loc.longitude)
-      );
     }
 
-    function normalizeCctvRows(rows){
-      return rows.map(raw => {
-        const row = {};
-        Object.keys(raw || {}).forEach(key => row[cleanKey(key)] = raw[key]);
-
-        return {
-          id: cleanText(row.id) || crypto.randomUUID(),
-          nama_cctv: cleanText(row.nama_cctv || row.nama_lokasi || row.nama || row.name || "CCTV"),
-          latitude: parseNumber(row.latitude || row.lat),
-          longitude: parseNumber(row.longitude || row.lng || row.lon),
-          stream_url: cleanText(row.stream_url || row.cctv_url || row.embed_url),
-          source_url: cleanText(row.source_url || row.url || CONFIG.officialCctvUrl)
-        };
-      }).filter(cam =>
-        cam.nama_cctv &&
-        Number.isFinite(cam.latitude) &&
-        Number.isFinite(cam.longitude)
-      );
-    }
-
-    function parseCsvText(csvText, mode="location"){
-      const parsed = Papa.parse(csvText, {
-        header:true,
-        skipEmptyLines:true,
-        dynamicTyping:false
-      });
-
-      if (parsed.errors?.length){
-        console.warn("CSV parse warning:", parsed.errors);
-      }
-
-      return mode === "cctv"
-        ? normalizeCctvRows(parsed.data)
-        : normalizeCsvRows(parsed.data);
-    }
-
-    async function fetchFirstAvailable(paths){
-      for (const path of paths){
-        try{
-          const res = await fetch(path, { cache:"no-store" });
-          if (res.ok){
-            const text = await res.text();
-            if (text.trim()) return { path, text };
-          }
-        }catch(err){
-          // Fetch gagal saat file tidak ada, dibuka dari file://, atau terkena CORS.
-        }
-      }
-      return null;
-    }
-
-    // =========================================================
-    // ANALISIS RISIKO DAN SAFE ZONE
-    // =========================================================
-    function categoryBaseRisk(category){
-      const c = String(category || "").toLowerCase();
-
-      if (c.includes("terminal") || c.includes("stasiun") || c.includes("transport")) return 66;
-      if (c.includes("pasar") || c.includes("mall") || c.includes("pusat belanja")) return 61;
-      if (c.includes("wisata") || c.includes("alun") || c.includes("malioboro")) return 60;
-      if (c.includes("jalan") || c.includes("simpang") || c.includes("halte")) return 57;
-      if (c.includes("kampus") || c.includes("sekolah")) return 46;
-      if (c.includes("cctv") || c.includes("pengawasan")) return 28;
-      if (c.includes("rumah sakit") || c.includes("puskesmas")) return 35;
-      if (c.includes("kantor")) return 32;
-      if (c.includes("ibadah") || c.includes("masjid") || c.includes("gereja")) return 26;
-
-      return 42;
-    }
-
-    function countNearbyLocations(loc, radiusMeters=1000){
-      return locations.filter(other =>
-        other.id !== loc.id &&
-        distanceMeters(loc, other) <= radiusMeters
-      ).length;
-    }
-
-    function nearestCCTV(loc){
-      const fromDedicatedCsv = cctvPoints.length ? cctvPoints : [];
-
-      const fromLocationRows = locations
-        .filter(item => item.cctv_url || /cctv|pengawasan/i.test(item.kategori))
-        .map(item => ({
-          id: item.id,
-          nama_cctv: item.nama_lokasi,
-          latitude: item.latitude,
-          longitude: item.longitude,
-          stream_url: item.cctv_url,
-          source_url: item.cctv_url || CONFIG.officialCctvUrl
-        }));
-
-      const all = [...fromDedicatedCsv, ...fromLocationRows];
-
-      if (!all.length) return null;
-
-      return all
-        .map(cam => ({ ...cam, distance: distanceMeters(loc, cam) }))
-        .sort((a,b) => a.distance - b.distance)[0];
-    }
-
-    function crimeScoreFromColumns(loc){
-      const values = [
-        loc.jumlah_kasus,
-        loc.curanmor,
-        loc.curat,
-        loc.penganiayaan,
-        loc.narkotika,
-        loc.penipuan
-      ].filter(Number.isFinite);
-
-      if (!values.length) return 0;
-
-      const total = Number.isFinite(loc.jumlah_kasus)
-        ? loc.jumlah_kasus
-        : values.reduce((a,b) => a + b, 0);
-
-      return clamp(total * 2.25, 0, 30);
-    }
-
-    function estimateRisk(loc){
-      const base = categoryBaseRisk(loc.kategori);
-      const nearby = countNearbyLocations(loc, 1000);
-      const densityScore = clamp(nearby * 3.5, 0, 18);
-      const crimeScore = crimeScoreFromColumns(loc);
-
-      const cam = nearestCCTV(loc);
-      let cctvGapScore = 12;
-
-      if (cam){
-        if (cam.distance <= 250) cctvGapScore = 1;
-        else if (cam.distance <= 500) cctvGapScore = 5;
-        else if (cam.distance <= 900) cctvGapScore = 10;
-        else cctvGapScore = 16;
-      }
-
-      const score = clamp(Math.round(base + densityScore + crimeScore + cctvGapScore - 18), 0, 100);
-
-      return {
-        score,
-        nearby,
-        nearestCCTV: cam,
-        components: { base, densityScore, crimeScore, cctvGapScore }
-      };
-    }
-
-    function classifyRisk(score){
-      if (score >= 66){
-        return {
-          label:"Prioritas Pengawasan",
-          className:"risk-high",
-          color:"#ff5c7a",
-          radius:760
-        };
-      }
-
-      if (score >= 41){
-        return {
-          label:"Waspada",
-          className:"risk-mid",
-          color:"#ffd166",
-          radius:560
-        };
-      }
-
-      return {
-        label:"Safe Zone Relatif",
-        className:"risk-low",
-        color:"#43e58a",
-        radius:390
-      };
-    }
-
-    function buildRecommendations(loc, risk, cls){
-      const recs = [];
-
-      if (cls.label === "Prioritas Pengawasan"){
-        recs.push("Prioritaskan patroli pada jam ramai dan jam rawan, terutama di sekitar simpul pergerakan orang.");
-        recs.push("Periksa kecukupan penerangan jalan, blind spot, serta kebutuhan penambahan CCTV/panic button.");
-        recs.push("Tampilkan peringatan keamanan dan rute keluar terdekat pada panel informasi publik.");
-      }else if (cls.label === "Waspada"){
-        recs.push("Lakukan monitoring berkala dan pastikan akses menuju titik CCTV atau petugas keamanan mudah diketahui.");
-        recs.push("Gunakan signage preventif serta edukasi pengguna area untuk menjaga barang pribadi.");
-      }else{
-        recs.push("Pertahankan kondisi pengawasan, penerangan, dan akses evakuasi agar tetap layak.");
-        recs.push("Tetap lakukan validasi lapangan karena safe zone bersifat relatif, bukan jaminan bebas kriminalitas.");
-      }
-
-      if (/kampus|sekolah/i.test(loc.kategori)){
-        recs.push("Untuk area pendidikan, tambahkan pengawasan pada titik parkir, pintu masuk, dan area tunggu.");
-      }
-
-      return recs;
-    }
-
-    // =========================================================
-    // RENDER MAP
-    // =========================================================
-    function initMap(){
-      map = L.map("map", {
-        center: CONFIG.defaultCenter,
-        zoom: CONFIG.defaultZoom,
-        zoomControl:false
-      });
-
-      activeBasemap = basemaps.osm.addTo(map);
-      L.control.zoom({ position:"bottomright" }).addTo(map);
-
-      layers.risk.addTo(map);
-      layers.markers.addTo(map);
-      layers.labels.addTo(map);
-      layers.cctv.addTo(map);
-    }
-
-    function markerIcon(color){
+    function makeIcon(row){
+      const cls = isPTZ(row) ? "ptz" : "fixed";
       return L.divIcon({
-        className:"",
-        html:`<div class="marker-dot" style="background:${color}"></div>`,
-        iconSize:[18,18],
-        iconAnchor:[9,9],
-        popupAnchor:[0,-10]
+        html: `<div class="cam-icon ${cls}">📹</div>`,
+        className: "",
+        iconSize: [34,34],
+        iconAnchor: [17,17],
+        popupAnchor: [0,-18]
       });
     }
 
-    function cctvIcon(){
-      return L.divIcon({
-        className:"",
-        html:`<div class="marker-cctv">▣</div>`,
-        iconSize:[30,30],
-        iconAnchor:[15,15],
-        popupAnchor:[0,-12]
-      });
-    }
-
-    function labelIcon(text){
-      return L.divIcon({
-        className:"",
-        html:`<div class="label-tag">${escapeHTML(text)}</div>`,
-        iconSize:[160,20],
-        iconAnchor:[0,0]
-      });
-    }
-
-    function popupHTML(loc, risk, cls){
-      const cam = risk.nearestCCTV;
+    function popupHtml(row){
+      const a = row._analysis;
       return `
-        <div class="popup-title">${escapeHTML(loc.nama_lokasi)}</div>
+        <div class="popup-title">${cleanText(row.nama_cctv)}</div>
         <div class="popup-meta">
-          <b>Wilayah:</b> ${escapeHTML(loc.kabupaten_kota || "-")}<br>
-          <b>Kategori:</b> ${escapeHTML(loc.kategori || "-")}<br>
-          <b>Skor risiko:</b> ${risk.score}/100 — ${escapeHTML(cls.label)}<br>
-          <b>CCTV terdekat:</b> ${cam ? escapeHTML(cam.nama_cctv) + " (" + formatDistance(cam.distance) + ")" : "Portal CCTV resmi"}
+          <b>Koridor:</b> ${cleanText(row.playlist_group) || "-"}<br/>
+          <b>Jenis:</b> ${isPTZ(row) ? "PTZ / kamera gerak" : cleanText(row.jenis_view) || "Fixed view"}<br/>
+          <b>Zona:</b> ${a.safeLabel} · Risiko ${a.riskClass}<br/>
+          <b>Koordinat:</b> ${row._lat.toFixed(5)}, ${row._lng.toFixed(5)}
         </div>
-        <div class="action-row">
-          <button class="small-btn primary" onclick="GeoSafe.selectLocation('${escapeHTML(loc.id)}')">Lihat analisis</button>
-          <button class="small-btn" onclick="GeoSafe.openCCTV('${escapeHTML(loc.id)}')">CCTV</button>
+        <div class="camera-meta">
+          <span class="tag ${isPTZ(row) ? "ptz" : ""}">${isPTZ(row) ? "PTZ" : "Fixed"}</span>
+          <span class="tag live">Live YouTube</span>
+          <span class="tag ${a.riskClass === "Tinggi" ? "high" : a.riskClass === "Sedang" ? "med" : "low"}">${a.safeLabel}</span>
+        </div>
+        <div class="popup-actions">
+          <button class="primary" onclick="selectCamera('${String(row._id).replace(/'/g,"\'")}')">Analisis</button>
+          <a href="${getWatch(row)}" target="_blank" rel="noopener">Buka Live</a>
         </div>
       `;
     }
 
-    function renderMap(){
-      layers.markers.clearLayers();
-      layers.risk.clearLayers();
-      layers.labels.clearLayers();
-      layers.cctv.clearLayers();
-
-      const opacity = Number($("overlayOpacity").value) / 100;
-
-      visibleLocations.forEach(loc => {
-        const risk = estimateRisk(loc);
-        const cls = classifyRisk(risk.score);
-
-        const circle = L.circle([loc.latitude, loc.longitude], {
-          radius: cls.radius,
-          color: cls.color,
-          fillColor: cls.color,
-          fillOpacity: opacity,
-          opacity: clamp(opacity + 0.18, 0, 1),
-          weight: 1.5
-        });
-        layers.risk.addLayer(circle);
-
-        const marker = L.marker([loc.latitude, loc.longitude], {
-          icon: markerIcon(cls.color),
-          title: loc.nama_lokasi
-        }).bindPopup(popupHTML(loc, risk, cls));
-
-        marker.on("click", () => selectLocation(loc.id));
-        layers.markers.addLayer(marker);
-
-        const label = L.marker([loc.latitude, loc.longitude], {
-          icon: labelIcon(loc.nama_lokasi),
-          interactive:false
-        });
-        layers.labels.addLayer(label);
-      });
-
-      cctvPoints.forEach(cam => {
-        const marker = L.marker([cam.latitude, cam.longitude], {
-          icon:cctvIcon(),
-          title: cam.nama_cctv
-        }).bindPopup(`
-          <div class="popup-title">${escapeHTML(cam.nama_cctv)}</div>
-          <div class="popup-meta">Sumber: CCTV / stream resmi yang diinput dalam cctv.csv.</div>
-          <div class="action-row">
-            <button class="small-btn primary" onclick="GeoSafe.showCCTV('${escapeHTML(cam.id)}')">Buka CCTV</button>
-          </div>
-        `);
-        layers.cctv.addLayer(marker);
-      });
-
-      syncLayerVisibility();
-      updateStats();
+    function initMap(){
+      map = L.map("map", { zoomControl:false }).setView(CENTER_JOGJA, 13);
+      activeBasemap = basemaps.dark.addTo(map);
+      L.control.zoom({position:"bottomright"}).addTo(map);
+      markersLayer = L.layerGroup().addTo(map);
+      buffersLayer = L.layerGroup().addTo(map);
     }
 
-    function syncLayerVisibility(){
-      toggleLayer(layers.markers, $("toggleMarker").checked);
-      toggleLayer(layers.risk, $("toggleRisk").checked);
-      toggleLayer(layers.labels, $("toggleLabel").checked);
-      toggleLayer(layers.cctv, $("toggleCCTV").checked);
-    }
-
-    function toggleLayer(layer, visible){
-      if (visible && !map.hasLayer(layer)) layer.addTo(map);
-      if (!visible && map.hasLayer(layer)) map.removeLayer(layer);
-    }
-
-    function fitVisible(){
-      const points = visibleLocations.map(loc => [loc.latitude, loc.longitude]);
-      cctvPoints.forEach(cam => points.push([cam.latitude, cam.longitude]));
-
-      if (!points.length){
-        map.setView(CONFIG.defaultCenter, CONFIG.defaultZoom);
-        return;
+    async function loadCsvRows(){
+      const mode = document.getElementById("dataMode");
+      try{
+        const res = await fetch(CSV_PATH, { cache:"no-store" });
+        if(!res.ok) throw new Error("CSV tidak ditemukan di " + CSV_PATH);
+        const text = await res.text();
+        const parsed = Papa.parse(text, { header:true, skipEmptyLines:true });
+        if(parsed.errors && parsed.errors.length) console.warn("CSV parse warnings", parsed.errors);
+        const rows = parsed.data || [];
+        if(!rows.length) throw new Error("CSV kosong");
+        mode.textContent = "CSV";
+        mode.className = "tag live";
+        return rows;
+      }catch(err){
+        console.warn(err.message);
+        mode.textContent = "Fallback";
+        mode.className = "tag med";
+        return FALLBACK_CCTV_ROWS;
       }
-
-      const bounds = L.latLngBounds(points);
-      map.fitBounds(bounds.pad(.18), { maxZoom:15 });
     }
 
-    // =========================================================
-    // FILTER DAN PANEL ANALISIS
-    // =========================================================
     function populateFilters(){
-      const areaSelect = $("areaFilter");
-      const categorySelect = $("categoryFilter");
-
-      const oldArea = areaSelect.value;
-      const oldCategory = categorySelect.value;
-
-      areaSelect.innerHTML = `<option value="all">Semua wilayah</option>`;
-      categorySelect.innerHTML = `<option value="all">Semua kategori</option>`;
-
-      uniqueValues(locations, "kabupaten_kota").forEach(value => {
-        areaSelect.insertAdjacentHTML("beforeend", `<option value="${escapeHTML(value)}">${escapeHTML(value)}</option>`);
-      });
-
-      uniqueValues(locations, "kategori").forEach(value => {
-        categorySelect.insertAdjacentHTML("beforeend", `<option value="${escapeHTML(value)}">${escapeHTML(value)}</option>`);
-      });
-
-      if ([...areaSelect.options].some(opt => opt.value === oldArea)) areaSelect.value = oldArea;
-      if ([...categorySelect.options].some(opt => opt.value === oldCategory)) categorySelect.value = oldCategory;
+      const groups = [...new Set(cctvRows.map(r => cleanText(r.playlist_group)).filter(Boolean))].sort();
+      const groupFilter = document.getElementById("groupFilter");
+      groupFilter.innerHTML = '<option value="all">Semua</option>' + groups.map(g => `<option value="${g}">${g}</option>`).join("");
     }
 
     function applyFilters(){
-      const search = $("searchText").value.toLowerCase().trim();
-      const area = $("areaFilter").value;
-      const category = $("categoryFilter").value;
-      const safe = $("safeFilter").value;
-      const minRisk = Number($("minRisk").value);
-
-      visibleLocations = locations.filter(loc => {
-        const risk = estimateRisk(loc);
-        const cls = classifyRisk(risk.score);
-
-        const matchSearch = !search ||
-          loc.nama_lokasi.toLowerCase().includes(search) ||
-          loc.kabupaten_kota.toLowerCase().includes(search) ||
-          loc.kategori.toLowerCase().includes(search);
-
-        const matchArea = area === "all" || loc.kabupaten_kota === area;
-        const matchCategory = category === "all" || loc.kategori === category;
-        const matchSafe = safe === "all" || cls.label === safe;
-        const matchRisk = risk.score >= minRisk;
-
-        return matchSearch && matchArea && matchCategory && matchSafe && matchRisk;
+      const q = cleanText(document.getElementById("searchInput").value).toLowerCase();
+      const group = document.getElementById("groupFilter").value;
+      const type = document.getElementById("typeFilter").value;
+      const risk = document.getElementById("riskFilter").value;
+      currentFiltered = cctvRows.filter(row => {
+        const text = [row.nama_cctv,row.playlist_group,row.jenis_view,row.video_id].map(cleanText).join(" ").toLowerCase();
+        if(q && !text.includes(q)) return false;
+        if(group !== "all" && cleanText(row.playlist_group) !== group) return false;
+        if(type === "PTZ" && !isPTZ(row)) return false;
+        if(type === "Fixed" && isPTZ(row)) return false;
+        if(risk !== "all" && row._analysis.riskClass !== risk) return false;
+        return true;
       });
-
       renderMap();
-      setStatus(`${visibleLocations.length} titik tampil — filter aktif`);
+      renderList();
+      updateStats();
+    }
+
+    function renderMap(){
+      markersLayer.clearLayers();
+      buffersLayer.clearLayers();
+      const radius = Number(document.getElementById("bufferRadius").value || 500);
+      const showBuffer = document.getElementById("toggleBuffer").value === "on";
+
+      currentFiltered.forEach(row => {
+        if(showBuffer){
+          const color = row._analysis.riskClass === "Tinggi" ? "#ff6b8b" : row._analysis.riskClass === "Sedang" ? "#ffd166" : "#70ffb8";
+          L.circle([row._lat,row._lng], { radius, color, weight:1, opacity:.45, fillColor:color, fillOpacity:.10 }).addTo(buffersLayer);
+        }
+        const marker = L.marker([row._lat,row._lng], { icon: makeIcon(row), title: cleanText(row.nama_cctv) }).bindPopup(popupHtml(row));
+        marker.on("click", () => selectCamera(row._id));
+        marker.addTo(markersLayer);
+      });
+      document.getElementById("mapStatus").textContent = `${currentFiltered.length} CCTV tampil · data YouTube Pemkot Yogyakarta · iframe live aktif bila diizinkan browser`;
+    }
+
+    function renderList(){
+      const list = document.getElementById("cameraList");
+      if(!currentFiltered.length){ list.innerHTML = '<div class="analysis-box"><p>Tidak ada CCTV yang cocok dengan filter.</p></div>'; return; }
+      list.innerHTML = currentFiltered.map(row => {
+        const a = row._analysis;
+        const riskCls = a.riskClass === "Tinggi" ? "high" : a.riskClass === "Sedang" ? "med" : "low";
+        return `
+          <div class="camera-card ${String(row._id)===String(selectedId)?"active":""}" onclick="selectCamera('${String(row._id).replace(/'/g,"\'")}')">
+            <div class="camera-title"><span>${cleanText(row.nama_cctv)}</span><span>${isPTZ(row)?"PTZ":"Fixed"}</span></div>
+            <div class="camera-meta">
+              <span class="tag live">YouTube</span>
+              <span class="tag ${isPTZ(row)?"ptz":""}">${cleanText(row.jenis_view)||"View"}</span>
+              <span class="tag ${riskCls}">${a.safeLabel}</span>
+            </div>
+            <div class="data-note">${cleanText(row.playlist_group)} · ${row._coordNote}</div>
+          </div>`;
+      }).join("");
     }
 
     function updateStats(){
-      const risks = visibleLocations.map(loc => estimateRisk(loc).score);
-      const avg = risks.length ? Math.round(risks.reduce((a,b) => a + b, 0) / risks.length) : 0;
-      const high = risks.filter(score => score >= 66).length;
-
-      $("statLokasi").textContent = visibleLocations.length;
-      $("statRisk").textContent = avg;
-      $("statHigh").textContent = high;
-      $("statCCTV").textContent = cctvPoints.length || "Portal";
+      const total = currentFiltered.length;
+      const ptz = currentFiltered.filter(isPTZ).length;
+      const priority = currentFiltered.filter(r => r._analysis.riskClass === "Tinggi").length;
+      document.getElementById("statTotal").textContent = total;
+      document.getElementById("statPTZ").textContent = ptz;
+      document.getElementById("statFixed").textContent = total - ptz;
+      document.getElementById("statPriority").textContent = priority;
     }
 
-    function selectLocation(id){
-      const loc = locations.find(item => String(item.id) === String(id));
-      if (!loc) return;
-
-      selectedLocation = loc;
-      const risk = estimateRisk(loc);
-      const cls = classifyRisk(risk.score);
-      const cam = risk.nearestCCTV;
-      const recs = buildRecommendations(loc, risk, cls);
-
-      $("analysisPanel").innerHTML = `
-        <div class="analysis-title">
-          <h4>${escapeHTML(loc.nama_lokasi)}</h4>
-          <span class="risk-badge ${cls.className}">${escapeHTML(cls.label)}</span>
-        </div>
-
-        <div class="kv"><b>Wilayah</b><span>${escapeHTML(loc.kabupaten_kota || "-")}</span></div>
-        <div class="kv"><b>Kategori</b><span>${escapeHTML(loc.kategori || "-")}</span></div>
-        <div class="kv"><b>Koordinat</b><span>${loc.latitude.toFixed(6)}, ${loc.longitude.toFixed(6)}</span></div>
-        <div class="kv"><b>Skor risiko</b><span>${risk.score}/100</span></div>
-        <div class="kv"><b>Kepadatan</b><span>${risk.nearby} titik lain dalam radius ±1 km</span></div>
-        <div class="kv"><b>CCTV terdekat</b><span>${cam ? escapeHTML(cam.nama_cctv) + " — " + formatDistance(cam.distance) : "Belum ada titik CCTV spesifik; gunakan portal resmi"}</span></div>
-
-        <div class="notice">
-          <strong>Analisis kriminalitas:</strong>
-          Area ini dinilai berdasarkan kategori lokasi, kepadatan titik sekitar, celah pengawasan CCTV,
-          dan kolom kasus kriminal jika tersedia di CSV. Klasifikasi <strong>${escapeHTML(cls.label)}</strong>
-          berarti area ini ${cls.label === "Safe Zone Relatif" ? "relatif lebih terkendali, tetapi tetap perlu validasi lapangan" : cls.label === "Waspada" ? "memerlukan monitoring rutin karena aktivitas dan potensi kerawanan sedang" : "perlu diprioritaskan untuk pengawasan, penerangan, dan manajemen kerumunan"}.
-        </div>
-
-        <ul class="analysis-list">
-          ${recs.map(item => `<li>${escapeHTML(item)}</li>`).join("")}
-        </ul>
-
-        <div class="action-row">
-          <button class="small-btn primary" onclick="GeoSafe.openCCTV('${escapeHTML(loc.id)}')">Cek CCTV</button>
-          <button class="small-btn" onclick="GeoSafe.zoomTo('${escapeHTML(loc.id)}')">Zoom lokasi</button>
-        </div>
-      `;
-
-      showCCTVForLocation(loc);
-      map.setView([loc.latitude, loc.longitude], Math.max(map.getZoom(), 15), { animate:true });
-    }
-
-    function zoomTo(id){
-      const loc = locations.find(item => String(item.id) === String(id));
-      if (loc) map.setView([loc.latitude, loc.longitude], 17, { animate:true });
-    }
-
-    function showCCTVForLocation(loc){
-      const cam = loc ? nearestCCTV(loc) : null;
-      const url = cam?.stream_url || loc?.cctv_url || CONFIG.officialCctvUrl;
-      setCCTVFrame(url);
-    }
-
-    function showCCTVById(id){
-      const cam = cctvPoints.find(item => String(item.id) === String(id));
-      setCCTVFrame(cam?.stream_url || cam?.source_url || CONFIG.officialCctvUrl);
-    }
-
-    function openCCTV(id){
-      const loc = locations.find(item => String(item.id) === String(id));
-      const cam = loc ? nearestCCTV(loc) : null;
-      const url = cam?.stream_url || loc?.cctv_url || CONFIG.officialCctvUrl;
-      setCCTVFrame(url);
-      window.open(url, "_blank", "noopener,noreferrer");
-    }
-
-    function setCCTVFrame(url){
-      const frame = $("cctvFrame");
-      const safeUrl = url || CONFIG.officialCctvUrl;
-      frame.src = safeUrl;
-      $("btnOpenCCTV").onclick = () => window.open(safeUrl, "_blank", "noopener,noreferrer");
-      $("btnRefreshCCTV").onclick = () => {
-        frame.src = "";
-        window.setTimeout(() => frame.src = safeUrl, 150);
-      };
-    }
-
-    // =========================================================
-    // LOAD DATA
-    // =========================================================
-    async function loadLocationData(){
-      setStatus("Mencari CSV default...");
-
-      const found = await fetchFirstAvailable(CONFIG.defaultCsvPaths);
-      if (found){
-        locations = parseCsvText(found.text, "location");
-        setStatus(`Data terbaca dari ${found.path}`);
+    function renderAnalysis(row){
+      const a = row._analysis;
+      const videoWrap = document.getElementById("videoWrap");
+      const embed = getEmbed(row);
+      if(embed){
+        videoWrap.innerHTML = `<iframe src="${embed}" title="${cleanText(row.nama_cctv)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
       }else{
-        locations = parseCsvText(SAMPLE_CSV, "location");
-        setStatus("CSV default tidak ditemukan — memakai sample data sementara");
+        videoWrap.innerHTML = '<div class="empty-video">Link embed YouTube tidak tersedia. Gunakan tombol buka live.</div>';
       }
 
-      populateFilters();
-      visibleLocations = [...locations];
-      renderMap();
-      fitVisible();
+      document.getElementById("selectedSubtitle").textContent = cleanText(row.nama_cctv);
+      const tag = document.getElementById("selectedTag");
+      tag.textContent = a.safeLabel;
+      tag.className = "tag " + (a.riskClass === "Tinggi" ? "high" : a.riskClass === "Sedang" ? "med" : "low");
+
+      document.getElementById("analysisPanel").innerHTML = `
+        <div class="analysis-box">
+          <h4>Analisis Zona CCTV</h4>
+          <p><b>${cleanText(row.nama_cctv)}</b> berada pada koridor <b>${cleanText(row.playlist_group)}</b>. ${a.reason}</p>
+          <div class="score-row"><span class="tag">Skor risiko ${a.risk}</span><div class="meter"><i style="width:${a.risk}%"></i></div></div>
+          <div class="score-row"><span class="tag">Coverage ${a.coverage}</span><div class="meter"><i style="width:${a.coverage}%"></i></div></div>
+          <div class="score-row"><span class="tag">Safe score ${a.safeScore}</span><div class="meter"><i style="width:${a.safeScore}%"></i></div></div>
+        </div>
+        <div class="analysis-box">
+          <h4>Klasifikasi</h4>
+          <p><b>${a.safeLabel}</b>. Kategori risiko: <b>${a.riskClass}</b>. Kepadatan aktivitas estimatif: <b>${a.crowd}</b>. Jenis kamera: <b>${isPTZ(row)?"PTZ, cocok untuk pemantauan area dinamis":"Fixed view, cocok untuk pengamatan sudut tetap"}</b>.</p>
+        </div>
+        <div class="analysis-box">
+          <h4>Rekomendasi Operasional</h4>
+          <p>${a.recommendation} Untuk dashboard kriminalitas, gabungkan layer ini dengan data kejadian aktual seperti curanmor, pencurian, penganiayaan, laporan warga, dan jam kejadian.</p>
+        </div>
+        <div class="analysis-box">
+          <h4>Metadata Stream</h4>
+          <p><b>Video ID:</b> ${cleanText(row.video_id)}<br/>
+          <b>Status:</b> ${cleanText(row.status_verifikasi)}<br/>
+          <b>Koordinat:</b> ${row._lat.toFixed(6)}, ${row._lng.toFixed(6)}<br/>
+          <b>Catatan koordinat:</b> ${row._coordNote}</p>
+          <div class="quick-actions">
+            <a class="primary" href="${getWatch(row)}" target="_blank" rel="noopener">Buka YouTube</a>
+            <a href="${cleanText(row.official_cctv_portal) || "https://cctv.jogjakota.go.id/"}" target="_blank" rel="noopener">Portal Resmi</a>
+          </div>
+        </div>`;
     }
 
-    async function loadCctvData(){
-      const found = await fetchFirstAvailable(CONFIG.cctvCsvPaths);
-      if (found){
-        cctvPoints = parseCsvText(found.text, "cctv");
-      }else{
-        cctvPoints = [];
-      }
-
-      setCCTVFrame(CONFIG.officialCctvUrl);
-    }
-
-    function handleCsvUpload(file){
-      if (!file) return;
-
-      Papa.parse(file, {
-        header:true,
-        skipEmptyLines:true,
-        complete: result => {
-          locations = normalizeCsvRows(result.data);
-          if (!locations.length){
-            alert("CSV terbaca, tetapi tidak ada baris valid. Pastikan kolom latitude dan longitude benar.");
-            return;
-          }
-
-          populateFilters();
-          visibleLocations = [...locations];
-          renderMap();
-          fitVisible();
-          setStatus(`${locations.length} titik berhasil dibaca dari file upload`);
-        },
-        error: err => {
-          console.error(err);
-          alert("Gagal membaca CSV. Periksa format file.");
-        }
+    window.selectCamera = function(id){
+      selectedId = id;
+      const row = cctvRows.find(r => String(r._id) === String(id));
+      if(!row) return;
+      renderAnalysis(row);
+      renderList();
+      map.setView([row._lat,row._lng], Math.max(map.getZoom(), 16), { animate:true });
+      // buka popup marker yang sesuai
+      markersLayer.eachLayer(layer => {
+        const ll = layer.getLatLng && layer.getLatLng();
+        if(ll && Math.abs(ll.lat-row._lat)<1e-9 && Math.abs(ll.lng-row._lng)<1e-9) layer.openPopup();
       });
-    }
-
-    // =========================================================
-    // EVENT LISTENER
-    // =========================================================
-    function bindEvents(){
-      $("csvUpload").addEventListener("change", e => handleCsvUpload(e.target.files?.[0]));
-
-      ["searchText","areaFilter","categoryFilter","safeFilter"].forEach(id => {
-        $(id).addEventListener("input", applyFilters);
-        $(id).addEventListener("change", applyFilters);
-      });
-
-      $("minRisk").addEventListener("input", e => {
-        $("minRiskValue").textContent = e.target.value;
-        applyFilters();
-      });
-
-      $("overlayOpacity").addEventListener("input", e => {
-        $("overlayOpacityValue").textContent = `${e.target.value}%`;
-        renderMap();
-      });
-
-      ["toggleMarker","toggleRisk","toggleLabel","toggleCCTV"].forEach(id => {
-        $(id).addEventListener("change", syncLayerVisibility);
-      });
-
-      $("basemapSelect").addEventListener("change", e => {
-        const selected = e.target.value;
-        if (!basemaps[selected]) return;
-
-        if (activeBasemap) map.removeLayer(activeBasemap);
-        activeBasemap = basemaps[selected].addTo(map);
-        setStatus(`${e.target.options[e.target.selectedIndex].text} aktif — ${visibleLocations.length} titik tampil`);
-      });
-
-      $("btnHome").addEventListener("click", fitVisible);
-
-      $("btnLocate").addEventListener("click", () => {
-        if (!navigator.geolocation){
-          alert("Browser tidak mendukung geolocation.");
-          return;
-        }
-
-        navigator.geolocation.getCurrentPosition(pos => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-
-          L.circleMarker([lat, lng], {
-            radius:8,
-            color:"#66e3ff",
-            fillColor:"#66e3ff",
-            fillOpacity:.85
-          }).addTo(map).bindPopup("Lokasi Anda saat ini").openPopup();
-
-          map.setView([lat,lng], 16);
-        }, () => {
-          alert("Gagal mengambil lokasi. Pastikan izin lokasi browser aktif.");
-        });
-      });
-    }
-
-    // Ekspor fungsi agar tombol dalam popup Leaflet bisa memanggilnya.
-    window.GeoSafe = {
-      selectLocation,
-      zoomTo,
-      openCCTV,
-      showCCTV: showCCTVById
     };
 
-    document.addEventListener("DOMContentLoaded", async () => {
+    function fitAll(){
+      if(!currentFiltered.length) return map.setView(CENTER_JOGJA, 13);
+      const bounds = L.latLngBounds(currentFiltered.map(r => [r._lat,r._lng]));
+      map.fitBounds(bounds.pad(.18));
+    }
+
+    async function boot(){
       initMap();
-      bindEvents();
-      await loadCctvData();
-      await loadLocationData();
+      const raw = await loadCsvRows();
+      cctvRows = enrichRows(raw);
+      currentFiltered = [...cctvRows];
+      populateFilters();
+      applyFilters();
+      setTimeout(fitAll, 300);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      boot();
+      ["searchInput","groupFilter","typeFilter","riskFilter","toggleBuffer","bufferRadius"].forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
+      document.getElementById("basemapSelect").addEventListener("change", e => {
+        if(activeBasemap) map.removeLayer(activeBasemap);
+        activeBasemap = basemaps[e.target.value].addTo(map);
+      });
+      document.getElementById("btnHome").addEventListener("click", () => map.setView(CENTER_JOGJA, 13));
+      document.getElementById("btnFit").addEventListener("click", fitAll);
+      document.getElementById("btnReload").addEventListener("click", async () => {
+        const raw = await loadCsvRows();
+        cctvRows = enrichRows(raw);
+        populateFilters();
+        applyFilters();
+        fitAll();
+      });
+      document.getElementById("btnLocate").addEventListener("click", () => {
+        if(!navigator.geolocation) return alert("Browser tidak mendukung geolocation.");
+        navigator.geolocation.getCurrentPosition(pos => {
+          const lat = pos.coords.latitude, lng = pos.coords.longitude;
+          L.circleMarker([lat,lng], {radius:8,color:"#62e6ff",fillColor:"#62e6ff",fillOpacity:.7}).addTo(map).bindPopup("Lokasi Anda").openPopup();
+          map.setView([lat,lng], 16);
+        }, () => alert("Lokasi tidak dapat diakses."));
+      });
     });
   </script>
 </body>
