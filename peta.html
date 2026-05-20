@@ -4,75 +4,338 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Peta Interaktif | GeoSafe Yogyakarta</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
+
 <body data-page="peta">
+
   <div class="cursor-glow" id="cursorGlow"></div>
+
   <div class="shell">
+
+    <!-- HEADER -->
     <header class="topbar">
-      <a href="index.html" class="brand"><div class="brand-mark"></div><div class="brand-text"><strong>GeoSafe Yogyakarta</strong><span>WebGIS Zona Kriminalitas</span></div></a>
+
+      <a href="index.html" class="brand">
+        <div class="brand-mark"></div>
+
+        <div class="brand-text">
+          <strong>GeoSafe Yogyakarta</strong>
+          <span>WebGIS Zona Kriminalitas</span>
+        </div>
+      </a>
+
       <nav class="navlinks" id="navlinks">
         <a href="index.html" data-page="home">Utama</a>
         <a href="peta.html" data-page="peta">Peta</a>
         <a href="analisis.html" data-page="analisis">Analisis</a>
         <a href="berita.html" data-page="berita">Berita</a>
       </nav>
-      <div class="top-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="analisis.html">Analisis</a><button class="mobile-toggle" id="mobileToggle">☰</button></div>
+
+      <div class="top-actions">
+        <a class="btn" href="index.html">← Utama</a>
+        <a class="btn primary" href="analisis.html">Analisis</a>
+        <button class="mobile-toggle" id="mobileToggle">☰</button>
+      </div>
+
     </header>
 
+    <!-- MAIN -->
     <main class="container">
+
+      <!-- PAGE HEAD -->
       <section class="page-head">
-        <div class="breadcrumb"><a href="index.html">Halaman utama</a><span>/</span><span>Peta interaktif</span></div>
-        <div class="section-head">
-          <div><div class="eyebrow"><span class="pulse-dot"></span> Halaman Peta</div><h1 class="h2">Atur parameter di peta, lalu kirim ke halaman analisis.</h1></div>
-          <p>Pilih jenis kriminalitas, kategori risiko, dan ambang skor. Setelah klik <b>Proses Analisis</b>, halaman analisis akan menampilkan diagram dan tabel sesuai parameter yang dipilih.</p>
+
+        <div class="breadcrumb">
+          <a href="index.html">Halaman utama</a>
+          <span>/</span>
+          <span>Peta interaktif</span>
         </div>
-      </section>
 
-      <section class="map-shell">
-        <div class="map-layout">
-          <aside class="map-panel left-panel">
-            <div class="panel-header"><div><h3>Parameter Analisis</h3><span>Input pengguna</span></div><span>Filter</span></div>
-            <div class="panel-body">
-              <div class="control-group"><label for="searchArea">Cari kecamatan</label><input class="field" id="searchArea" type="search" placeholder="Contoh: Umbulharjo" /></div>
-              <div class="control-group"><label for="crimeType">Jenis kriminalitas</label><select class="select" id="crimeType"><option value="all">Semua jenis</option><option value="curat">Pencurian / Curat</option><option value="curanmor">Curanmor</option><option value="penganiayaan">Penganiayaan</option><option value="narkotika">Narkotika</option><option value="penipuan">Penipuan</option></select></div>
-              <div class="control-group"><label for="riskFilter">Kategori risiko</label><select class="select" id="riskFilter"><option value="all">Semua kategori</option><option value="Tinggi">Risiko tinggi</option><option value="Sedang">Risiko sedang</option><option value="Rendah">Risiko rendah</option></select></div>
-              <div class="control-group"><label for="minRisk">Skor risiko minimum</label><div class="range-row"><input type="range" id="minRisk" min="0" max="100" step="1" value="0" /><span id="minRiskValue" class="pill">0</span></div></div>
-              <div class="control-group"><label for="opacityRange">Transparansi overlay</label><div class="range-row"><input type="range" id="opacityRange" min="0.15" max="1" step="0.05" value="0.72" /><span id="opacityValue" class="pill">72%</span></div></div>
-              <div class="control-group"><label>Layer peta</label><div class="toggle-list"><button class="toggle-chip active" data-layer-toggle="risk"><span>Zona risiko</span><span class="switch"></span></button><button class="toggle-chip active" data-layer-toggle="points"><span>Titik kejadian</span><span class="switch"></span></button><button class="toggle-chip active" data-layer-toggle="labels"><span>Label kecamatan</span><span class="switch"></span></button></div></div>
-              <div class="control-group"><label>Basemap</label><div class="toggle-list"><button class="toggle-chip active" data-basemap="Carto Voyager"><span>Carto Voyager</span><span>🗺️</span></button><button class="toggle-chip" data-basemap="Esri World Imagery"><span>Esri Imagery</span><span>🛰️</span></button><button class="toggle-chip" data-basemap="Esri Topographic"><span>Esri Topographic</span><span>⛰️</span></button><button class="toggle-chip" data-basemap="OSM HOT"><span>OSM HOT</span><span>🏙️</span></button></div></div>
-              <button class="btn primary" id="runAnalysis" style="width:100%">Proses Analisis →</button>
-              <p class="small-note">Parameter akan disimpan ke localStorage dan dibaca oleh halaman <span class="code">analisis.html</span>.</p>
+        <div class="section-head">
+
+          <div>
+            <div class="eyebrow">
+              <span class="pulse-dot"></span>
+              Halaman Peta
             </div>
-          </aside>
 
-          <div class="map-center">
-            <div class="map-topbar"><div class="map-badge"><span class="pulse-dot"></span><span id="mapStatus">Prototype aktif — data demo</span></div><div class="map-toolbox"><button class="tool-btn" id="btnHome" title="Kembali ke Yogyakarta">⌂</button><button class="tool-btn" id="btnLocate" title="Lokasi saya">◎</button></div></div>
-            <div id="map"></div>
+            <h1 class="h2">
+              Atur parameter di peta, lalu kirim ke halaman analisis.
+            </h1>
           </div>
 
-          <aside class="map-panel right-panel">
-            <div class="panel-header"><div><h3>Ringkasan Peta</h3><span>Live preview</span></div><span>Info</span></div>
-            <div class="panel-body">
-              <div class="stat-stack"><div class="stat-card"><span>Wilayah tampil</span><strong id="statWilayah">0</strong><em>Mengikuti filter aktif</em></div><div class="stat-card"><span>Total kasus demo</span><strong id="statKasus">0</strong><em>Akumulasi wilayah tampil</em></div><div class="stat-card"><span>Zona prioritas</span><strong id="statPrioritas">-</strong><em>Skor risiko tertinggi</em></div></div>
-              <div class="control-group"><label>Legenda risiko</label><div class="legend"><div class="legend-row"><span class="legend-left"><span class="legend-color risk-high"></span> Tinggi</span><span>≥ 70</span></div><div class="legend-row"><span class="legend-left"><span class="legend-color risk-mid"></span> Sedang</span><span>45–69</span></div><div class="legend-row"><span class="legend-left"><span class="legend-color risk-low"></span> Rendah</span><span>&lt; 45</span></div></div></div>
-              <div class="insight-box" id="insightBox"><strong>Insight awal:</strong> klik salah satu zona untuk melihat detail indikator wilayah.</div>
-            </div>
-          </aside>
+          <p>
+            Pilih jenis kriminalitas, kategori risiko, dan ambang skor.
+            Setelah klik <b>Proses Analisis</b>, halaman analisis akan
+            menampilkan diagram dan tabel sesuai parameter yang dipilih.
+          </p>
+
         </div>
+
       </section>
 
-      <footer class="footer"><div><strong>CrimeScope Yogyakarta</strong><p class="muted">Halaman peta untuk memilih parameter analisis.</p></div><div class="row-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="analisis.html">Ke Analisis →</a></div></footer>
+      <!-- MAP -->
+      <section class="map-shell">
+
+        <div class="map-layout">
+
+          <!-- LEFT PANEL -->
+          <aside class="map-panel left-panel">
+
+            <div class="panel-header">
+              <div>
+                <h3>Parameter Analisis</h3>
+                <span>Input pengguna</span>
+              </div>
+
+              <span>Filter</span>
+            </div>
+
+            <div class="panel-body">
+
+              <!-- DROPDOWN KECAMATAN -->
+              <div class="control-group">
+
+                <label for="searchArea">Cari Kecamatan</label>
+
+                <select class="select" id="searchArea">
+
+                  <option value="">Pilih Kecamatan</option>
+
+                  <option value="Danurejan">Danurejan</option>
+                  <option value="Gedongtengen">Gedongtengen</option>
+                  <option value="Gondokusuman">Gondokusuman</option>
+                  <option value="Gondomanan">Gondomanan</option>
+                  <option value="Jetis">Jetis</option>
+                  <option value="Kotagede">Kotagede</option>
+                  <option value="Kraton">Kraton</option>
+                  <option value="Mantrijeron">Mantrijeron</option>
+                  <option value="Mergangsan">Mergangsan</option>
+                  <option value="Ngampilan">Ngampilan</option>
+                  <option value="Pakualaman">Pakualaman</option>
+                  <option value="Tegalrejo">Tegalrejo</option>
+                  <option value="Umbulharjo">Umbulharjo</option>
+                  <option value="Wirobrajan">Wirobrajan</option>
+
+                </select>
+
+              </div>
+
+              <!-- JENIS KRIMINALITAS -->
+              <div class="control-group">
+
+                <label for="crimeType">Jenis kriminalitas</label>
+
+                <select class="select" id="crimeType">
+                  <option value="all">Semua jenis</option>
+                  <option value="curat">Pencurian / Curat</option>
+                  <option value="curanmor">Curanmor</option>
+                  <option value="penganiayaan">Penganiayaan</option>
+                  <option value="narkotika">Narkotika</option>
+                  <option value="penipuan">Penipuan</option>
+                </select>
+
+              </div>
+
+              <!-- RISIKO -->
+              <div class="control-group">
+
+                <label for="riskFilter">Kategori risiko</label>
+
+                <select class="select" id="riskFilter">
+                  <option value="all">Semua kategori</option>
+                  <option value="Tinggi">Risiko tinggi</option>
+                  <option value="Sedang">Risiko sedang</option>
+                  <option value="Rendah">Risiko rendah</option>
+                </select>
+
+              </div>
+
+              <!-- SKOR -->
+              <div class="control-group">
+
+                <label for="minRisk">Skor risiko minimum</label>
+
+                <div class="range-row">
+                  <input type="range" id="minRisk" min="0" max="100" step="1" value="0" />
+                  <span id="minRiskValue" class="pill">0</span>
+                </div>
+
+              </div>
+
+              <!-- TRANSPARANSI -->
+              <div class="control-group">
+
+                <label for="opacityRange">Transparansi overlay</label>
+
+                <div class="range-row">
+                  <input type="range" id="opacityRange" min="0.15" max="1" step="0.05" value="0.72" />
+                  <span id="opacityValue" class="pill">72%</span>
+                </div>
+
+              </div>
+
+              <!-- LAYER -->
+              <div class="control-group">
+
+                <label>Layer peta</label>
+
+                <div class="toggle-list">
+
+                  <button class="toggle-chip active" data-layer-toggle="risk">
+                    <span>Zona risiko</span>
+                    <span class="switch"></span>
+                  </button>
+
+                  <button class="toggle-chip active" data-layer-toggle="points">
+                    <span>Titik kejadian</span>
+                    <span class="switch"></span>
+                  </button>
+
+                  <button class="toggle-chip active" data-layer-toggle="labels">
+                    <span>Label kecamatan</span>
+                    <span class="switch"></span>
+                  </button>
+
+                </div>
+
+              </div>
+
+              <!-- BASEMAP -->
+              <div class="control-group">
+
+                <label>Basemap</label>
+
+                <div class="toggle-list">
+
+                  <button class="toggle-chip active" data-basemap="Carto Voyager">
+                    <span>Carto Voyager</span>
+                    <span>🗺️</span>
+                  </button>
+
+                  <button class="toggle-chip" data-basemap="Esri World Imagery">
+                    <span>Esri Imagery</span>
+                    <span>🛰️</span>
+                  </button>
+
+                  <button class="toggle-chip" data-basemap="Esri Topographic">
+                    <span>Esri Topographic</span>
+                    <span>⛰️</span>
+                  </button>
+
+                  <button class="toggle-chip" data-basemap="OSM HOT">
+                    <span>OSM HOT</span>
+                    <span>🏙️</span>
+                  </button>
+
+                </div>
+
+              </div>
+
+              <!-- BUTTON -->
+              <button class="btn primary" id="runAnalysis" style="width:100%">
+                Proses Analisis →
+              </button>
+
+              <p class="small-note">
+                Parameter akan disimpan ke localStorage dan dibaca oleh halaman
+                <span class="code">analisis.html</span>.
+              </p>
+
+            </div>
+
+          </aside>
+
+          <!-- MAP CENTER -->
+          <div class="map-center">
+
+            <div class="map-topbar">
+
+              <div class="map-badge">
+                <span class="pulse-dot"></span>
+                <span id="mapStatus">Prototype aktif — data demo</span>
+              </div>
+
+              <div class="map-toolbox">
+                <button class="tool-btn" id="btnHome" title="Kembali ke Yogyakarta">⌂</button>
+                <button class="tool-btn" id="btnLocate" title="Lokasi saya">◎</button>
+              </div>
+
+            </div>
+
+            <div id="map"></div>
+
+          </div>
+
+          <!-- RIGHT PANEL -->
+          <aside class="map-panel right-panel">
+
+            <div class="panel-header">
+
+              <div>
+                <h3>Ringkasan Peta</h3>
+                <span>Live preview</span>
+              </div>
+
+              <span>Info</span>
+
+            </div>
+
+            <div class="panel-body">
+
+              <div class="stat-stack">
+
+                <div class="stat-card">
+                  <span>Wilayah tampil</span>
+                  <strong id="statWilayah">0</strong>
+                  <em>Mengikuti filter aktif</em>
+                </div>
+
+                <div class="stat-card">
+                  <span>Total kasus demo</span>
+                  <strong id="statKasus">0</strong>
+                  <em>Akumulasi wilayah tampil</em>
+                </div>
+
+                <div class="stat-card">
+                  <span>Zona prioritas</span>
+                  <strong id="statPrioritas">-</strong>
+                  <em>Skor risiko tertinggi</em>
+                </div>
+
+              </div>
+
+            </div>
+
+          </aside>
+
+        </div>
+
+      </section>
+
     </main>
+
   </div>
+
+  <!-- SCRIPT -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
   <script src="assets/js/data.js"></script>
+
   <script src="assets/js/common.js"></script>
+
   <script src="assets/js/map.js"></script>
+
 </body>
 </html>
