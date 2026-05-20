@@ -41,13 +41,9 @@
       display: none;
     }
 
-    /* ======================
-       FULLSCREEN MAP
-    ====================== */
-
     .map-shell{
       width: 100%;
-      height: calc(100vh - 90px);
+      height: 100vh;
       padding: 0;
       margin: 0;
     }
@@ -55,17 +51,21 @@
     .map-layout{
       position: relative;
       width: 100%;
-      height: calc(100vh - 90px);
+      height: 100vh;
     }
+
+    /* ======================
+       FULL MAP
+    ====================== */
 
     .map-center{
       width: 100%;
-      height: calc(100vh - 90px);
+      height: 100vh;
     }
 
     #map{
       width: 100%;
-      height: calc(100vh - 90px);
+      height: 100vh;
       z-index: 1;
     }
 
@@ -79,7 +79,7 @@
       left: 20px;
 
       width: 320px;
-      max-height: calc(100vh - 130px);
+      max-height: calc(100vh - 40px);
 
       overflow-y: auto;
 
@@ -366,7 +366,6 @@
 
             </div>
 
-            <!-- MAP -->
             <div id="map"></div>
 
           </div>
