@@ -366,6 +366,7 @@
 
             </div>
 
+            <!-- MAP -->
             <div id="map"></div>
 
           </div>
@@ -434,16 +435,65 @@
 
   </div>
 
-  <!-- SCRIPT -->
+  <!-- LEAFLET -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- =========================
+       MAP LOCK JOGJA
+  ========================== -->
+
+  <script>
+
+    // BATAS KOTA YOGYAKARTA
+    const jogjaBounds = [
+      [-7.845, 110.340],
+      [-7.730, 110.430]
+    ];
+
+    // INISIALISASI MAP
+    const map = L.map('map', {
+
+      zoomControl: true,
+
+      minZoom: 12,
+      maxZoom: 16,
+
+      maxBounds: jogjaBounds,
+      maxBoundsViscosity: 1.0,
+
+      dragging: true,
+      scrollWheelZoom: true
+
+    }).setView([-7.8011945, 110.364917], 13);
+
+    // BASEMAP
+    L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        attribution: '&copy; OpenStreetMap contributors'
+      }
+    ).addTo(map);
+
+    // LOCK AREA
+    map.setMaxBounds(jogjaBounds);
+
+    map.on('drag', function () {
+      map.panInsideBounds(jogjaBounds, {
+        animate: false
+      });
+    });
+
+  </script>
+
+  <!-- SCRIPT -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
   <script src="assets/js/data.js"></script>
 
   <script src="assets/js/common.js"></script>
 
-  <script src="assets/js/map.js"></script>
+  <!-- HAPUS map.js lama kalau bentrok -->
+  <!-- <script src="assets/js/map.js"></script> -->
 
 </body>
 </html>
