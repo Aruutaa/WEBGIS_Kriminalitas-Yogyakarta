@@ -2,13 +2,13 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <title>Peta Interaktif | GeoSafe Yogyakarta</title>
 
   <!-- FONT -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
@@ -22,155 +22,213 @@
   />
 
   <!-- MAIN CSS -->
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/style.css"/>
 
-  <!-- FULLSCREEN MAP STYLE -->
+  <!-- CUSTOM FIX CSS -->
   <style>
 
+    *{
+      box-sizing:border-box;
+    }
+
+    html,
     body{
-      overflow: hidden;
+      margin:0;
+      padding:0;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+    }
+
+    body{
+      font-family:'Inter',sans-serif;
+    }
+
+    .shell{
+      width:100%;
+      height:100vh;
+      overflow:hidden;
     }
 
     .container{
-      max-width: 100%;
-      padding: 0;
-      margin: 0;
+      width:100%;
+      height:calc(100vh - 110px);
+      padding:0 24px 24px;
     }
 
     .page-head{
-      display: none;
+      display:none;
     }
 
+    /* ======================
+        MAP WRAPPER
+    ====================== */
+
     .map-shell{
-      width: 100%;
-      height: 100vh;
-      padding: 0;
-      margin: 0;
+      width:100%;
+      height:100%;
     }
 
     .map-layout{
-      position: relative;
-      width: 100%;
-      height: 100vh;
+
+      position:relative;
+
+      display:flex;
+      gap:24px;
+
+      width:100%;
+      height:100%;
+
+      min-height:0;
     }
 
     /* ======================
-       FULL MAP
-    ====================== */
-
-    .map-center{
-      width: 100%;
-      height: 100vh;
-    }
-
-    #map{
-      width: 100%;
-      height: 100vh;
-      z-index: 1;
-    }
-
-    /* ======================
-       FLOATING LEFT PANEL
+        LEFT PANEL
     ====================== */
 
     .left-panel{
-      position: absolute;
-      top: 20px;
-      left: 20px;
 
-      width: 320px;
-      max-height: calc(100vh - 40px);
+      width:320px;
+      height:100%;
 
-      overflow-y: auto;
+      flex-shrink:0;
 
-      z-index: 1000;
+      overflow-y:auto;
 
-      border-radius: 24px;
+      z-index:1000;
 
-      background: rgba(10,15,30,0.78);
+      border-radius:24px;
 
-      backdrop-filter: blur(20px);
+      background:rgba(10,15,30,0.78);
 
-      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(20px);
 
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      border:1px solid rgba(255,255,255,0.08);
+
+      box-shadow:0 10px 30px rgba(0,0,0,0.35);
     }
 
     /* ======================
-       FLOATING RIGHT PANEL
+        MAP CENTER
+    ====================== */
+
+    .map-center{
+
+      position:relative;
+
+      flex:1;
+
+      height:100%;
+
+      min-width:0;
+      min-height:0;
+    }
+
+    #map{
+
+      width:100%;
+      height:100%;
+
+      border-radius:24px;
+
+      overflow:hidden;
+
+      z-index:1;
+    }
+
+    /* ======================
+        RIGHT PANEL
     ====================== */
 
     .right-panel{
-      position: absolute;
-      top: 20px;
-      right: 20px;
 
-      width: 280px;
+      width:280px;
+      height:100%;
 
-      z-index: 1000;
+      flex-shrink:0;
 
-      border-radius: 24px;
+      overflow-y:auto;
 
-      background: rgba(10,15,30,0.78);
+      z-index:1000;
 
-      backdrop-filter: blur(20px);
+      border-radius:24px;
 
-      border: 1px solid rgba(255,255,255,0.08);
+      background:rgba(10,15,30,0.78);
 
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      backdrop-filter:blur(20px);
+
+      border:1px solid rgba(255,255,255,0.08);
+
+      box-shadow:0 10px 30px rgba(0,0,0,0.35);
     }
 
     /* ======================
-       MAP TOOLBAR
+        MAP TOOLBAR
     ====================== */
 
     .map-topbar{
-      position: absolute;
 
-      top: 20px;
-      left: 50%;
+      position:absolute;
 
-      transform: translateX(-50%);
+      top:16px;
+      left:16px;
+      right:16px;
 
-      z-index: 1200;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+
+      z-index:1200;
+
+      pointer-events:none;
+    }
+
+    .map-badge,
+    .map-toolbox{
+      pointer-events:auto;
     }
 
     /* ======================
-       MOBILE
+        MOBILE
     ====================== */
 
-    @media(max-width:768px){
+    @media(max-width:1024px){
 
       body{
-        overflow: auto;
+        overflow:auto;
+      }
+
+      .container{
+        height:auto;
       }
 
       .map-layout{
-        display: flex;
-        flex-direction: column;
-        height: auto;
+
+        flex-direction:column;
+
+        height:auto;
       }
 
       .left-panel,
       .right-panel{
-        position: relative;
 
-        width: 100%;
+        width:100%;
+        height:auto;
+      }
 
-        top: auto;
-        left: auto;
-        right: auto;
+      .map-center{
 
-        margin-bottom: 16px;
+        height:70vh;
       }
 
       #map{
-        height: 70vh;
+        height:100%;
       }
 
     }
 
   </style>
+
 </head>
 
 <body data-page="peta">
@@ -211,7 +269,9 @@
 
         <a class="btn primary" href="analisis.html">Analisis</a>
 
-        <button class="mobile-toggle" id="mobileToggle">☰</button>
+        <button class="mobile-toggle" id="mobileToggle">
+          ☰
+        </button>
 
       </div>
 
@@ -220,7 +280,6 @@
     <!-- MAIN -->
     <main class="container">
 
-      <!-- MAP -->
       <section class="map-shell">
 
         <div class="map-layout">
@@ -244,11 +303,15 @@
               <!-- KECAMATAN -->
               <div class="control-group">
 
-                <label for="searchArea">Cari Kecamatan</label>
+                <label for="searchArea">
+                  Cari Kecamatan
+                </label>
 
                 <select class="select" id="searchArea">
 
-                  <option value="">Pilih Kecamatan</option>
+                  <option value="">
+                    Pilih Kecamatan
+                  </option>
 
                   <option value="Danurejan">Danurejan</option>
                   <option value="Gedongtengen">Gedongtengen</option>
@@ -269,19 +332,38 @@
 
               </div>
 
-              <!-- JENIS KRIMINAL -->
+              <!-- JENIS -->
               <div class="control-group">
 
-                <label for="crimeType">Jenis kriminalitas</label>
+                <label for="crimeType">
+                  Jenis kriminalitas
+                </label>
 
                 <select class="select" id="crimeType">
 
-                  <option value="all">Semua jenis</option>
-                  <option value="curat">Pencurian / Curat</option>
-                  <option value="curanmor">Curanmor</option>
-                  <option value="penganiayaan">Penganiayaan</option>
-                  <option value="narkotika">Narkotika</option>
-                  <option value="penipuan">Penipuan</option>
+                  <option value="all">
+                    Semua jenis
+                  </option>
+
+                  <option value="curat">
+                    Pencurian / Curat
+                  </option>
+
+                  <option value="curanmor">
+                    Curanmor
+                  </option>
+
+                  <option value="penganiayaan">
+                    Penganiayaan
+                  </option>
+
+                  <option value="narkotika">
+                    Narkotika
+                  </option>
+
+                  <option value="penipuan">
+                    Penipuan
+                  </option>
 
                 </select>
 
@@ -290,14 +372,27 @@
               <!-- RISIKO -->
               <div class="control-group">
 
-                <label for="riskFilter">Kategori risiko</label>
+                <label for="riskFilter">
+                  Kategori risiko
+                </label>
 
                 <select class="select" id="riskFilter">
 
-                  <option value="all">Semua kategori</option>
-                  <option value="Tinggi">Risiko tinggi</option>
-                  <option value="Sedang">Risiko sedang</option>
-                  <option value="Rendah">Risiko rendah</option>
+                  <option value="all">
+                    Semua kategori
+                  </option>
+
+                  <option value="Tinggi">
+                    Risiko tinggi
+                  </option>
+
+                  <option value="Sedang">
+                    Risiko sedang
+                  </option>
+
+                  <option value="Rendah">
+                    Risiko rendah
+                  </option>
 
                 </select>
 
@@ -306,7 +401,9 @@
               <!-- RANGE -->
               <div class="control-group">
 
-                <label for="minRisk">Skor risiko minimum</label>
+                <label for="minRisk">
+                  Skor risiko minimum
+                </label>
 
                 <div class="range-row">
 
@@ -319,7 +416,9 @@
                     value="0"
                   />
 
-                  <span id="minRiskValue" class="pill">0</span>
+                  <span id="minRiskValue" class="pill">
+                    0
+                  </span>
 
                 </div>
 
@@ -332,6 +431,7 @@
           <!-- MAP -->
           <div class="map-center">
 
+            <!-- MAP TOOLBAR -->
             <div class="map-topbar">
 
               <div class="map-badge">
@@ -339,7 +439,7 @@
                 <span class="pulse-dot"></span>
 
                 <span id="mapStatus">
-                  GeoSafe Yogyakarta — Live Map
+                  OSM Standard aktif — data demo
                 </span>
 
               </div>
@@ -366,6 +466,7 @@
 
             </div>
 
+            <!-- MAP -->
             <div id="map"></div>
 
           </div>
@@ -392,7 +493,9 @@
 
                   <span>Wilayah tampil</span>
 
-                  <strong id="statWilayah">14</strong>
+                  <strong id="statWilayah">
+                    14
+                  </strong>
 
                   <em>Mengikuti filter aktif</em>
 
@@ -402,7 +505,9 @@
 
                   <span>Total kasus demo</span>
 
-                  <strong id="statKasus">863</strong>
+                  <strong id="statKasus">
+                    863
+                  </strong>
 
                   <em>Akumulasi wilayah tampil</em>
 
@@ -434,11 +539,13 @@
 
   </div>
 
-  <!-- SCRIPT -->
+  <!-- LEAFLET -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- PAPAPARSE -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
+  <!-- JS -->
   <script src="assets/js/data.js"></script>
 
   <script src="assets/js/common.js"></script>
