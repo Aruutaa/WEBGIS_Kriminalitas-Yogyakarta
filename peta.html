@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <meta charset="UTF-8"/>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <title>Peta Interaktif | GeoSafe Yogyakarta</title>
 
-  <!-- FONT -->
+  <!-- GOOGLE FONT -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 
@@ -24,7 +28,7 @@
   <!-- MAIN CSS -->
   <link rel="stylesheet" href="assets/css/style.css"/>
 
-  <!-- CUSTOM FIX CSS -->
+  <!-- CUSTOM STYLE -->
   <style>
 
     *{
@@ -189,6 +193,42 @@
     }
 
     /* ======================
+        LAYER TOGGLE
+    ====================== */
+
+    .layer-list{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .layer-item{
+
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+
+      padding:14px 16px;
+
+      border-radius:16px;
+
+      background:rgba(255,255,255,0.03);
+
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .layer-item span{
+      font-size:14px;
+      font-weight:500;
+    }
+
+    .layer-item input{
+      width:18px;
+      height:18px;
+      accent-color:#66e3ff;
+    }
+
+    /* ======================
         MOBILE
     ====================== */
 
@@ -245,29 +285,36 @@
         <div class="brand-mark"></div>
 
         <div class="brand-text">
+
           <strong>GeoSafe Yogyakarta</strong>
+
           <span>WebGIS Zona Kriminalitas</span>
+
         </div>
 
       </a>
 
       <nav class="navlinks" id="navlinks">
 
-        <a href="index.html" data-page="home">Utama</a>
+        <a href="index.html">Utama</a>
 
-        <a href="peta.html" data-page="peta">Peta</a>
+        <a href="peta.html">Peta</a>
 
-        <a href="analisis.html" data-page="analisis">Analisis</a>
+        <a href="analisis.html">Analisis</a>
 
-        <a href="berita.html" data-page="berita">Berita</a>
+        <a href="berita.html">Berita</a>
 
       </nav>
 
       <div class="top-actions">
 
-        <a class="btn" href="index.html">← Utama</a>
+        <a class="btn" href="index.html">
+          ← Utama
+        </a>
 
-        <a class="btn primary" href="analisis.html">Analisis</a>
+        <a class="btn primary" href="analisis.html">
+          Analisis
+        </a>
 
         <button class="mobile-toggle" id="mobileToggle">
           ☰
@@ -290,8 +337,11 @@
             <div class="panel-header">
 
               <div>
+
                 <h3>Parameter Analisis</h3>
+
                 <span>Input pengguna</span>
+
               </div>
 
               <span>Filter</span>
@@ -424,6 +474,113 @@
 
               </div>
 
+              <!-- TRANSPARANSI -->
+              <div class="control-group">
+
+                <label for="overlayOpacity">
+                  Transparansi Overlay
+                </label>
+
+                <div class="range-row">
+
+                  <input
+                    type="range"
+                    id="overlayOpacity"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value="72"
+                  />
+
+                  <span
+                    id="overlayOpacityValue"
+                    class="pill"
+                  >
+                    72%
+                  </span>
+
+                </div>
+
+              </div>
+
+              <!-- LAYER -->
+              <div class="control-group">
+
+                <label>
+                  Layer Peta
+                </label>
+
+                <div class="layer-list">
+
+                  <label class="layer-item">
+
+                    <span>Zona risiko</span>
+
+                    <input
+                      type="checkbox"
+                      id="toggleRisk"
+                      checked
+                    />
+
+                  </label>
+
+                  <label class="layer-item">
+
+                    <span>Titik kejadian</span>
+
+                    <input
+                      type="checkbox"
+                      id="toggleMarker"
+                      checked
+                    />
+
+                  </label>
+
+                  <label class="layer-item">
+
+                    <span>Label kecamatan</span>
+
+                    <input
+                      type="checkbox"
+                      id="toggleLabel"
+                      checked
+                    />
+
+                  </label>
+
+                </div>
+
+              </div>
+
+              <!-- BASEMAP -->
+              <div class="control-group">
+
+                <label for="basemapSelect">
+                  Basemap
+                </label>
+
+                <select class="select" id="basemapSelect">
+
+                  <option value="osm">
+                    OpenStreetMap
+                  </option>
+
+                  <option value="cartoLight">
+                    Carto Light
+                  </option>
+
+                  <option value="cartoDark">
+                    Carto Dark
+                  </option>
+
+                  <option value="satellite">
+                    Satellite
+                  </option>
+
+                </select>
+
+              </div>
+
             </div>
 
           </aside>
@@ -431,7 +588,6 @@
           <!-- MAP -->
           <div class="map-center">
 
-            <!-- MAP TOOLBAR -->
             <div class="map-topbar">
 
               <div class="map-badge">
@@ -466,7 +622,6 @@
 
             </div>
 
-            <!-- MAP -->
             <div id="map"></div>
 
           </div>
@@ -477,8 +632,11 @@
             <div class="panel-header">
 
               <div>
+
                 <h3>Ringkasan Peta</h3>
+
                 <span>Live preview</span>
+
               </div>
 
               <span>Info</span>
