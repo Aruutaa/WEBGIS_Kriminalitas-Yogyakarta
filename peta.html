@@ -200,7 +200,7 @@
             <label>Layer batas Kota Jogja</label>
             <div class="analysis-box" style="margin-bottom:0">
               <h4 style="margin-bottom:6px">Auto-load dari file HTML</h4>
-              <p>Layer dibaca otomatis dari ZIP <b id="boundaryPathText">assets/data/KOTA%20YOGYAKARTA.zip</b>. ZIP ini berisi banyak layer, tetapi dashboard hanya mengambil layer administrasi desa/kelurahan sebagai batas wilayah utama.</p>
+              <p>Layer dibaca otomatis dari file <b id="boundaryPathText">assets/data/kota_yogyakarta_admin.zip</b>. ZIP asli sudah disederhanakan menjadi satu layer administrasi desa/kelurahan agar stabil dibaca browser. Jika ZIP gagal karena library, dashboard otomatis memakai GeoJSON cadangan.</p>
             </div>
           </div>
           <div class="mini-grid">
@@ -723,14 +723,14 @@
 
     // ============================================================
     // 3) LAYER BATAS KOTA JOGJA
-    //    Letakkan file di folder proyek, lalu sesuaikan path ini.
-    //    Bisa memakai:
-    //    - ZIP shapefile: assets/data/KOTA%20YOGYAKARTA.zip
-    //      Isi ZIP minimal: .shp, .shx, .dbf, .prj
-    //    - GeoJSON: assets/data/batas_kota_jogja.geojson
-    //    Disarankan sistem koordinat WGS84 / EPSG:4326.
+    //    ZIP asli "KOTA YOGYAKARTA.zip" berisi banyak shapefile dan folder.
+    //    Agar stabil di browser, layer ADMINISTRASIDESA_AR_25K sudah dibuat
+    //    menjadi ZIP bersih satu layer + GeoJSON cadangan.
     // ============================================================
-    const JOGJA_BOUNDARY_PATH = "assets/data/KOTA%20YOGYAKARTA.zip";
+    const JOGJA_BOUNDARY_PATH = "assets/data/kota_yogyakarta_admin.zip";
+    const JOGJA_BOUNDARY_FALLBACK_GEOJSON_PATH = "assets/data/kota_yogyakarta_admin.geojson";
+    const JOGJA_BOUNDARY_LAYER_KEYWORD = "ADMINISTRASIDESA_AR_25K";
+    const JOGJA_BOUNDARY_LABEL = "Administrasi Desa/Kelurahan Kota Yogyakarta";
     const AUTO_LOAD_JOGJA_BOUNDARY = true;
 
     const CENTER_JOGJA = [-7.7956, 110.3695];
@@ -1097,29 +1097,40 @@
 
     async function loadSpatialLayerFromPath(path = JOGJA_BOUNDARY_PATH, showAlert = false){
       if(!path) return;
-      try{
-        const lowerPath = String(path).toLowerCase();
-        let geojson;
-
-        if(lowerPath.endsWith(".geojson") || lowerPath.endsWith(".json")){
-          const res = await fetch(path, { cache:"no-store" });
-          if(!res.ok) throw new Error("File GeoJSON tidak ditemukan di " + path);
-          geojson = await res.json();
-        }else if(lowerPath.endsWith(".zip")){
-          if(typeof shp !== "function") throw new Error("Library shpjs belum termuat. Periksa koneksi internet/CDN.");
-          const res = await fetch(path, { cache:"no-store" });
-          if(!res.ok) throw new Error("File ZIP shapefile tidak ditemukan di " + path);
-          geojson = await shp(await res.arrayBuffer());
-        }else{
-          throw new Error("Path harus berupa .zip shapefile atau .geojson/.json.");
-        }
-
-        addJogjaBoundaryLayer(geojson, JOGJA_BOUNDARY_LABEL);
-      }catch(err){
-        console.warn(err);
-        document.getElementById("mapStatus").textContent = "Layer KOTA YOGYAKARTA.zip belum termuat · cek lokasi file ZIP di assets/data/";
-        if(showAlert) alert("Layer tidak bisa dimuat: " + err.message);
+      const tryPaths = [path];
+      if(JOGJA_BOUNDARY_FALLBACK_GEOJSON_PATH && !tryPaths.includes(JOGJA_BOUNDARY_FALLBACK_GEOJSON_PATH)){
+        tryPaths.push(JOGJA_BOUNDARY_FALLBACK_GEOJSON_PATH);
       }
+
+      let lastError = null;
+      for(const currentPath of tryPaths){
+        try{
+          const lowerPath = String(currentPath).toLowerCase();
+          let geojson;
+
+          if(lowerPath.endsWith(".geojson") || lowerPath.endsWith(".json")){
+            const res = await fetch(currentPath, { cache:"no-store" });
+            if(!res.ok) throw new Error("File GeoJSON tidak ditemukan di " + currentPath);
+            geojson = await res.json();
+          }else if(lowerPath.endsWith(".zip")){
+            if(typeof shp !== "function") throw new Error("Library shpjs belum termuat. Dashboard akan mencoba GeoJSON cadangan.");
+            const res = await fetch(currentPath, { cache:"no-store" });
+            if(!res.ok) throw new Error("File ZIP shapefile tidak ditemukan di " + currentPath);
+            geojson = await shp(await res.arrayBuffer());
+          }else{
+            throw new Error("Path harus berupa .zip shapefile atau .geojson/.json.");
+          }
+
+          addJogjaBoundaryLayer(geojson, currentPath.includes("geojson") ? "GeoJSON cadangan administrasi" : JOGJA_BOUNDARY_LABEL);
+          return;
+        }catch(err){
+          lastError = err;
+          console.warn("Gagal memuat layer dari", currentPath, err);
+        }
+      }
+
+      document.getElementById("mapStatus").textContent = "Layer batas Jogja belum termuat · cek assets/data/kota_yogyakarta_admin.zip atau .geojson";
+      if(showAlert) alert("Layer tidak bisa dimuat: " + (lastError ? lastError.message : "file tidak ditemukan"));
     }
 
     function fitJogjaBoundary(){
