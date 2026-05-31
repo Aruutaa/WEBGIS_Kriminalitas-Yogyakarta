@@ -32,6 +32,9 @@
     button,input,select{font:inherit}
     .app{height:100vh;display:grid;grid-template-rows:72px minmax(0,1fr)}
     .topbar{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--stroke);background:rgba(4,8,18,.72);backdrop-filter:blur(22px);z-index:2000}
+    .topbar-left{display:flex;align-items:center;gap:12px;min-width:260px}
+    .panel-toggle-btn{width:42px;height:42px;border-radius:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);color:var(--text);cursor:pointer;font-weight:900;font-size:18px}
+    .panel-toggle-btn:hover{border-color:rgba(98,230,255,.40);background:rgba(98,230,255,.08)}
     .brand{display:flex;align-items:center;gap:12px;min-width:260px}
     .brand-mark{width:42px;height:42px;border-radius:16px;background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 0 28px rgba(98,230,255,.28);position:relative}
     .brand-mark:after{content:"";position:absolute;inset:11px;border-radius:50%;border:3px solid rgba(7,12,25,.9)}
@@ -41,7 +44,10 @@
     .navlinks a,.btn{border:1px solid var(--stroke);background:rgba(255,255,255,.04);color:var(--text);padding:10px 14px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer}
     .navlinks a.active,.btn.primary{background:linear-gradient(135deg,rgba(98,230,255,.22),rgba(122,167,255,.18));border-color:rgba(98,230,255,.34)}
     .btn:hover,.navlinks a:hover{border-color:rgba(98,230,255,.35)}
-    .layout{height:calc(100vh - 72px);display:grid;grid-template-columns:340px minmax(0,1fr) 390px;gap:16px;padding:16px}
+    .layout{height:calc(100vh - 72px);display:grid;grid-template-columns:340px minmax(0,1fr) 390px;gap:16px;padding:16px;transition:grid-template-columns .28s ease}
+    .layout.left-collapsed{grid-template-columns:minmax(0,1fr) 390px}
+    .left-panel{min-width:0}
+    .layout.left-collapsed .left-panel{display:none}
     .panel{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(22px);min-height:0;overflow:hidden;display:flex;flex-direction:column}
     .panel-head{padding:18px 18px 14px;border-bottom:1px solid var(--stroke);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
     .panel-head h2,.panel-head h3{margin:0;font-size:16px}
@@ -105,22 +111,27 @@
     .legend h4{margin:0 0 9px;font-size:12px}
     .legend-row{display:flex;align-items:center;gap:8px;font-size:11px;color:#cbd8ed;margin:6px 0}
     .dot{width:12px;height:12px;border-radius:50%;background:#62e6ff}
-    .dot.fixed{background:#70ffb8} .dot.buffer{background:#ffd166} .dot.safe{background:#7aa7ff}
+    .dot.fixed{background:#70ffb8} .dot.buffer{background:#ffd166} .dot.safe{background:#7aa7ff} .dot.boundary{background:transparent;border:2px solid var(--cyan)}
+    .file-input{height:auto;padding:10px 12px;color:#dbeafe}
+    .file-input::file-selector-button{border:1px solid var(--stroke);border-radius:999px;background:rgba(98,230,255,.14);color:#fff;padding:8px 12px;margin-right:10px;font-weight:800;cursor:pointer}
     .data-note{font-size:11px;color:var(--muted);line-height:1.45;margin-top:6px}
     .hidden{display:none!important}
-    @media(max-width:1180px){html,body{overflow:auto}.app{height:auto;min-height:100vh}.layout{height:auto;grid-template-columns:1fr;padding:12px}.mapbox{height:70vh}.topbar{position:sticky;top:0}.navlinks{display:none}}
+    @media(max-width:1180px){html,body{overflow:auto}.app{height:auto;min-height:100vh}.layout{height:auto;grid-template-columns:1fr;padding:12px}.layout.left-collapsed{grid-template-columns:1fr}.mapbox{height:70vh}.topbar{position:sticky;top:0}.topbar-left,.brand{min-width:0}.navlinks{display:none}}
   </style>
 </head>
 <body>
   <div class="app">
     <header class="topbar">
-      <a href="index.html" class="brand">
+      <div class="topbar-left">
+        <button class="panel-toggle-btn" id="btnToggleLeft" type="button" title="Sembunyikan panel kiri">×</button>
+        <a href="index.html" class="brand">
         <div class="brand-mark"></div>
         <div>
           <strong>GeoSafe Yogyakarta</strong>
           <span>Peta CCTV Live YouTube + Analisis Zona</span>
         </div>
-      </a>
+        </a>
+      </div>
       <nav class="navlinks">
         <a href="index.html">Utama</a>
         <a href="peta.html" class="active">Peta CCTV</a>
@@ -133,8 +144,8 @@
       </div>
     </header>
 
-    <main class="layout">
-      <aside class="panel">
+    <main class="layout" id="mainLayout">
+      <aside class="panel left-panel" id="leftPanel">
         <div class="panel-head">
           <div>
             <h2>Data CCTV</h2>
@@ -185,6 +196,16 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <label for="shpInput">Layer batas Kota Jogja / SHP</label>
+            <input class="input file-input" id="shpInput" type="file" accept=".zip,.geojson,.json" />
+            <div class="data-note">Upload ZIP berisi .shp, .shx, .dbf, dan .prj, atau unggah file GeoJSON/JSON.</div>
+          </div>
+          <div class="mini-grid">
+            <button class="btn" id="btnFitJogja" type="button">Fit Layer</button>
+            <button class="btn" id="btnClearJogja" type="button">Hapus Layer</button>
+          </div>
+
           <div class="warning">
             CSV YouTube tidak memiliki kolom koordinat, jadi script ini memakai <b>coordinateOverrides</b> di JavaScript. Jika Anda punya koordinat resmi, tambahkan kolom <b>latitude</b> dan <b>longitude</b> pada CSV agar marker menjadi presisi.
           </div>
@@ -210,6 +231,7 @@
           <div class="legend-row"><span class="dot fixed"></span> CCTV fixed view</div>
           <div class="legend-row"><span class="dot buffer"></span> Buffer estimasi jangkauan pengawasan</div>
           <div class="legend-row"><span class="dot safe"></span> Zona aman relatif berbasis keterpantauan</div>
+          <div class="legend-row"><span class="dot boundary"></span> Batas administratif dari SHP/GeoJSON</div>
           <div class="data-note">Analisis risiko bersifat heuristik untuk dashboard. Bukan data resmi kriminalitas/kepolisian.</div>
         </div>
       </section>
@@ -237,6 +259,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://unpkg.com/shpjs@latest/dist/shp.min.js"></script>
   <script>
     // ============================================================
     // 1) DATA FALLBACK: dipakai jika fetch CSV gagal.
@@ -697,7 +720,7 @@
     const CSV_PATH = "assets/data/cctv_pemkot_yogyakarta_youtube_links.csv";
     const CENTER_JOGJA = [-7.7956, 110.3695];
 
-    let map, activeBasemap, cctvRows = [], markersLayer, buffersLayer;
+    let map, activeBasemap, cctvRows = [], markersLayer, buffersLayer, jogjaBoundaryLayer;
     let currentFiltered = [];
     let selectedId = null;
 
@@ -942,6 +965,88 @@
         </div>`;
     }
 
+
+    function normalizeGeoJson(data){
+      if(!data) throw new Error("Data spasial kosong atau tidak terbaca.");
+      if(data.type === "FeatureCollection" || data.type === "Feature") return data;
+      if(Array.isArray(data)){
+        const features = data.flatMap(item => item?.type === "FeatureCollection" ? item.features : item?.type === "Feature" ? [item] : []);
+        return { type:"FeatureCollection", features };
+      }
+      if(typeof data === "object"){
+        const features = Object.values(data).flatMap(item => item?.type === "FeatureCollection" ? item.features : item?.type === "Feature" ? [item] : []);
+        if(features.length) return { type:"FeatureCollection", features };
+      }
+      throw new Error("Format data belum dikenali. Gunakan ZIP shapefile atau GeoJSON.");
+    }
+
+    function getFeatureLabel(feature){
+      const props = feature?.properties || {};
+      return props.NAMOBJ || props.nama || props.NAMA || props.name || props.NAME || props.KAB_KOTA || props.WADMKK || "Batas wilayah";
+    }
+
+    function addJogjaBoundaryLayer(geojson, layerName){
+      const normalized = normalizeGeoJson(geojson);
+      if(!normalized.features || !normalized.features.length) throw new Error("GeoJSON tidak memiliki feature.");
+      if(jogjaBoundaryLayer) map.removeLayer(jogjaBoundaryLayer);
+      jogjaBoundaryLayer = L.geoJSON(normalized, {
+        style: () => ({ color:"#62e6ff", weight:2, opacity:.95, fillColor:"#62e6ff", fillOpacity:.07, dashArray:"6 6" }),
+        onEachFeature: (feature, layer) => {
+          layer.bindPopup(`<b>${getFeatureLabel(feature)}</b><br/>Layer: ${layerName || "SHP/GeoJSON Kota Jogja"}`);
+        }
+      }).addTo(map);
+      const bounds = jogjaBoundaryLayer.getBounds();
+      if(bounds.isValid()) map.fitBounds(bounds.pad(.12));
+      document.getElementById("mapStatus").textContent = `Layer ${layerName || "SHP/GeoJSON"} berhasil dimuat · ${normalized.features.length} feature`;
+    }
+
+    async function handleSpatialUpload(event){
+      const file = event.target.files && event.target.files[0];
+      if(!file) return;
+      try{
+        const lowerName = file.name.toLowerCase();
+        let geojson;
+        if(lowerName.endsWith(".geojson") || lowerName.endsWith(".json")){
+          geojson = JSON.parse(await file.text());
+        }else if(lowerName.endsWith(".zip")){
+          if(typeof shp !== "function") throw new Error("Library shpjs belum termuat. Periksa koneksi internet/CDN.");
+          geojson = await shp(await file.arrayBuffer());
+        }else{
+          throw new Error("File harus berupa .zip shapefile atau .geojson/.json.");
+        }
+        addJogjaBoundaryLayer(geojson, file.name);
+      }catch(err){
+        console.error(err);
+        alert("Layer tidak bisa dimuat: " + err.message);
+      }
+    }
+
+    function fitJogjaBoundary(){
+      if(!jogjaBoundaryLayer) return alert("Belum ada layer SHP/GeoJSON yang dimuat.");
+      const bounds = jogjaBoundaryLayer.getBounds();
+      if(bounds.isValid()) map.fitBounds(bounds.pad(.12));
+    }
+
+    function clearJogjaBoundary(){
+      if(jogjaBoundaryLayer){
+        map.removeLayer(jogjaBoundaryLayer);
+        jogjaBoundaryLayer = null;
+      }
+      const input = document.getElementById("shpInput");
+      if(input) input.value = "";
+      document.getElementById("mapStatus").textContent = `${currentFiltered.length} CCTV tampil · layer batas wilayah dihapus`;
+    }
+
+    function toggleLeftPanel(force){
+      const layout = document.getElementById("mainLayout");
+      const button = document.getElementById("btnToggleLeft");
+      const collapsed = typeof force === "boolean" ? force : !layout.classList.contains("left-collapsed");
+      layout.classList.toggle("left-collapsed", collapsed);
+      button.textContent = collapsed ? "☰" : "×";
+      button.title = collapsed ? "Tampilkan panel kiri" : "Sembunyikan panel kiri";
+      setTimeout(() => map && map.invalidateSize(), 320);
+    }
+
     window.selectCamera = function(id){
       selectedId = id;
       const row = cctvRows.find(r => String(r._id) === String(id));
@@ -974,6 +1079,10 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       boot();
+      document.getElementById("btnToggleLeft").addEventListener("click", () => toggleLeftPanel());
+      document.getElementById("shpInput").addEventListener("change", handleSpatialUpload);
+      document.getElementById("btnFitJogja").addEventListener("click", fitJogjaBoundary);
+      document.getElementById("btnClearJogja").addEventListener("click", clearJogjaBoundary);
       ["searchInput","groupFilter","typeFilter","riskFilter","toggleBuffer","bufferRadius"].forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
       document.getElementById("basemapSelect").addEventListener("change", e => {
         if(activeBasemap) map.removeLayer(activeBasemap);
