@@ -200,7 +200,7 @@
             <label>Layer batas Kota Jogja</label>
             <div class="analysis-box" style="margin-bottom:0">
               <h4 style="margin-bottom:6px">Auto-load dari file HTML</h4>
-              <p>Layer dibaca otomatis dari path <b id="boundaryPathText">assets/data/batas_kota_jogja.zip</b>. Ubah nama/path file pada konstanta <b>JOGJA_BOUNDARY_PATH</b> di JavaScript.</p>
+              <p>Layer dibaca otomatis dari ZIP <b id="boundaryPathText">assets/data/KOTA%20YOGYAKARTA.zip</b>. ZIP ini berisi banyak layer, tetapi dashboard hanya mengambil layer administrasi desa/kelurahan sebagai batas wilayah utama.</p>
             </div>
           </div>
           <div class="mini-grid">
@@ -725,12 +725,12 @@
     // 3) LAYER BATAS KOTA JOGJA
     //    Letakkan file di folder proyek, lalu sesuaikan path ini.
     //    Bisa memakai:
-    //    - ZIP shapefile: assets/data/batas_kota_jogja.zip
+    //    - ZIP shapefile: assets/data/KOTA%20YOGYAKARTA.zip
     //      Isi ZIP minimal: .shp, .shx, .dbf, .prj
     //    - GeoJSON: assets/data/batas_kota_jogja.geojson
     //    Disarankan sistem koordinat WGS84 / EPSG:4326.
     // ============================================================
-    const JOGJA_BOUNDARY_PATH = "assets/data/batas_kota_jogja.zip";
+    const JOGJA_BOUNDARY_PATH = "assets/data/KOTA%20YOGYAKARTA.zip";
     const AUTO_LOAD_JOGJA_BOUNDARY = true;
 
     const CENTER_JOGJA = [-7.7956, 110.3695];
@@ -981,23 +981,89 @@
     }
 
 
+    function layerNameMatches(name){
+      return cleanText(name).toUpperCase().includes(JOGJA_BOUNDARY_LAYER_KEYWORD.toUpperCase());
+    }
+
+    function isAdminDesaFeature(feature){
+      const props = feature?.properties || {};
+      const remark = cleanText(props.REMARK).toUpperCase();
+      const lcode = cleanText(props.LCODE).toUpperCase();
+      const namobj = cleanText(props.NAMOBJ);
+      const geomType = cleanText(feature?.geometry?.type).toUpperCase();
+      return (
+        geomType.includes("POLYGON") &&
+        (
+          remark.includes("WILAYAH ADMINISTRASI") ||
+          remark.includes("KELURAHAN") ||
+          remark.includes("DESA") ||
+          lcode === "BA0020" ||
+          Boolean(namobj)
+        )
+      );
+    }
+
+    function asFeatureCollection(item, layerName = ""){
+      if(!item) return null;
+      if(item.type === "FeatureCollection") return { ...item, _layerName: layerName || item.fileName || item.name || item.layerName || "" };
+      if(item.type === "Feature") return { type:"FeatureCollection", features:[item], _layerName: layerName || item.fileName || item.name || item.layerName || "" };
+      return null;
+    }
+
+    function collectFeatureCollections(data, inheritedName = ""){
+      const collections = [];
+      const direct = asFeatureCollection(data, inheritedName);
+      if(direct){
+        collections.push(direct);
+        return collections;
+      }
+      if(Array.isArray(data)){
+        data.forEach((item, idx) => {
+          const name = item?.fileName || item?.name || item?.layerName || inheritedName || `layer_${idx + 1}`;
+          collections.push(...collectFeatureCollections(item, name));
+        });
+      }else if(typeof data === "object" && data){
+        Object.entries(data).forEach(([key, value]) => {
+          collections.push(...collectFeatureCollections(value, key));
+        });
+      }
+      return collections;
+    }
+
     function normalizeGeoJson(data){
       if(!data) throw new Error("Data spasial kosong atau tidak terbaca.");
-      if(data.type === "FeatureCollection" || data.type === "Feature") return data;
-      if(Array.isArray(data)){
-        const features = data.flatMap(item => item?.type === "FeatureCollection" ? item.features : item?.type === "Feature" ? [item] : []);
-        return { type:"FeatureCollection", features };
+
+      const collections = collectFeatureCollections(data);
+      if(!collections.length) throw new Error("Format data belum dikenali. Gunakan ZIP shapefile atau GeoJSON.");
+
+      // Prioritas 1: ambil koleksi yang nama layer/file-nya ADMINISTRASIDESA_AR_25K.
+      const namedMatches = collections.filter(fc => layerNameMatches(fc._layerName));
+      let features = namedMatches.flatMap(fc => fc.features || []);
+
+      // Prioritas 2: jika shpjs tidak mengembalikan nama layer, filter dari atribut.
+      if(!features.length){
+        features = collections.flatMap(fc => fc.features || []).filter(isAdminDesaFeature);
       }
-      if(typeof data === "object"){
-        const features = Object.values(data).flatMap(item => item?.type === "FeatureCollection" ? item.features : item?.type === "Feature" ? [item] : []);
-        if(features.length) return { type:"FeatureCollection", features };
+
+      // Prioritas 3: fallback agar layer tetap tampil, tetapi tetap batasi ke geometri polygon.
+      if(!features.length){
+        features = collections
+          .flatMap(fc => fc.features || [])
+          .filter(feature => cleanText(feature?.geometry?.type).toUpperCase().includes("POLYGON"));
       }
-      throw new Error("Format data belum dikenali. Gunakan ZIP shapefile atau GeoJSON.");
+
+      if(!features.length) throw new Error("Tidak menemukan layer polygon administrasi dari ZIP KOTA YOGYAKARTA.zip.");
+
+      return {
+        type:"FeatureCollection",
+        features,
+        _sourceLayer: namedMatches.length ? JOGJA_BOUNDARY_LAYER_KEYWORD : "filter atribut administrasi"
+      };
     }
 
     function getFeatureLabel(feature){
       const props = feature?.properties || {};
-      return props.NAMOBJ || props.nama || props.NAMA || props.name || props.NAME || props.KAB_KOTA || props.WADMKK || "Batas wilayah";
+      return props.NAMOBJ || props.WADMKD || props.WADMKC || props.nama || props.NAMA || props.name || props.NAME || props.KAB_KOTA || props.WADMKK || "Batas wilayah";
     }
 
     function addJogjaBoundaryLayer(geojson, layerName){
@@ -1005,14 +1071,28 @@
       if(!normalized.features || !normalized.features.length) throw new Error("GeoJSON tidak memiliki feature.");
       if(jogjaBoundaryLayer) map.removeLayer(jogjaBoundaryLayer);
       jogjaBoundaryLayer = L.geoJSON(normalized, {
-        style: () => ({ color:"#62e6ff", weight:2, opacity:.95, fillColor:"#62e6ff", fillOpacity:.07, dashArray:"6 6" }),
+        style: feature => {
+          const kec = cleanText(feature?.properties?.WADMKC);
+          return {
+            color:"#62e6ff",
+            weight: kec ? 1.5 : 2,
+            opacity:.95,
+            fillColor:"#62e6ff",
+            fillOpacity:.055,
+            dashArray:"6 6"
+          };
+        },
         onEachFeature: (feature, layer) => {
-          layer.bindPopup(`<b>${getFeatureLabel(feature)}</b><br/>Layer: ${layerName || "SHP/GeoJSON Kota Jogja"}`);
+          const props = feature.properties || {};
+          const kel = cleanText(props.NAMOBJ || props.WADMKD || "Kelurahan/Desa");
+          const kec = cleanText(props.WADMKC || "-");
+          const sumber = normalized._sourceLayer || JOGJA_BOUNDARY_LAYER_KEYWORD;
+          layer.bindPopup(`<b>${kel}</b><br/>Kecamatan: ${kec}<br/>Layer: ${sumber}`);
         }
       }).addTo(map);
       const bounds = jogjaBoundaryLayer.getBounds();
       if(bounds.isValid()) map.fitBounds(bounds.pad(.12));
-      document.getElementById("mapStatus").textContent = `Layer ${layerName || "SHP/GeoJSON"} berhasil dimuat · ${normalized.features.length} feature`;
+      document.getElementById("mapStatus").textContent = `Layer ${JOGJA_BOUNDARY_LABEL} berhasil dimuat · ${normalized.features.length} feature administrasi`;
     }
 
     async function loadSpatialLayerFromPath(path = JOGJA_BOUNDARY_PATH, showAlert = false){
@@ -1034,10 +1114,10 @@
           throw new Error("Path harus berupa .zip shapefile atau .geojson/.json.");
         }
 
-        addJogjaBoundaryLayer(geojson, path.split("/").pop());
+        addJogjaBoundaryLayer(geojson, JOGJA_BOUNDARY_LABEL);
       }catch(err){
         console.warn(err);
-        document.getElementById("mapStatus").textContent = "Layer batas Jogja belum termuat · cek path JOGJA_BOUNDARY_PATH";
+        document.getElementById("mapStatus").textContent = "Layer KOTA YOGYAKARTA.zip belum termuat · cek lokasi file ZIP di assets/data/";
         if(showAlert) alert("Layer tidak bisa dimuat: " + err.message);
       }
     }
