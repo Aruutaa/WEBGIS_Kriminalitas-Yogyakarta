@@ -197,9 +197,11 @@
           </div>
 
           <div class="form-group">
-            <label for="shpInput">Layer batas Kota Jogja / SHP</label>
-            <input class="input file-input" id="shpInput" type="file" accept=".zip,.geojson,.json" />
-            <div class="data-note">Upload ZIP berisi .shp, .shx, .dbf, dan .prj, atau unggah file GeoJSON/JSON.</div>
+            <label>Layer batas Kota Jogja</label>
+            <div class="analysis-box" style="margin-bottom:0">
+              <h4 style="margin-bottom:6px">Auto-load dari file HTML</h4>
+              <p>Layer dibaca otomatis dari path <b id="boundaryPathText">assets/data/batas_kota_jogja.zip</b>. Ubah nama/path file pada konstanta <b>JOGJA_BOUNDARY_PATH</b> di JavaScript.</p>
+            </div>
           </div>
           <div class="mini-grid">
             <button class="btn" id="btnFitJogja" type="button">Fit Layer</button>
@@ -718,6 +720,19 @@
 };
 
     const CSV_PATH = "assets/data/cctv_pemkot_yogyakarta_youtube_links.csv";
+
+    // ============================================================
+    // 3) LAYER BATAS KOTA JOGJA
+    //    Letakkan file di folder proyek, lalu sesuaikan path ini.
+    //    Bisa memakai:
+    //    - ZIP shapefile: assets/data/batas_kota_jogja.zip
+    //      Isi ZIP minimal: .shp, .shx, .dbf, .prj
+    //    - GeoJSON: assets/data/batas_kota_jogja.geojson
+    //    Disarankan sistem koordinat WGS84 / EPSG:4326.
+    // ============================================================
+    const JOGJA_BOUNDARY_PATH = "assets/data/batas_kota_jogja.zip";
+    const AUTO_LOAD_JOGJA_BOUNDARY = true;
+
     const CENTER_JOGJA = [-7.7956, 110.3695];
 
     let map, activeBasemap, cctvRows = [], markersLayer, buffersLayer, jogjaBoundaryLayer;
@@ -1000,24 +1015,30 @@
       document.getElementById("mapStatus").textContent = `Layer ${layerName || "SHP/GeoJSON"} berhasil dimuat · ${normalized.features.length} feature`;
     }
 
-    async function handleSpatialUpload(event){
-      const file = event.target.files && event.target.files[0];
-      if(!file) return;
+    async function loadSpatialLayerFromPath(path = JOGJA_BOUNDARY_PATH, showAlert = false){
+      if(!path) return;
       try{
-        const lowerName = file.name.toLowerCase();
+        const lowerPath = String(path).toLowerCase();
         let geojson;
-        if(lowerName.endsWith(".geojson") || lowerName.endsWith(".json")){
-          geojson = JSON.parse(await file.text());
-        }else if(lowerName.endsWith(".zip")){
+
+        if(lowerPath.endsWith(".geojson") || lowerPath.endsWith(".json")){
+          const res = await fetch(path, { cache:"no-store" });
+          if(!res.ok) throw new Error("File GeoJSON tidak ditemukan di " + path);
+          geojson = await res.json();
+        }else if(lowerPath.endsWith(".zip")){
           if(typeof shp !== "function") throw new Error("Library shpjs belum termuat. Periksa koneksi internet/CDN.");
-          geojson = await shp(await file.arrayBuffer());
+          const res = await fetch(path, { cache:"no-store" });
+          if(!res.ok) throw new Error("File ZIP shapefile tidak ditemukan di " + path);
+          geojson = await shp(await res.arrayBuffer());
         }else{
-          throw new Error("File harus berupa .zip shapefile atau .geojson/.json.");
+          throw new Error("Path harus berupa .zip shapefile atau .geojson/.json.");
         }
-        addJogjaBoundaryLayer(geojson, file.name);
+
+        addJogjaBoundaryLayer(geojson, path.split("/").pop());
       }catch(err){
-        console.error(err);
-        alert("Layer tidak bisa dimuat: " + err.message);
+        console.warn(err);
+        document.getElementById("mapStatus").textContent = "Layer batas Jogja belum termuat · cek path JOGJA_BOUNDARY_PATH";
+        if(showAlert) alert("Layer tidak bisa dimuat: " + err.message);
       }
     }
 
@@ -1032,8 +1053,6 @@
         map.removeLayer(jogjaBoundaryLayer);
         jogjaBoundaryLayer = null;
       }
-      const input = document.getElementById("shpInput");
-      if(input) input.value = "";
       document.getElementById("mapStatus").textContent = `${currentFiltered.length} CCTV tampil · layer batas wilayah dihapus`;
     }
 
@@ -1074,13 +1093,22 @@
       currentFiltered = [...cctvRows];
       populateFilters();
       applyFilters();
-      setTimeout(fitAll, 300);
+      if(AUTO_LOAD_JOGJA_BOUNDARY) await loadSpatialLayerFromPath(JOGJA_BOUNDARY_PATH, false);
+      setTimeout(() => {
+        if(jogjaBoundaryLayer){
+          const bounds = jogjaBoundaryLayer.getBounds();
+          if(bounds.isValid()) map.fitBounds(bounds.pad(.12));
+        }else{
+          fitAll();
+        }
+      }, 300);
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+      const pathLabel = document.getElementById("boundaryPathText");
+      if(pathLabel) pathLabel.textContent = JOGJA_BOUNDARY_PATH;
       boot();
       document.getElementById("btnToggleLeft").addEventListener("click", () => toggleLeftPanel());
-      document.getElementById("shpInput").addEventListener("change", handleSpatialUpload);
       document.getElementById("btnFitJogja").addEventListener("click", fitJogjaBoundary);
       document.getElementById("btnClearJogja").addEventListener("click", clearJogjaBoundary);
       ["searchInput","groupFilter","typeFilter","riskFilter","toggleBuffer","bufferRadius"].forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
@@ -1095,7 +1123,13 @@
         cctvRows = enrichRows(raw);
         populateFilters();
         applyFilters();
-        fitAll();
+        if(AUTO_LOAD_JOGJA_BOUNDARY) await loadSpatialLayerFromPath(JOGJA_BOUNDARY_PATH, false);
+        if(jogjaBoundaryLayer){
+          const bounds = jogjaBoundaryLayer.getBounds();
+          if(bounds.isValid()) map.fitBounds(bounds.pad(.12));
+        }else{
+          fitAll();
+        }
       });
       document.getElementById("btnLocate").addEventListener("click", () => {
         if(!navigator.geolocation) return alert("Browser tidak mendukung geolocation.");
