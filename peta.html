@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GeoSafe Yogyakarta | Peta CCTV Live YouTube</title>
+  <title>GeoSafe Yogyakarta | Peta CCTV + Kejadian Klitih</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -73,9 +73,10 @@
     .stat span{font-size:11px;color:var(--muted)}
     .stat strong{display:block;font-size:22px;margin-top:4px}
     .stat em{font-style:normal;font-size:11px;color:#b8c6dc;display:block;margin-top:4px}
-    .camera-list{display:flex;flex-direction:column;gap:10px}
-    .camera-card{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:18px;padding:12px;cursor:pointer;transition:.18s ease}
+    .camera-list,.incident-list{display:flex;flex-direction:column;gap:10px}
+    .camera-card,.incident-card{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:18px;padding:12px;cursor:pointer;transition:.18s ease}
     .camera-card:hover,.camera-card.active{transform:translateY(-1px);border-color:rgba(98,230,255,.38);background:rgba(98,230,255,.075)}
+    .incident-card:hover,.incident-card.active{transform:translateY(-1px);border-color:rgba(255,107,139,.44);background:rgba(255,107,139,.08)}
     .camera-title{font-size:13px;font-weight:850;line-height:1.35;display:flex;gap:8px;justify-content:space-between}
     .camera-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
     .tag{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);font-size:10.5px;color:#d9e7fb;font-weight:750}
@@ -107,11 +108,14 @@
     .cam-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;font-size:17px;color:#04111f;border:2px solid rgba(255,255,255,.72);box-shadow:0 10px 24px rgba(0,0,0,.34)}
     .cam-icon.ptz{background:linear-gradient(135deg,#62e6ff,#7aa7ff)}
     .cam-icon.fixed{background:linear-gradient(135deg,#70ffb8,#ffd166)}
+    .incident-icon{width:32px;height:32px;border-radius:50% 50% 50% 10px;display:grid;place-items:center;font-size:15px;color:#fff;background:linear-gradient(135deg,#ff6b8b,#ffd166);border:2px solid rgba(255,255,255,.78);box-shadow:0 10px 24px rgba(0,0,0,.34);transform:rotate(-45deg)}
+    .incident-icon span{transform:rotate(45deg);display:block}
+    .incident-cluster-note{font-size:11px;color:#ffe7a6;margin-top:6px;line-height:1.45}
     .legend{position:absolute;z-index:1200;left:16px;bottom:16px;width:260px;border:1px solid var(--stroke);background:rgba(7,12,25,.82);backdrop-filter:blur(18px);border-radius:18px;padding:12px;box-shadow:0 12px 30px rgba(0,0,0,.26)}
     .legend h4{margin:0 0 9px;font-size:12px}
     .legend-row{display:flex;align-items:center;gap:8px;font-size:11px;color:#cbd8ed;margin:6px 0}
     .dot{width:12px;height:12px;border-radius:50%;background:#62e6ff}
-    .dot.fixed{background:#70ffb8} .dot.buffer{background:#ffd166} .dot.safe{background:#7aa7ff} .dot.boundary{background:transparent;border:2px solid var(--cyan)}
+    .dot.fixed{background:#70ffb8} .dot.buffer{background:#ffd166} .dot.safe{background:#7aa7ff} .dot.boundary{background:transparent;border:2px solid var(--cyan)} .dot.incident{background:#ff6b8b} .dot.incident-buffer{background:transparent;border:2px solid #ff6b8b}
     .file-input{height:auto;padding:10px 12px;color:#dbeafe}
     .file-input::file-selector-button{border:1px solid var(--stroke);border-radius:999px;background:rgba(98,230,255,.14);color:#fff;padding:8px 12px;margin-right:10px;font-weight:800;cursor:pointer}
     .data-note{font-size:11px;color:var(--muted);line-height:1.45;margin-top:6px}
@@ -128,7 +132,7 @@
         <div class="brand-mark"></div>
         <div>
           <strong>GeoSafe Yogyakarta</strong>
-          <span>Peta CCTV Live YouTube + Analisis Zona</span>
+          <span>Peta CCTV + Batas Kota + Kejadian Klitih</span>
         </div>
         </a>
       </div>
@@ -159,6 +163,13 @@
             <div class="stat"><span>PTZ</span><strong id="statPTZ">0</strong><em>kamera gerak</em></div>
             <div class="stat"><span>Fixed</span><strong id="statFixed">0</strong><em>kamera tetap</em></div>
             <div class="stat"><span>Prioritas</span><strong id="statPriority">0</strong><em>zona waspada</em></div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat"><span>Kejadian</span><strong id="statIncidentTotal">0</strong><em>titik terbaca</em></div>
+            <div class="stat"><span>Kecamatan</span><strong id="statIncidentKec">0</strong><em>area kejadian</em></div>
+            <div class="stat"><span>Dekat CCTV</span><strong id="statIncidentCovered">0</strong><em>≤ 500 meter</em></div>
+            <div class="stat"><span>Prioritas</span><strong id="statIncidentPriority">0</strong><em>butuh perhatian</em></div>
           </div>
 
           <div class="form-group">
@@ -208,12 +219,54 @@
             <button class="btn" id="btnClearJogja" type="button">Hapus Layer</button>
           </div>
 
+          <div style="height:14px"></div>
+          <div class="form-group">
+            <label>Layer titik kejadian klitih</label>
+            <div class="analysis-box" style="margin-bottom:0">
+              <h4 style="margin-bottom:6px">Auto-load dari CSV</h4>
+              <p>Data kejadian dibaca otomatis dari <b id="incidentPathText">assets/data/Data Kejahatan Klitih.csv</b>. Kolom yang dipakai: tanggal, bujur, lintang, kecamatan, dan URL sumber.</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="incidentSearchInput">Cari kejadian / kecamatan / sumber</label>
+            <input class="input" id="incidentSearchInput" placeholder="contoh: Jetis, Umbulharjo, 2023..." />
+          </div>
+          <div class="mini-grid">
+            <div class="form-group">
+              <label for="incidentKecamatanFilter">Kecamatan</label>
+              <select class="select" id="incidentKecamatanFilter"><option value="all">Semua</option></select>
+            </div>
+            <div class="form-group">
+              <label for="incidentYearFilter">Tahun</label>
+              <select class="select" id="incidentYearFilter"><option value="all">Semua</option></select>
+            </div>
+          </div>
+          <div class="mini-grid">
+            <div class="form-group">
+              <label for="toggleIncidentLayer">Titik kejadian</label>
+              <select class="select" id="toggleIncidentLayer"><option value="on">Aktif</option><option value="off">Nonaktif</option></select>
+            </div>
+            <div class="form-group">
+              <label for="incidentBufferRadius">Buffer kejadian</label>
+              <select class="select" id="incidentBufferRadius"><option value="0">Nonaktif</option><option value="250">250 m</option><option value="500" selected>500 m</option><option value="1000">1 km</option></select>
+            </div>
+          </div>
+          <div class="mini-grid">
+            <button class="btn" id="btnFitIncidents" type="button">Fit Kejadian</button>
+            <button class="btn" id="btnResetIncidentFilter" type="button">Reset Filter</button>
+          </div>
+
           <div class="warning">
-            CSV YouTube tidak memiliki kolom koordinat, jadi script ini memakai <b>coordinateOverrides</b> di JavaScript. Jika Anda punya koordinat resmi, tambahkan kolom <b>latitude</b> dan <b>longitude</b> pada CSV agar marker menjadi presisi.
+            Catatan: koordinat CCTV masih memakai estimasi <b>coordinateOverrides</b>. Titik kejadian memakai koordinat dari CSV dan dinormalisasi otomatis jika desimal memakai koma atau lintang tertulis positif. Analisis jarak bersifat indikatif, bukan data resmi kepolisian.
           </div>
 
           <div style="height:14px"></div>
+          <div class="analysis-box" style="margin-bottom:10px"><h4>Daftar CCTV</h4><p>Klik salah satu kartu untuk membuka live dan analisis kamera.</p></div>
           <div class="camera-list" id="cameraList"></div>
+          <div style="height:14px"></div>
+          <div class="analysis-box" style="margin-bottom:10px"><h4>Daftar Kejadian Klitih</h4><p>Klik titik atau kartu kejadian untuk melihat analisis kedekatan dengan CCTV.</p></div>
+          <div class="incident-list" id="incidentList"></div>
         </div>
       </aside>
 
@@ -234,6 +287,8 @@
           <div class="legend-row"><span class="dot buffer"></span> Buffer estimasi jangkauan pengawasan</div>
           <div class="legend-row"><span class="dot safe"></span> Zona aman relatif berbasis keterpantauan</div>
           <div class="legend-row"><span class="dot boundary"></span> Batas administratif dari SHP/GeoJSON</div>
+          <div class="legend-row"><span class="dot incident"></span> Titik kejadian klitih</div>
+          <div class="legend-row"><span class="dot incident-buffer"></span> Buffer analisis kejadian</div>
           <div class="data-note">Analisis risiko bersifat heuristik untuk dashboard. Bukan data resmi kriminalitas/kepolisian.</div>
         </div>
       </section>
@@ -241,17 +296,17 @@
       <aside class="panel">
         <div class="panel-head">
           <div>
-            <h3>Panel Live & Analisis</h3>
-            <span id="selectedSubtitle">Klik salah satu CCTV pada peta</span>
+            <h3>Panel Live & Analisis Spasial</h3>
+            <span id="selectedSubtitle">Klik CCTV atau titik kejadian pada peta</span>
           </div>
           <span class="tag" id="selectedTag">Idle</span>
         </div>
         <div class="panel-body">
-          <div class="video-wrap" id="videoWrap"><div class="empty-video">Pilih marker CCTV untuk menampilkan live YouTube, metadata, dan analisis zona.</div></div>
+          <div class="video-wrap" id="videoWrap"><div class="empty-video">Pilih marker CCTV untuk live YouTube, atau pilih titik kejadian untuk analisis kedekatan terhadap CCTV.</div></div>
           <div id="analysisPanel">
             <div class="analysis-box">
               <h4>Belum ada CCTV dipilih</h4>
-              <p>Panel ini akan menampilkan klasifikasi safe zone, prioritas pengawasan, serta rekomendasi mitigasi berdasarkan posisi CCTV, koridor, dan jenis kamera.</p>
+              <p>Panel ini akan menampilkan analisis CCTV, titik kejadian klitih, kedekatan terhadap kamera, dan rekomendasi pengawasan spasial.</p>
             </div>
           </div>
         </div>
@@ -733,11 +788,553 @@
     const JOGJA_BOUNDARY_LABEL = "Administrasi Desa/Kelurahan Kota Yogyakarta";
     const AUTO_LOAD_JOGJA_BOUNDARY = true;
 
+    // ============================================================
+    // 4) DATA TITIK KEJADIAN KLITIH
+    //    File CSV memakai pemisah titik koma dan sebagian koordinat
+    //    memakai koma desimal, jadi dinormalisasi di JavaScript.
+    // ============================================================
+    const INCIDENT_CSV_PATH = "assets/data/Data%20Kejahatan%20Klitih.csv";
+    const AUTO_LOAD_INCIDENTS = true;
+    const FALLBACK_INCIDENT_ROWS = [
+  {
+    "id": 1,
+    "no": "1",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-01-12",
+    "Bujur": 110.61,
+    "Lintang": -8.13,
+    "Kecamatan": "Tanjungsari"
+  },
+  {
+    "id": 2,
+    "no": "2",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-01-15",
+    "Bujur": 110.42,
+    "Lintang": -7.83,
+    "Kecamatan": "Piyungan"
+  },
+  {
+    "id": 3,
+    "no": "1",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-02-07",
+    "Bujur": 110.3047,
+    "Lintang": -7.8014,
+    "Kecamatan": "Gondomanan"
+  },
+  {
+    "id": 4,
+    "no": "",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-02-25",
+    "Bujur": 110.324,
+    "Lintang": -7.821,
+    "Kecamatan": "Kasihan"
+  },
+  {
+    "id": 5,
+    "no": "2",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-03-24",
+    "Bujur": 110.359,
+    "Lintang": -7.783,
+    "Kecamatan": "Jetis"
+  },
+  {
+    "id": 6,
+    "no": "",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-04-16",
+    "Bujur": 110.456,
+    "Lintang": -7.779,
+    "Kecamatan": "Berbah"
+  },
+  {
+    "id": 7,
+    "no": "",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-05-03",
+    "Bujur": 110.326,
+    "Lintang": -7.887,
+    "Kecamatan": "Bantul"
+  },
+  {
+    "id": 8,
+    "no": "",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-05-07",
+    "Bujur": 110.332,
+    "Lintang": -7.86,
+    "Kecamatan": "Sewon"
+  },
+  {
+    "id": 9,
+    "no": "",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-05-20",
+    "Bujur": 110.387,
+    "Lintang": -7.914,
+    "Kecamatan": "Imogiri"
+  },
+  {
+    "id": 10,
+    "no": "3",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-05-27",
+    "Bujur": 110.369,
+    "Lintang": -7.8,
+    "Kecamatan": "Gondomanan"
+  },
+  {
+    "id": 11,
+    "no": "",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-08-13",
+    "Bujur": 110.308,
+    "Lintang": -7.72,
+    "Kecamatan": "Seyegan"
+  },
+  {
+    "id": 12,
+    "no": "4",
+    "URL": "https://rri.co.id/yogyakarta/kriminalitas/500294/jpw-belasan-kejahatan-jalanan-di-diy-selama-2023",
+    "Tanggal_up": "2023-10-01",
+    "Bujur": 110.352,
+    "Lintang": -7.812,
+    "Kecamatan": "Mantrijeron"
+  },
+  {
+    "id": 13,
+    "no": "",
+    "URL": "https://newsmaker.tribunnews.com/2023/11/01/update-kasus-klitih-di-karanganyar-5-tersangka-masih-anak-anak-polisi-sebut-pelaku-bisa-bertambah",
+    "Tanggal_up": "2023-10-21",
+    "Bujur": 111.13,
+    "Lintang": -7.62,
+    "Kecamatan": "Karangpandan"
+  },
+  {
+    "id": 14,
+    "no": "",
+    "URL": "https://twitter.com/chocohzelnutt/status/1345401904914784256",
+    "Tanggal_up": "2021-01-01",
+    "Bujur": 110.375,
+    "Lintang": -7.865,
+    "Kecamatan": "Banguntapan"
+  },
+  {
+    "id": 15,
+    "no": "",
+    "URL": "https://twitter.com/DennyPriyono/status/1345506728310280192",
+    "Tanggal_up": "2021-01-01",
+    "Bujur": 110.307,
+    "Lintang": -7.728,
+    "Kecamatan": "Sleman"
+  },
+  {
+    "id": 16,
+    "no": "",
+    "URL": "https://twitter.com/mystingray91/status/1345885972454461440",
+    "Tanggal_up": "2021-01-03",
+    "Bujur": 110.307,
+    "Lintang": -7.728,
+    "Kecamatan": "Sleman"
+  },
+  {
+    "id": 17,
+    "no": "",
+    "URL": "https://twitter.com/nisfiani16/status/1346463231586406401",
+    "Tanggal_up": "2021-01-04",
+    "Bujur": 110.215,
+    "Lintang": -7.76,
+    "Kecamatan": "Minggir"
+  },
+  {
+    "id": 18,
+    "no": "5",
+    "URL": "7 Kawasan di Jogja yang Pernah Terjadi Klitih, Nomor 7 Malah di Pusat Keramaian",
+    "Tanggal_up": "2022-04-03",
+    "Bujur": 110.4019,
+    "Lintang": -7.8094,
+    "Kecamatan": "Umbulharjo"
+  },
+  {
+    "id": 19,
+    "no": "6",
+    "URL": "7 Kawasan di Jogja yang Pernah Terjadi Klitih, Nomor 7 Malah di Pusat Keramaian",
+    "Tanggal_up": "2022-01-12",
+    "Bujur": 110.3726,
+    "Lintang": -7.8034,
+    "Kecamatan": "Pakualaman"
+  },
+  {
+    "id": 20,
+    "no": "7",
+    "URL": "Daftar Lengkap Aksi Klitih di Jogja Sepanjang 2022, Warga Cari Obat dan Sahur Jadi Korban Kekerasan - ERA.ID",
+    "Tanggal_up": "2022-01-01",
+    "Bujur": 110.3759,
+    "Lintang": -7.7898,
+    "Kecamatan": "Danurejan"
+  },
+  {
+    "id": 21,
+    "no": "8",
+    "URL": "Daftar Lengkap Aksi Klitih di Jogja Sepanjang 2022, Warga Cari Obat dan Sahur Jadi Korban Kekerasan - ERA.ID",
+    "Tanggal_up": "2022-01-28",
+    "Bujur": 110.3677,
+    "Lintang": -7.7757,
+    "Kecamatan": "Jetis"
+  },
+  {
+    "id": 22,
+    "no": "9",
+    "URL": "Daftar Lengkap Aksi Klitih di Jogja Sepanjang 2022, Warga Cari Obat dan Sahur Jadi Korban Kekerasan - ERA.ID",
+    "Tanggal_up": "2022-02-08",
+    "Bujur": 110.3738,
+    "Lintang": -7.8176,
+    "Kecamatan": "Mergangsan"
+  },
+  {
+    "id": 23,
+    "no": "10",
+    "URL": "Daftar Lengkap Aksi Klitih di Jogja Sepanjang 2022, Warga Cari Obat dan Sahur Jadi Korban Kekerasan - ERA.ID",
+    "Tanggal_up": "2022-02-20",
+    "Bujur": 110.3672,
+    "Lintang": -7.7836,
+    "Kecamatan": "Jetis"
+  },
+  {
+    "id": 24,
+    "no": "11",
+    "URL": "7 Kawasan di Jogja yang Pernah Terjadi Klitih, Nomor 7 Malah di Pusat Keramaian",
+    "Tanggal_up": "2021-10-31",
+    "Bujur": 110.4088,
+    "Lintang": -7.7827,
+    "Kecamatan": "Danurejan"
+  },
+  {
+    "id": 25,
+    "no": "12",
+    "URL": "Baca Jogja – Aksi Brutal Geng Klitih di Kota Yogyakarta, Satu Korban Meninggal",
+    "Tanggal_up": "2021-07-31",
+    "Bujur": 110.3644,
+    "Lintang": -7.7798,
+    "Kecamatan": "Jetis"
+  },
+  {
+    "id": 26,
+    "no": "13",
+    "URL": "Baca Jogja – Polres Sleman Tangkap Enam Pelaku Klitih Jalan Kaliurang",
+    "Tanggal_up": "2021-12-27",
+    "Bujur": 110.3895,
+    "Lintang": -7.7285,
+    "Kecamatan": "Ngaglik"
+  },
+  {
+    "id": 27,
+    "no": "14",
+    "URL": "Harian Jogja – Tawuran Pecah di Jalan Kaliurang, Satu Korban Dibacok",
+    "Tanggal_up": "2021-12-27",
+    "Bujur": 110.3895,
+    "Lintang": -7.7285,
+    "Kecamatan": "Ngaglik"
+  },
+  {
+    "id": 28,
+    "no": "15",
+    "URL": "iNews Yogya – Polres Sleman Tangkap 6 Pelaku Klitih di Jalan Kaliurang",
+    "Tanggal_up": "2021-12-28",
+    "Bujur": 110.3928,
+    "Lintang": -7.7209,
+    "Kecamatan": "Ngaglik"
+  },
+  {
+    "id": 29,
+    "no": "16",
+    "URL": "JPNN Jogja – Pelaku Klitih Jalan Kaliurang Diringkus Polisi",
+    "Tanggal_up": "2021-12-28",
+    "Bujur": 110.3895,
+    "Lintang": -7.7285,
+    "Kecamatan": "Ngaglik"
+  },
+  {
+    "id": 30,
+    "no": "17",
+    "URL": "Inilah Jogja – Kekejaman Klitih di Jalan Kaliurang",
+    "Tanggal_up": "2021-12-29",
+    "Bujur": 110.3895,
+    "Lintang": -7.7285,
+    "Kecamatan": "Ngaglik"
+  },
+  {
+    "id": 31,
+    "no": "18",
+    "URL": "https://borobudurnews.com/fakta-terbaru-kasus-klitih-jogja-tewaskan-bocah-14-tahun-polisi-temukan-celurit-dan-gir/",
+    "Tanggal_up": "2021-07-31",
+    "Bujur": 110.36651072144824,
+    "Lintang": -7.778128990804081,
+    "Kecamatan": "Jetis"
+  },
+  {
+    "id": 32,
+    "no": "20",
+    "URL": "https://borobudurnews.com/pulang-kerja-pemuda-di-jogja-dibacok-rombongan-diduga-klitih/",
+    "Tanggal_up": "2021-08-26",
+    "Bujur": 110.3297268,
+    "Lintang": -7.835412,
+    "Kecamatan": "Umbulharjo"
+  },
+  {
+    "id": 33,
+    "no": "21",
+    "URL": "https://www.kompas.id/artikel/pulang-main-gim-tiga-pemuda-jadi-korban-klitih-di-yogyakarta",
+    "Tanggal_up": "2021-01-20",
+    "Bujur": 110.3880675,
+    "Lintang": -7.819137,
+    "Kecamatan": "Umbulharjo"
+  },
+  {
+    "id": 34,
+    "no": "22",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/4",
+    "Tanggal_up": "2021-01-01",
+    "Bujur": 110.3500539,
+    "Lintang": -7.8028914,
+    "Kecamatan": "Wirobrajan"
+  },
+  {
+    "id": 35,
+    "no": "23",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/5",
+    "Tanggal_up": "2021-01-08",
+    "Bujur": 110.3619767,
+    "Lintang": -7.8199858,
+    "Kecamatan": "Mantrijeron"
+  },
+  {
+    "id": 36,
+    "no": "24",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/6",
+    "Tanggal_up": "2021-01-26",
+    "Bujur": 110.3500539,
+    "Lintang": -7.8028914,
+    "Kecamatan": "Wirobrajan"
+  },
+  {
+    "id": 37,
+    "no": "25",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/8",
+    "Tanggal_up": "2021-04-14",
+    "Bujur": 110.3770867,
+    "Lintang": -7.8178415,
+    "Kecamatan": "Kotagede"
+  },
+  {
+    "id": 38,
+    "no": "26",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/9",
+    "Tanggal_up": "2021-05-27",
+    "Bujur": 110.3622107,
+    "Lintang": -7.786428,
+    "Kecamatan": "Gondokusuman"
+  },
+  {
+    "id": 39,
+    "no": "27",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/10",
+    "Tanggal_up": "2021-10-14",
+    "Bujur": 110.3747535,
+    "Lintang": -7.8111652,
+    "Kecamatan": "Umbulharjo"
+  },
+  {
+    "id": 40,
+    "no": "28",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/11",
+    "Tanggal_up": "2021-08-05",
+    "Bujur": 110.3571386,
+    "Lintang": -7.8020894,
+    "Kecamatan": "Gondomanan"
+  },
+  {
+    "id": 41,
+    "no": "29",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/12",
+    "Tanggal_up": "2021-07-31",
+    "Bujur": 110.3530417,
+    "Lintang": -7.7816014,
+    "Kecamatan": "Jetis"
+  },
+  {
+    "id": 42,
+    "no": "30",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/13",
+    "Tanggal_up": "2021-11-21",
+    "Bujur": 110.3537647,
+    "Lintang": -7.8143171,
+    "Kecamatan": "Mergangsan"
+  },
+  {
+    "id": 43,
+    "no": "31",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/14",
+    "Tanggal_up": "2021-10-30",
+    "Bujur": 110.3454656,
+    "Lintang": -7.8152551,
+    "Kecamatan": "Umbulharjo"
+  },
+  {
+    "id": 44,
+    "no": "32",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/15",
+    "Tanggal_up": "2021-11-28",
+    "Bujur": 110.3385292,
+    "Lintang": -7.7804175,
+    "Kecamatan": "Tegalrejo"
+  },
+  {
+    "id": 45,
+    "no": "33",
+    "URL": "https://kumparan.com/kumparannews/waspada-ini-lokasi-laporan-kejahatan-jalanan-klitih-di-yogya-sepanjang-2021-1xD6XmJ2u3q/16",
+    "Tanggal_up": "2021-11-06",
+    "Bujur": 110.3619767,
+    "Lintang": -7.8199858,
+    "Kecamatan": "Mantrijeron"
+  },
+  {
+    "id": 46,
+    "no": "34",
+    "URL": "https://www.espos.id/tag/polsek-umbulharjo",
+    "Tanggal_up": "2021-08-26",
+    "Bujur": 110.3454656,
+    "Lintang": -7.8152551,
+    "Kecamatan": "Umbulharjo"
+  },
+  {
+    "id": 47,
+    "no": "35",
+    "URL": "https://jogja.idntimes.com/news/jogja/tunggul-damarjati/pelaku-klitih-tewaskan-pelajar-ngaku-korban-salah-tangkap?utm_source=chatgpt.com",
+    "Tanggal_up": "2022-6-28",
+    "Bujur": 110.3995595,
+    "Lintang": -7.8113361,
+    "Kecamatan": "Gedongkuning, Kotagede"
+  },
+  {
+    "id": 48,
+    "no": "36",
+    "URL": "https://www.suara.com/news/2022/01/02/084315/klitih-kembali-teror-warga-yogyakarta-pemuda-jadi-korban-pembacokan?utm_source=chatgpt.com",
+    "Tanggal_up": "2022-01-02",
+    "Bujur": 110.3668117,
+    "Lintang": -7.7926923,
+    "Kecamatan": "Kecamatan Danurejan, Kota Yogyakarta"
+  },
+  {
+    "id": 49,
+    "no": "37",
+    "URL": "https://www.youtube.com/watch?v=6FmtzQ7_IPo&utm_source=chatgpt.com",
+    "Tanggal_up": "2022-02-07",
+    "Bujur": 110.367631,
+    "Lintang": -7.801324,
+    "Kecamatan": "kecamatan gondomana"
+  },
+  {
+    "id": 50,
+    "no": "38",
+    "URL": "https://www.krjogja.com/yogyakarta/1242459763/pelaku-curanmor-ditangkap-sempat-dorong-motor-curian-sejauh-5-km",
+    "Tanggal_up": "2022-11-07",
+    "Bujur": 110.3622107,
+    "Lintang": -7.786428,
+    "Kecamatan": "Gondokusuman"
+  },
+  {
+    "id": 51,
+    "no": "39",
+    "URL": "https://yogyakarta.kompas.com/read/2022/04/11/151500878/pelaku-penyerangan-yang-tewaskan-anak-anggota-dprd-kebumen-ada-yang",
+    "Tanggal_up": "2022-04-11",
+    "Bujur": 110.3995595,
+    "Lintang": -7.8113361,
+    "Kecamatan": "Kotagede"
+  },
+  {
+    "id": 52,
+    "no": "40",
+    "URL": "https://news.okezone.com/read/2023/03/24/510/2786735/klitih-terjadi-saat-ramadhan-di-yogyakarta-korban-seorang-pelajar?utm_source=chatgpt.com",
+    "Tanggal_up": "2023-03-24",
+    "Bujur": 110.3549897,
+    "Lintang": -7.7859238,
+    "Kecamatan": "Jalan Tentara Rakyat Mataram, Jetis"
+  },
+  {
+    "id": 53,
+    "no": "42",
+    "URL": "https://jogja.suara.com/read/2023/10/01/140000/klitih-di-kota-jogja-satu-orang-luka-polisi-dalami-identitas-pelaku?utm_source=chatgpt.com",
+    "Tanggal_up": "2023-10-01",
+    "Bujur": 110.3421526,
+    "Lintang": -7.8460639,
+    "Kecamatan": "Jalan Bantul, Mantrijeron"
+  },
+  {
+    "id": 54,
+    "no": "43",
+    "URL": "https://jogja.polri.go.id/polda/tribrata-news/online/detail/polda-diy-berhasil-meringkus-tersangka-pencurian-dengan-pemberatan-atas-laptop-jaksa-penuntut-komisi-pemberantasan-korupsi--kpk-.html",
+    "Tanggal_up": "2022-12-24",
+    "Bujur": 110.3500539,
+    "Lintang": -7.8028914,
+    "Kecamatan": "Wirobrajan"
+  },
+  {
+    "id": 55,
+    "no": "44",
+    "URL": "https://kumparan.com/tugujogja/angka-kriminalitas-di-kota-yogyakarta-meningkat-selama-2022-1zWQPgOGDCk?utm_source=chatgpt.com",
+    "Tanggal_up": "2023-05-27",
+    "Bujur": 110.3888633,
+    "Lintang": -7.8020861,
+    "Kecamatan": "Jalan Kusumanegara, Umbulharjo"
+  },
+  {
+    "id": 56,
+    "no": "45",
+    "URL": "https://jogja.suara.com/read/2023/10/01/140000/klitih-di-kota-jogja-satu-orang-luka-polisi-dalami-identitas-pelaku?utm_source=chatgpt.com",
+    "Tanggal_up": "2023-10-01",
+    "Bujur": 110.3421526,
+    "Lintang": -7.8460639,
+    "Kecamatan": "Jalan Bantul, Gedongkiwo, Mantrijeron"
+  },
+  {
+    "id": 57,
+    "no": "48",
+    "URL": "https://www.polresjogja.com/2022/01/konferensi-pers-polsek-umbulharjo.html?utm_source=chatgpt.com",
+    "Tanggal_up": "2022-01-12",
+    "Bujur": 110.393103,
+    "Lintang": -7.809574,
+    "Kecamatan": "Jalan Veteran, Umbulharjo"
+  },
+  {
+    "id": 58,
+    "no": "49",
+    "URL": "https://www.benggala.com/2023/08/korban-sempat-diteriaki-klitih-polisi.html?utm_source=chatgpt.com",
+    "Tanggal_up": "2023-07-09",
+    "Bujur": 110.3583665,
+    "Lintang": -7.7863631,
+    "Kecamatan": "Selatan Tugu Yogyakarta"
+  },
+  {
+    "id": 59,
+    "no": "50",
+    "URL": "https://bacajogja.id/2023/03/26/kronologi-klitih-bumijo-yogyakarta-polisi-tangkap-15-pelaku/?utm_source=chatgpt.com",
+    "Tanggal_up": "2023-03-26",
+    "Bujur": 110.360645,
+    "Lintang": -7.783339,
+    "Kecamatan": "Bumijo, Jetis"
+  }
+];
+
+
     const CENTER_JOGJA = [-7.7956, 110.3695];
 
-    let map, activeBasemap, cctvRows = [], markersLayer, buffersLayer, jogjaBoundaryLayer;
-    let currentFiltered = [];
-    let selectedId = null;
+    let map, activeBasemap, cctvRows = [], incidentRows = [], markersLayer, buffersLayer, incidentLayer, incidentBuffersLayer, jogjaBoundaryLayer;
+    let currentFiltered = [], currentIncidentFiltered = [];
+    let selectedId = null, selectedIncidentId = null;
 
     const basemaps = {
       dark: L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {maxZoom:19, attribution:"© OpenStreetMap © CARTO"}),
@@ -751,6 +1348,64 @@
     function getEmbed(row){ return cleanText(row.youtube_nocookie_embed_url || row.youtube_embed_url || ""); }
     function getWatch(row){ return cleanText(row.youtube_watch_url || row.channel_streams_url || "https://www.youtube.com/@CCTVPemkotYogyakarta/streams"); }
     function safeId(row){ return cleanText(row.id || row.video_id || row.nama_cctv); }
+    function escapeHtml(value){
+      return cleanText(value).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[ch]));
+    }
+
+    function normalizeNumber(value){
+      const raw = cleanText(value).replace(",", ".");
+      if(!raw) return NaN;
+      return Number(raw);
+    }
+
+    function normalizeLatitude(value){
+      let lat = normalizeNumber(value);
+      // Beberapa baris CSV tertulis 7,80 tanpa tanda minus. Untuk DIY/Jogja, lintang harus bernilai negatif.
+      if(Number.isFinite(lat) && lat > 0 && lat >= 6 && lat <= 9) lat = -lat;
+      return lat;
+    }
+
+    function getYear(value){
+      const match = cleanText(value).match(/(20\d{2}|19\d{2})/);
+      return match ? match[1] : "Tidak diketahui";
+    }
+
+    function haversineMeters(lat1, lng1, lat2, lng2){
+      const R = 6371000;
+      const toRad = d => d * Math.PI / 180;
+      const dLat = toRad(lat2-lat1), dLng = toRad(lng2-lng1);
+      const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    function formatDistance(meters){
+      if(!Number.isFinite(meters)) return "-";
+      return meters >= 1000 ? `${(meters/1000).toFixed(2)} km` : `${Math.round(meters)} m`;
+    }
+
+    function classifyJogjaApprox(row){
+      // Batas kasar untuk memisahkan titik Kota Yogyakarta dan sekitar DIY.
+      const inCityBbox = row._lng >= 110.32 && row._lng <= 110.43 && row._lat >= -7.86 && row._lat <= -7.75;
+      return inCityBbox ? "Kota Yogyakarta / sekitar batas kota" : "Luar Kota Yogyakarta / DIY sekitar";
+    }
+
+    function getNearestCctv(row){
+      let nearest = null;
+      cctvRows.forEach(cam => {
+        const d = haversineMeters(row._lat, row._lng, cam._lat, cam._lng);
+        if(!nearest || d < nearest.distance){ nearest = { row: cam, distance: d }; }
+      });
+      return nearest;
+    }
+
+    function countCctvWithin(row, radius){
+      return cctvRows.filter(cam => haversineMeters(row._lat, row._lng, cam._lat, cam._lng) <= radius).length;
+    }
+
+    function countIncidentsWithin(row, radius){
+      return incidentRows.filter(other => other._id !== row._id && haversineMeters(row._lat, row._lng, other._lat, other._lng) <= radius).length;
+    }
+
 
     function inferCoord(row, index){
       const latCsv = Number(row.latitude || row.lat);
@@ -839,8 +1494,10 @@
       map = L.map("map", { zoomControl:false }).setView(CENTER_JOGJA, 13);
       activeBasemap = basemaps.dark.addTo(map);
       L.control.zoom({position:"bottomright"}).addTo(map);
-      markersLayer = L.layerGroup().addTo(map);
       buffersLayer = L.layerGroup().addTo(map);
+      incidentBuffersLayer = L.layerGroup().addTo(map);
+      markersLayer = L.layerGroup().addTo(map);
+      incidentLayer = L.layerGroup().addTo(map);
     }
 
     async function loadCsvRows(){
@@ -862,6 +1519,213 @@
         mode.className = "tag med";
         return FALLBACK_CCTV_ROWS;
       }
+    }
+
+
+    async function loadIncidentRows(){
+      try{
+        const res = await fetch(INCIDENT_CSV_PATH, { cache:"no-store" });
+        if(!res.ok) throw new Error("CSV kejadian tidak ditemukan di " + INCIDENT_CSV_PATH);
+        const text = await res.text();
+        const parsed = Papa.parse(text, { header:true, delimiter:";", skipEmptyLines:true });
+        const rows = parsed.data || [];
+        if(!rows.length) throw new Error("CSV kejadian kosong");
+        return rows;
+      }catch(err){
+        console.warn(err.message);
+        return FALLBACK_INCIDENT_ROWS;
+      }
+    }
+
+    function enrichIncidentRows(rows){
+      const normalized = rows.map((row, index) => {
+        const lng = normalizeNumber(row.Bujur ?? row.bujur ?? row.longitude ?? row.lng ?? row.lon);
+        const lat = normalizeLatitude(row.Lintang ?? row.lintang ?? row.latitude ?? row.lat);
+        const tanggal = cleanText(row.Tanggal_up ?? row.tanggal_up ?? row.tanggal ?? row.date);
+        const kecamatan = cleanText(row.Kecamatan ?? row.kecamatan ?? row.lokasi ?? row.location);
+        const url = cleanText(row.URL ?? row.url ?? row.sumber ?? row.source);
+        const no = cleanText(row.No ?? row.no ?? row.id ?? index + 1);
+        if(!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+        if(lat < -10 || lat > -5 || lng < 108 || lng > 113) return null;
+        return {
+          ...row,
+          _id: `kejadian_${index + 1}`,
+          _no: no || String(index + 1),
+          _lat: lat,
+          _lng: lng,
+          _tanggal: tanggal || "Tidak diketahui",
+          _tahun: getYear(tanggal),
+          _kecamatan: kecamatan || "Tidak diketahui",
+          _url: url,
+          _areaApprox: "",
+          _analysis: {}
+        };
+      }).filter(Boolean);
+
+      incidentRows = normalized;
+      incidentRows.forEach(row => {
+        const nearest = getNearestCctv(row);
+        const cctv500 = countCctvWithin(row, 500);
+        const cctv1000 = countCctvWithin(row, 1000);
+        const incident1000 = countIncidentsWithin(row, 1000);
+        const nearestDistance = nearest ? nearest.distance : Infinity;
+        let coverageLabel = "Blind spot relatif";
+        if(cctv500 >= 2) coverageLabel = "Terpantau kuat";
+        else if(cctv500 === 1 || cctv1000 >= 2) coverageLabel = "Terpantau sedang";
+        else if(nearestDistance <= 1500) coverageLabel = "Terpantau rendah";
+        const priorityScore = Math.min(100, Math.round(35 + Math.min(30, incident1000 * 6) + (nearestDistance > 1000 ? 30 : nearestDistance > 500 ? 20 : 8)));
+        const priorityClass = priorityScore >= 78 ? "Tinggi" : priorityScore >= 58 ? "Sedang" : "Rendah";
+        row._areaApprox = classifyJogjaApprox(row);
+        row._analysis = {
+          nearestCctvName: nearest ? cleanText(nearest.row.nama_cctv) : "-",
+          nearestDistance,
+          cctv500,
+          cctv1000,
+          incident1000,
+          coverageLabel,
+          priorityScore,
+          priorityClass,
+          recommendation: priorityClass === "Tinggi"
+            ? "Prioritaskan validasi lapangan, cek blind spot CCTV, dan pertimbangkan penambahan/pengarahan kamera atau patroli pada jam rawan."
+            : priorityClass === "Sedang"
+              ? "Cek jangkauan kamera terdekat, korelasikan dengan waktu kejadian, dan pantau pengulangan kejadian pada radius 1 km."
+              : "Tetap tampilkan sebagai arsip kejadian dan gunakan sebagai pembanding terhadap sebaran CCTV yang sudah ada."
+        };
+      });
+      return incidentRows;
+    }
+
+    function populateIncidentFilters(){
+      const kecamatan = [...new Set(incidentRows.map(r => r._kecamatan).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+      const years = [...new Set(incidentRows.map(r => r._tahun).filter(Boolean))].sort((a,b) => b.localeCompare(a));
+      const kecSelect = document.getElementById("incidentKecamatanFilter");
+      const yearSelect = document.getElementById("incidentYearFilter");
+      if(kecSelect) kecSelect.innerHTML = '<option value="all">Semua</option>' + kecamatan.map(k => `<option value="${escapeHtml(k)}">${escapeHtml(k)}</option>`).join("");
+      if(yearSelect) yearSelect.innerHTML = '<option value="all">Semua</option>' + years.map(y => `<option value="${escapeHtml(y)}">${escapeHtml(y)}</option>`).join("");
+    }
+
+    function makeIncidentIcon(row){
+      const a = row._analysis || {};
+      const size = a.priorityClass === "Tinggi" ? 38 : a.priorityClass === "Sedang" ? 34 : 30;
+      return L.divIcon({
+        html: `<div class="incident-icon" style="width:${size}px;height:${size}px"><span>!</span></div>`,
+        className: "",
+        iconSize: [size,size],
+        iconAnchor: [size/2,size],
+        popupAnchor: [0,-size]
+      });
+    }
+
+    function incidentPopupHtml(row){
+      const a = row._analysis;
+      return `
+        <div class="popup-title">Kejadian Klitih #${escapeHtml(row._no)}</div>
+        <div class="popup-meta">
+          <b>Tanggal:</b> ${escapeHtml(row._tanggal)}<br/>
+          <b>Lokasi/Kecamatan:</b> ${escapeHtml(row._kecamatan)}<br/>
+          <b>Koordinat:</b> ${row._lat.toFixed(6)}, ${row._lng.toFixed(6)}<br/>
+          <b>CCTV terdekat:</b> ${escapeHtml(a.nearestCctvName)} (${formatDistance(a.nearestDistance)})<br/>
+          <b>Coverage:</b> ${escapeHtml(a.coverageLabel)}
+        </div>
+        <div class="camera-meta">
+          <span class="tag ${a.priorityClass === "Tinggi" ? "high" : a.priorityClass === "Sedang" ? "med" : "low"}">Prioritas ${a.priorityClass}</span>
+          <span class="tag live">${escapeHtml(row._tahun)}</span>
+        </div>
+        <div class="popup-actions">
+          <button class="primary" onclick="selectIncident('${row._id}')">Analisis</button>
+          ${row._url ? `<a href="${escapeHtml(row._url)}" target="_blank" rel="noopener">Sumber</a>` : `<button type="button">No URL</button>`}
+        </div>`;
+    }
+
+    function applyIncidentFilters(){
+      const q = cleanText(document.getElementById("incidentSearchInput")?.value).toLowerCase();
+      const kec = document.getElementById("incidentKecamatanFilter")?.value || "all";
+      const year = document.getElementById("incidentYearFilter")?.value || "all";
+      currentIncidentFiltered = incidentRows.filter(row => {
+        const text = [row._no,row._tanggal,row._tahun,row._kecamatan,row._url,row._areaApprox].map(cleanText).join(" ").toLowerCase();
+        if(q && !text.includes(q)) return false;
+        if(kec !== "all" && row._kecamatan !== kec) return false;
+        if(year !== "all" && row._tahun !== year) return false;
+        return true;
+      });
+      renderIncidents();
+      renderIncidentList();
+      updateIncidentStats();
+    }
+
+    function renderIncidents(){
+      if(!incidentLayer || !incidentBuffersLayer) return;
+      incidentLayer.clearLayers();
+      incidentBuffersLayer.clearLayers();
+      const showIncident = (document.getElementById("toggleIncidentLayer")?.value || "on") === "on";
+      const radius = Number(document.getElementById("incidentBufferRadius")?.value || 0);
+      if(!showIncident){ updateMapStatus(); return; }
+      currentIncidentFiltered.forEach(row => {
+        if(radius > 0){
+          const color = row._analysis.priorityClass === "Tinggi" ? "#ff6b8b" : row._analysis.priorityClass === "Sedang" ? "#ffd166" : "#7aa7ff";
+          L.circle([row._lat,row._lng], { radius, color, weight:1, opacity:.42, fillColor:color, fillOpacity:.08, dashArray:"5 5" }).addTo(incidentBuffersLayer);
+        }
+        const marker = L.marker([row._lat,row._lng], { icon: makeIncidentIcon(row), title:`Kejadian ${row._tanggal} ${row._kecamatan}` }).bindPopup(incidentPopupHtml(row));
+        marker.on("click", () => selectIncident(row._id));
+        marker.addTo(incidentLayer);
+      });
+      updateMapStatus();
+    }
+
+    function renderIncidentList(){
+      const list = document.getElementById("incidentList");
+      if(!list) return;
+      if(!currentIncidentFiltered.length){ list.innerHTML = '<div class="analysis-box"><p>Tidak ada titik kejadian yang cocok dengan filter.</p></div>'; return; }
+      list.innerHTML = currentIncidentFiltered.slice(0,80).map(row => {
+        const a = row._analysis;
+        const cls = a.priorityClass === "Tinggi" ? "high" : a.priorityClass === "Sedang" ? "med" : "low";
+        return `
+          <div class="incident-card ${String(row._id)===String(selectedIncidentId)?"active":""}" onclick="selectIncident('${row._id}')">
+            <div class="camera-title"><span>Kejadian #${escapeHtml(row._no)}</span><span>${escapeHtml(row._tahun)}</span></div>
+            <div class="camera-meta">
+              <span class="tag ${cls}">Prioritas ${escapeHtml(a.priorityClass)}</span>
+              <span class="tag">${escapeHtml(row._kecamatan)}</span>
+              <span class="tag live">${escapeHtml(a.coverageLabel)}</span>
+            </div>
+            <div class="data-note">${escapeHtml(row._tanggal)} · CCTV terdekat ${escapeHtml(a.nearestCctvName)} (${formatDistance(a.nearestDistance)})</div>
+          </div>`;
+      }).join("");
+    }
+
+    function updateIncidentStats(){
+      const total = currentIncidentFiltered.length;
+      const kec = new Set(currentIncidentFiltered.map(r => r._kecamatan).filter(Boolean)).size;
+      const covered = currentIncidentFiltered.filter(r => r._analysis.cctv500 > 0).length;
+      const priority = currentIncidentFiltered.filter(r => r._analysis.priorityClass === "Tinggi").length;
+      const set = (id,val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+      set("statIncidentTotal", total);
+      set("statIncidentKec", kec);
+      set("statIncidentCovered", covered);
+      set("statIncidentPriority", priority);
+    }
+
+    function updateMapStatus(){
+      const cctvCount = currentFiltered?.length || 0;
+      const incidentCount = currentIncidentFiltered?.length || 0;
+      const el = document.getElementById("mapStatus");
+      if(el) el.textContent = `${cctvCount} CCTV tampil · ${incidentCount} titik kejadian tampil · batas Kota Jogja aktif jika layer termuat`;
+    }
+
+    function fitIncidents(){
+      if(!currentIncidentFiltered.length) return alert("Belum ada titik kejadian yang tampil.");
+      const bounds = L.latLngBounds(currentIncidentFiltered.map(r => [r._lat,r._lng]));
+      if(bounds.isValid()) map.fitBounds(bounds.pad(.18));
+    }
+
+    function resetIncidentFilters(){
+      const ids = ["incidentSearchInput","incidentKecamatanFilter","incidentYearFilter"];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if(!el) return;
+        if(el.tagName === "SELECT") el.value = "all";
+        else el.value = "";
+      });
+      applyIncidentFilters();
     }
 
     function populateFilters(){
@@ -887,6 +1751,7 @@
       renderMap();
       renderList();
       updateStats();
+      applyIncidentFilters();
     }
 
     function renderMap(){
@@ -904,7 +1769,7 @@
         marker.on("click", () => selectCamera(row._id));
         marker.addTo(markersLayer);
       });
-      document.getElementById("mapStatus").textContent = `${currentFiltered.length} CCTV tampil · data YouTube Pemkot Yogyakarta · iframe live aktif bila diizinkan browser`;
+      updateMapStatus();
     }
 
     function renderList(){
@@ -938,6 +1803,7 @@
 
     function renderAnalysis(row){
       const a = row._analysis;
+      selectedIncidentId = null;
       const videoWrap = document.getElementById("videoWrap");
       const embed = getEmbed(row);
       if(embed){
@@ -1144,7 +2010,7 @@
         map.removeLayer(jogjaBoundaryLayer);
         jogjaBoundaryLayer = null;
       }
-      document.getElementById("mapStatus").textContent = `${currentFiltered.length} CCTV tampil · layer batas wilayah dihapus`;
+      updateMapStatus();
     }
 
     function toggleLeftPanel(force){
@@ -1156,6 +2022,53 @@
       button.title = collapsed ? "Tampilkan panel kiri" : "Sembunyikan panel kiri";
       setTimeout(() => map && map.invalidateSize(), 320);
     }
+
+
+    window.selectIncident = function(id){
+      selectedIncidentId = id;
+      selectedId = null;
+      const row = incidentRows.find(r => String(r._id) === String(id));
+      if(!row) return;
+      const a = row._analysis;
+      document.getElementById("selectedSubtitle").textContent = `Kejadian ${row._tanggal} · ${row._kecamatan}`;
+      const tag = document.getElementById("selectedTag");
+      tag.textContent = `Prioritas ${a.priorityClass}`;
+      tag.className = "tag " + (a.priorityClass === "Tinggi" ? "high" : a.priorityClass === "Sedang" ? "med" : "low");
+      document.getElementById("videoWrap").innerHTML = `<div class="empty-video">Titik kejadian dipilih. Panel ini menampilkan analisis jarak kejadian terhadap CCTV, bukan live video.</div>`;
+      document.getElementById("analysisPanel").innerHTML = `
+        <div class="analysis-box">
+          <h4>Analisis Titik Kejadian Klitih</h4>
+          <p><b>Kejadian #${escapeHtml(row._no)}</b> tercatat pada <b>${escapeHtml(row._tanggal)}</b> di <b>${escapeHtml(row._kecamatan)}</b>. Posisi koordinat: <b>${row._lat.toFixed(6)}, ${row._lng.toFixed(6)}</b>. Area estimatif: <b>${escapeHtml(row._areaApprox)}</b>.</p>
+          <div class="score-row"><span class="tag">Prioritas ${a.priorityScore}</span><div class="meter"><i style="width:${a.priorityScore}%"></i></div></div>
+          <div class="score-row"><span class="tag">CCTV ≤500 m: ${a.cctv500}</span><div class="meter"><i style="width:${Math.min(100,a.cctv500*35)}%"></i></div></div>
+          <div class="score-row"><span class="tag">Kejadian ≤1 km: ${a.incident1000}</span><div class="meter"><i style="width:${Math.min(100,a.incident1000*18)}%"></i></div></div>
+        </div>
+        <div class="analysis-box">
+          <h4>Kedekatan dengan CCTV</h4>
+          <p>CCTV terdekat adalah <b>${escapeHtml(a.nearestCctvName)}</b> dengan jarak sekitar <b>${formatDistance(a.nearestDistance)}</b>. Dalam radius 500 meter terdapat <b>${a.cctv500}</b> CCTV, sedangkan dalam radius 1 km terdapat <b>${a.cctv1000}</b> CCTV. Klasifikasi keterpantauan: <b>${escapeHtml(a.coverageLabel)}</b>.</p>
+        </div>
+        <div class="analysis-box">
+          <h4>Rekomendasi Analisis</h4>
+          <p>${escapeHtml(a.recommendation)} Untuk analisis lanjutan, bandingkan titik kejadian dengan jam kejadian, arah ruas jalan, blind spot kamera, dan frekuensi kasus per kecamatan.</p>
+        </div>
+        <div class="analysis-box">
+          <h4>Metadata Kejadian</h4>
+          <p><b>Sumber:</b> ${row._url ? escapeHtml(row._url) : "Tidak tersedia"}<br/>
+          <b>Tahun:</b> ${escapeHtml(row._tahun)}<br/>
+          <b>Koordinat:</b> ${row._lat.toFixed(6)}, ${row._lng.toFixed(6)}</p>
+          <div class="quick-actions">
+            ${row._url ? `<a class="primary" href="${escapeHtml(row._url)}" target="_blank" rel="noopener">Buka Sumber</a>` : `<button type="button">Tidak ada URL</button>`}
+            <button type="button" onclick="map.setView([${row._lat},${row._lng}], 16)">Zoom Titik</button>
+          </div>
+        </div>`;
+      renderIncidentList();
+      renderList();
+      map.setView([row._lat,row._lng], Math.max(map.getZoom(), 16), { animate:true });
+      incidentLayer.eachLayer(layer => {
+        const ll = layer.getLatLng && layer.getLatLng();
+        if(ll && Math.abs(ll.lat-row._lat)<1e-9 && Math.abs(ll.lng-row._lng)<1e-9) layer.openPopup();
+      });
+    };
 
     window.selectCamera = function(id){
       selectedId = id;
@@ -1172,9 +2085,13 @@
     };
 
     function fitAll(){
-      if(!currentFiltered.length) return map.setView(CENTER_JOGJA, 13);
-      const bounds = L.latLngBounds(currentFiltered.map(r => [r._lat,r._lng]));
-      map.fitBounds(bounds.pad(.18));
+      const points = [
+        ...currentFiltered.map(r => [r._lat,r._lng]),
+        ...currentIncidentFiltered.map(r => [r._lat,r._lng])
+      ];
+      if(!points.length) return map.setView(CENTER_JOGJA, 13);
+      const bounds = L.latLngBounds(points);
+      if(bounds.isValid()) map.fitBounds(bounds.pad(.18));
     }
 
     async function boot(){
@@ -1182,7 +2099,11 @@
       const raw = await loadCsvRows();
       cctvRows = enrichRows(raw);
       currentFiltered = [...cctvRows];
+      const rawIncidents = AUTO_LOAD_INCIDENTS ? await loadIncidentRows() : [];
+      enrichIncidentRows(rawIncidents);
+      currentIncidentFiltered = [...incidentRows];
       populateFilters();
+      populateIncidentFilters();
       applyFilters();
       if(AUTO_LOAD_JOGJA_BOUNDARY) await loadSpatialLayerFromPath(JOGJA_BOUNDARY_PATH, false);
       setTimeout(() => {
@@ -1198,11 +2119,16 @@
     document.addEventListener("DOMContentLoaded", () => {
       const pathLabel = document.getElementById("boundaryPathText");
       if(pathLabel) pathLabel.textContent = JOGJA_BOUNDARY_PATH;
+      const incidentPathLabel = document.getElementById("incidentPathText");
+      if(incidentPathLabel) incidentPathLabel.textContent = decodeURIComponent(INCIDENT_CSV_PATH);
       boot();
       document.getElementById("btnToggleLeft").addEventListener("click", () => toggleLeftPanel());
       document.getElementById("btnFitJogja").addEventListener("click", fitJogjaBoundary);
       document.getElementById("btnClearJogja").addEventListener("click", clearJogjaBoundary);
+      document.getElementById("btnFitIncidents").addEventListener("click", fitIncidents);
+      document.getElementById("btnResetIncidentFilter").addEventListener("click", resetIncidentFilters);
       ["searchInput","groupFilter","typeFilter","riskFilter","toggleBuffer","bufferRadius"].forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
+      ["incidentSearchInput","incidentKecamatanFilter","incidentYearFilter","toggleIncidentLayer","incidentBufferRadius"].forEach(id => document.getElementById(id).addEventListener("input", applyIncidentFilters));
       document.getElementById("basemapSelect").addEventListener("change", e => {
         if(activeBasemap) map.removeLayer(activeBasemap);
         activeBasemap = basemaps[e.target.value].addTo(map);
@@ -1212,7 +2138,10 @@
       document.getElementById("btnReload").addEventListener("click", async () => {
         const raw = await loadCsvRows();
         cctvRows = enrichRows(raw);
+        const rawIncidents = AUTO_LOAD_INCIDENTS ? await loadIncidentRows() : [];
+        enrichIncidentRows(rawIncidents);
         populateFilters();
+        populateIncidentFilters();
         applyFilters();
         if(AUTO_LOAD_JOGJA_BOUNDARY) await loadSpatialLayerFromPath(JOGJA_BOUNDARY_PATH, false);
         if(jogjaBoundaryLayer){
