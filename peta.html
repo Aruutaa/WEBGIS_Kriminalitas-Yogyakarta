@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
 
   <style>
     :root{
@@ -121,15 +122,37 @@
     .data-note{font-size:11px;color:var(--muted);line-height:1.45;margin-top:6px}
     .hidden{display:none!important}
     @media(max-width:1180px){html,body{overflow:auto}.app{height:auto;min-height:100vh}.layout{height:auto;grid-template-columns:1fr;padding:12px}.layout.left-collapsed{grid-template-columns:1fr}.mapbox{height:70vh}.topbar{position:sticky;top:0}.topbar-left,.brand{min-width:0}.navlinks{display:none}}
+
+    .app{position:relative;isolation:isolate}
+    .app:before{content:"";position:fixed;inset:72px 0 0;z-index:-1;background:linear-gradient(rgba(6,16,28,.72),rgba(6,16,28,.88)),url("assets/img/map-overlay.svg") center/cover no-repeat;opacity:.82;pointer-events:none}
+    .brand-logo-box.compact{width:48px;height:48px;border-radius:16px}.brand-logo-box.compact .brand-logo{width:40px;height:40px}
+    .risk-method{border:1px solid rgba(98,230,255,.18);background:rgba(98,230,255,.055);border-radius:18px;padding:12px;margin-bottom:12px}
+    .risk-method h4{font-size:13px;margin:0 0 7px}.risk-method p{margin:0;color:#c9d7ec;font-size:11.8px;line-height:1.55}
+    .risk-summary{display:grid;grid-template-columns:1fr;gap:9px;margin:10px 0 14px}
+    .district-risk-card{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:16px;padding:11px;display:grid;gap:7px}
+    .district-risk-card .line{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px}.district-risk-card b{font-size:13px}.district-risk-card small{color:var(--muted);line-height:1.45}.district-risk-card .meter{height:7px}
+    .dot.choro-high{background:#ff6b8b}.dot.choro-med{background:#ffd166}.dot.choro-low{background:#70ffb8}.dot.choro-none{background:#7aa7ff;opacity:.55}
+    .dot.network-high{background:#ff3f68}.dot.network-med{background:#ffd166}.dot.network-low{background:#70ffb8}
+    .legend.is-closed{display:none!important}
+    .legend-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .legend-head h4{margin:0!important}
+    .legend-close{width:28px;height:28px;border-radius:10px;border:1px solid var(--stroke);background:rgba(255,255,255,.06);color:var(--text);font-weight:900;cursor:pointer}
+    .legend-close:hover{border-color:rgba(98,230,255,.42);background:rgba(98,230,255,.10)}
+    .camera-dropdown-note{font-size:11px;color:var(--muted);line-height:1.45;margin-top:7px}
+    .selected-camera-card{border:1px solid rgba(98,230,255,.22);background:rgba(98,230,255,.065);border-radius:18px;padding:12px}
+    .selected-incident-card{border:1px solid rgba(255,107,139,.28);background:rgba(255,107,139,.07);border-radius:18px;padding:12px}
+    .road-card{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:16px;padding:11px;display:grid;gap:7px}
+    .road-card .line{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px}.road-card b{font-size:13px}.road-card small{color:var(--muted);line-height:1.45}.road-card .meter{height:7px}
+
   </style>
 </head>
-<body>
+<body data-page="peta">
   <div class="app">
     <header class="topbar">
       <div class="topbar-left">
         <button class="panel-toggle-btn" id="btnToggleLeft" type="button" title="Sembunyikan panel kiri">×</button>
         <a href="index.html" class="brand">
-        <div class="brand-mark"></div>
+        <div class="brand-logo-box compact"><img src="assets/img/logo-crimescope.png" alt="Logo GeoSafe Yogyakarta" class="brand-logo"></div>
         <div>
           <strong>GeoSafe Yogyakarta</strong>
           <span>Peta CCTV + Batas Kota + Kejadian Klitih</span>
@@ -137,10 +160,10 @@
         </a>
       </div>
       <nav class="navlinks">
-        <a href="index.html">Utama</a>
-        <a href="peta.html" class="active">Peta CCTV</a>
-        <a href="analisis.html">Analisis</a>
-        <a href="berita.html">Berita</a>
+        <a href="index.html" data-page="home">Utama</a>
+        <a href="peta.html" data-page="peta" class="active">Peta CCTV</a>
+        <a href="analisis.html" data-page="analisis">Analisis</a>
+        <a href="berita.html" data-page="berita">Berita</a>
       </nav>
       <div style="display:flex;gap:8px;align-items:center">
         <button class="btn" id="btnReload">Reload Data</button>
@@ -171,6 +194,12 @@
             <div class="stat"><span>Dekat CCTV</span><strong id="statIncidentCovered">0</strong><em>≤ 500 meter</em></div>
             <div class="stat"><span>Prioritas</span><strong id="statIncidentPriority">0</strong><em>butuh perhatian</em></div>
           </div>
+
+          <div class="risk-method">
+            <h4>Model analisis spasial</h4>
+            <p>Skor peta dihitung dari kepadatan kejadian, kedekatan terhadap CCTV, jumlah kejadian sekitar radius 1 km, serta status cakupan kamera. Layer batas administrasi diberi warna seperti choropleth agar pola prioritas per kecamatan langsung terbaca.</p>
+          </div>
+          <div class="risk-summary" id="districtRiskSummary"></div>
 
           <div class="form-group">
             <label for="searchInput">Cari CCTV / lokasi</label>
@@ -257,15 +286,49 @@
             <button class="btn" id="btnResetIncidentFilter" type="button">Reset Filter</button>
           </div>
 
+          <div style="height:14px"></div>
+          <div class="form-group">
+            <label>Network analysis kerawanan jalan</label>
+            <div class="analysis-box" style="margin-bottom:0">
+              <h4 style="margin-bottom:6px">Ruas jalan berbasis kejadian + CCTV + data sosial ekonomi</h4>
+              <p>Layer ini membentuk garis network indikatif pada koridor utama. Skor dihitung dari titik kejadian dekat ruas, blind spot CCTV, dan kepadatan penduduk dari <b>Data Pendukung - Sosial dan Ekonomi.csv</b>.</p>
+            </div>
+          </div>
+          <div class="mini-grid">
+            <div class="form-group">
+              <label for="toggleRoadNetwork">Network jalan</label>
+              <select class="select" id="toggleRoadNetwork"><option value="off" selected>Nonaktif</option><option value="on">Aktif</option></select>
+            </div>
+            <div class="form-group">
+              <label for="roadRiskMode">Mode skor</label>
+              <select class="select" id="roadRiskMode"><option value="komposit" selected>Komposit</option><option value="kejadian">Dominan kejadian</option><option value="blindspot">Dominan blind spot</option></select>
+            </div>
+          </div>
+          <div class="mini-grid">
+            <button class="btn" id="btnFitRoadNetwork" type="button">Fit Network</button>
+            <button class="btn" id="btnTopRoad" type="button">Ruas Tertinggi</button>
+          </div>
+          <div class="risk-summary" id="roadRiskSummary"></div>
+
           <div class="warning">
             Catatan: koordinat CCTV masih memakai estimasi <b>coordinateOverrides</b>. Titik kejadian memakai koordinat dari CSV dan dinormalisasi otomatis jika desimal memakai koma atau lintang tertulis positif. Analisis jarak bersifat indikatif, bukan data resmi kepolisian.
           </div>
 
           <div style="height:14px"></div>
-          <div class="analysis-box" style="margin-bottom:10px"><h4>Daftar CCTV</h4><p>Klik salah satu kartu untuk membuka live dan analisis kamera.</p></div>
+          <div class="analysis-box" style="margin-bottom:10px"><h4>Pilih CCTV</h4><p>Daftar CCTV diringkas menjadi dropdown agar panel kiri tidak terlalu panjang. Pilih satu CCTV untuk membuka live dan analisis kamera.</p></div>
+          <div class="form-group">
+            <label for="cctvDropdown">Dropdown CCTV</label>
+            <select class="select" id="cctvDropdown"><option value="">Pilih CCTV dari hasil filter...</option></select>
+            <div class="camera-dropdown-note" id="cctvDropdownNote">Filter dulu atau pilih langsung dari peta.</div>
+          </div>
           <div class="camera-list" id="cameraList"></div>
           <div style="height:14px"></div>
-          <div class="analysis-box" style="margin-bottom:10px"><h4>Daftar Kejadian Klitih</h4><p>Klik titik atau kartu kejadian untuk melihat analisis kedekatan dengan CCTV.</p></div>
+          <div class="analysis-box" style="margin-bottom:10px"><h4>Pilih Kejadian Klitih</h4><p>Daftar kejadian diringkas menjadi dropdown agar panel kiri tetap ringkas. Pilih satu kejadian untuk melihat analisis kedekatan dengan CCTV.</p></div>
+          <div class="form-group">
+            <label for="incidentDropdown">Dropdown kejadian klitih</label>
+            <select class="select" id="incidentDropdown"><option value="">Pilih kejadian dari hasil filter...</option></select>
+            <div class="camera-dropdown-note" id="incidentDropdownNote">Filter dulu atau pilih titik kejadian dari peta.</div>
+          </div>
           <div class="incident-list" id="incidentList"></div>
         </div>
       </aside>
@@ -277,11 +340,12 @@
             <button id="btnHome" title="Kembali ke Kota Yogyakarta">⌂</button>
             <button id="btnLocate" title="Lokasi saya">◎</button>
             <button id="btnFit" title="Fit semua CCTV">□</button>
+            <button id="btnLegend" title="Tampilkan/sembunyikan legenda">☷</button>
           </div>
         </div>
         <div id="map"></div>
-        <div class="legend">
-          <h4>Legenda</h4>
+        <div class="legend" id="mapLegend">
+          <div class="legend-head"><h4>Legenda layer aktif</h4><button class="legend-close" id="btnCloseLegend" type="button" title="Tutup legenda">×</button></div>
           <div class="legend-row"><span class="dot"></span> CCTV PTZ / kamera gerak</div>
           <div class="legend-row"><span class="dot fixed"></span> CCTV fixed view</div>
           <div class="legend-row"><span class="dot buffer"></span> Buffer estimasi jangkauan pengawasan</div>
@@ -289,6 +353,12 @@
           <div class="legend-row"><span class="dot boundary"></span> Batas administratif dari SHP/GeoJSON</div>
           <div class="legend-row"><span class="dot incident"></span> Titik kejadian klitih</div>
           <div class="legend-row"><span class="dot incident-buffer"></span> Buffer analisis kejadian</div>
+          <div class="legend-row"><span class="dot choro-high"></span> Choropleth prioritas tinggi</div>
+          <div class="legend-row"><span class="dot choro-med"></span> Choropleth prioritas sedang</div>
+          <div class="legend-row"><span class="dot choro-low"></span> Choropleth prioritas rendah</div>
+          <div class="legend-row"><span class="dot network-high"></span> Network jalan risiko tinggi</div>
+          <div class="legend-row"><span class="dot network-med"></span> Network jalan risiko sedang</div>
+          <div class="legend-row"><span class="dot network-low"></span> Network jalan risiko rendah</div>
           <div class="data-note">Analisis risiko bersifat heuristik untuk dashboard. Bukan data resmi kriminalitas/kepolisian.</div>
         </div>
       </section>
@@ -317,6 +387,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://unpkg.com/shpjs@latest/dist/shp.min.js"></script>
+  <script src="assets/js/common.js"></script>
   <script>
     // ============================================================
     // 1) DATA FALLBACK: dipakai jika fetch CSV gagal.
@@ -795,6 +866,20 @@
     // ============================================================
     const INCIDENT_CSV_PATH = "assets/data/Data%20Kejahatan%20Klitih.csv";
     const AUTO_LOAD_INCIDENTS = true;
+    const SOCIO_ECON_CSV_PATH = "assets/data/Data%20Pendukung%20-%20Sosial%20dan%20Ekonomi.csv";
+    const ROAD_SEGMENTS = [
+      { id:"malioboro", name:"Jl. Malioboro - Margo Mulyo", kecamatan:["Danurejan","Gedongtengen","Gondomanan"], path:[[-7.7834,110.3670],[-7.7890,110.3664],[-7.7946,110.3657],[-7.8010,110.3652]] },
+      { id:"margo_utomo", name:"Jl. Margo Utomo - Tugu", kecamatan:["Jetis","Gedongtengen"], path:[[-7.7727,110.3637],[-7.7782,110.3652],[-7.7834,110.3670]] },
+      { id:"sudirman", name:"Jl. Jenderal Sudirman", kecamatan:["Jetis","Gondokusuman"], path:[[-7.7829,110.3770],[-7.7824,110.3843],[-7.7822,110.3910]] },
+      { id:"cik_ditiro", name:"Jl. Cik Di Tiro", kecamatan:["Gondokusuman","Jetis"], path:[[-7.7737,110.3750],[-7.7809,110.3766],[-7.7909,110.3784]] },
+      { id:"mataram", name:"Jl. Mataram - Hayam Wuruk", kecamatan:["Danurejan","Pakualaman","Gondomanan"], path:[[-7.7878,110.3738],[-7.7950,110.3745],[-7.8032,110.3749]] },
+      { id:"kusumanegara", name:"Jl. Kusumanegara", kecamatan:["Umbulharjo","Pakualaman"], path:[[-7.8010,110.3820],[-7.8046,110.3922],[-7.8082,110.4050]] },
+      { id:"veteran", name:"Jl. Veteran", kecamatan:["Umbulharjo"], path:[[-7.8094,110.3890],[-7.8106,110.3973],[-7.8120,110.4072]] },
+      { id:"parangtritis", name:"Jl. Parangtritis - Sisingamangaraja", kecamatan:["Mantrijeron","Mergangsan"], path:[[-7.8088,110.3630],[-7.8174,110.3610],[-7.8314,110.3597]] },
+      { id:"bantul", name:"Jl. Bantul - Gedongkiwo", kecamatan:["Mantrijeron"], path:[[-7.8109,110.3544],[-7.8235,110.3499],[-7.8461,110.3422]] },
+      { id:"wirobrajan", name:"Jl. KH Ahmad Dahlan - Wirobrajan", kecamatan:["Ngampilan","Wirobrajan","Gondomanan"], path:[[-7.8010,110.3515],[-7.8011,110.3586],[-7.8012,110.3658]] },
+      { id:"timoho", name:"Jl. Timoho", kecamatan:["Gondokusuman","Umbulharjo"], path:[[-7.7850,110.3920],[-7.7945,110.3920],[-7.8040,110.3920]] }
+    ];
     const FALLBACK_INCIDENT_ROWS = [
   {
     "id": 1,
@@ -1332,7 +1417,10 @@
 
     const CENTER_JOGJA = [-7.7956, 110.3695];
 
-    let map, activeBasemap, cctvRows = [], incidentRows = [], markersLayer, buffersLayer, incidentLayer, incidentBuffersLayer, jogjaBoundaryLayer;
+    let map, activeBasemap, cctvRows = [], incidentRows = [], socioRows = [], markersLayer, buffersLayer, incidentLayer, incidentBuffersLayer, roadNetworkLayer, jogjaBoundaryLayer;
+    let districtRiskLookup = new Map();
+    let socioLookup = new Map();
+    let currentRoadNetwork = [];
     let currentFiltered = [], currentIncidentFiltered = [];
     let selectedId = null, selectedIncidentId = null;
 
@@ -1498,6 +1586,7 @@
       incidentBuffersLayer = L.layerGroup().addTo(map);
       markersLayer = L.layerGroup().addTo(map);
       incidentLayer = L.layerGroup().addTo(map);
+      roadNetworkLayer = L.layerGroup().addTo(map);
     }
 
     async function loadCsvRows(){
@@ -1520,6 +1609,203 @@
         return FALLBACK_CCTV_ROWS;
       }
     }
+
+
+    function parseSocioNumber(value, multiplier = 1){
+      const raw = cleanText(value);
+      if(!raw) return 0;
+      const normalized = raw.replace(/\s/g, "").replace(",", ".");
+      const num = Number(normalized);
+      if(!Number.isFinite(num)) return 0;
+      return num * multiplier;
+    }
+
+    async function loadSocioRows(){
+      try{
+        const res = await fetch(SOCIO_ECON_CSV_PATH, { cache:"no-store" });
+        if(!res.ok) throw new Error("CSV sosial ekonomi tidak ditemukan di " + SOCIO_ECON_CSV_PATH);
+        const text = await res.text();
+        const parsed = Papa.parse(text, { header:true, delimiter:";", skipEmptyLines:true });
+        const rows = parsed.data || [];
+        socioLookup = new Map();
+        socioRows = rows.map(row => {
+          const kecamatan = canonicalKecamatan(row.Kecamatan_Kapanewon || row.kecamatan || row.Kecamatan);
+          const densityRaw = parseSocioNumber(row.Kepadatan_jiwa_km2);
+          const populationRaw = parseSocioNumber(row.Jumlah_Penduduk_jiwa);
+          const luas = parseSocioNumber(row.Luas_km2);
+          const item = {
+            ...row,
+            _kecamatan: kecamatan,
+            _density: densityRaw && densityRaw < 100 ? Math.round(densityRaw * 1000) : Math.round(densityRaw || 0),
+            _population: populationRaw && populationRaw < 1000 ? Math.round(populationRaw * 1000) : Math.round(populationRaw || 0),
+            _luas: luas
+          };
+          if(kecamatan && kecamatan !== "Tidak diketahui") socioLookup.set(kecamatan, item);
+          return item;
+        });
+        return socioRows;
+      }catch(err){
+        console.warn(err.message);
+        socioRows = [];
+        socioLookup = new Map();
+        return [];
+      }
+    }
+
+    function pointToSegmentDistanceMeters(lat, lng, lat1, lng1, lat2, lng2){
+      const refLat = (lat + lat1 + lat2) / 3 * Math.PI / 180;
+      const x = val => val * 111320 * Math.cos(refLat);
+      const y = val => val * 110540;
+      const px = x(lng), py = y(lat);
+      const ax = x(lng1), ay = y(lat1);
+      const bx = x(lng2), by = y(lat2);
+      const dx = bx - ax, dy = by - ay;
+      const len2 = dx * dx + dy * dy;
+      if(!len2) return Math.hypot(px - ax, py - ay);
+      const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2));
+      const projX = ax + t * dx, projY = ay + t * dy;
+      return Math.hypot(px - projX, py - projY);
+    }
+
+    function distanceToRoadMeters(row, road){
+      let min = Infinity;
+      for(let i = 0; i < road.path.length - 1; i++){
+        const a = road.path[i], b = road.path[i + 1];
+        min = Math.min(min, pointToSegmentDistanceMeters(row._lat, row._lng, a[0], a[1], b[0], b[1]));
+      }
+      return min;
+    }
+
+    function getRoadSocialIndex(road){
+      const densities = road.kecamatan.map(k => socioLookup.get(k)?._density || 0).filter(Boolean);
+      const avgDensity = densities.length ? densities.reduce((a,b)=>a+b,0) / densities.length : 0;
+      const maxDensity = Math.max(1, ...[...socioLookup.values()].map(item => item._density || 0));
+      return { avgDensity, densityIndex: Math.round((avgDensity / maxDensity) * 100) };
+    }
+
+    function computeRoadNetworkRows(){
+      const base = ROAD_SEGMENTS.map(road => {
+        const nearIncidents = currentIncidentFiltered.filter(row => distanceToRoadMeters(row, road) <= 450);
+        const nearCctv = cctvRows.filter(row => distanceToRoadMeters(row, road) <= 320);
+        const highIncidents = nearIncidents.filter(row => row._analysis?.priorityClass === "Tinggi").length;
+        const social = getRoadSocialIndex(road);
+        return { ...road, incidents:nearIncidents.length, cctv:nearCctv.length, highIncidents, avgDensity:social.avgDensity, densityIndex:social.densityIndex };
+      });
+      const maxIncident = Math.max(1, ...base.map(item => item.incidents));
+      const mode = document.getElementById("roadRiskMode")?.value || "komposit";
+      return base.map(item => {
+        const incidentIndex = Math.round((item.incidents / maxIncident) * 100);
+        const blindIndex = Math.max(0, Math.round(((5 - Math.min(5, item.cctv)) / 5) * 100));
+        const highIndex = item.incidents ? Math.round((item.highIncidents / item.incidents) * 100) : 0;
+        let score;
+        if(mode === "kejadian") score = incidentIndex * .70 + item.densityIndex * .20 + blindIndex * .10;
+        else if(mode === "blindspot") score = blindIndex * .50 + incidentIndex * .30 + item.densityIndex * .20;
+        else score = incidentIndex * .45 + blindIndex * .25 + item.densityIndex * .20 + highIndex * .10;
+        score = Math.max(0, Math.min(100, Math.round(score)));
+        const category = score >= 72 ? "Tinggi" : score >= 45 ? "Sedang" : "Rendah";
+        return { ...item, incidentIndex, blindIndex, highIndex, score, category };
+      }).sort((a,b) => b.score - a.score || b.incidents - a.incidents);
+    }
+
+    function roadRiskColor(category){
+      if(category === "Tinggi") return "#ff3f68";
+      if(category === "Sedang") return "#ffd166";
+      return "#70ffb8";
+    }
+
+    function roadPopupHtml(row){
+      return `<div class="popup-title">${escapeHtml(row.name)}</div>
+        <div class="popup-meta">
+          <b>Skor kerawanan:</b> ${row.score}/100 (${row.category})<br/>
+          <b>Kejadian dekat ruas:</b> ${row.incidents} titik dalam ±450 m<br/>
+          <b>CCTV dekat ruas:</b> ${row.cctv} kamera dalam ±320 m<br/>
+          <b>Indeks kepadatan:</b> ${row.densityIndex}/100 · rata-rata ${Math.round(row.avgDensity).toLocaleString("id-ID")} jiwa/km²<br/>
+          <b>Kecamatan terkait:</b> ${row.kecamatan.join(", ")}
+        </div>
+        <div class="popup-actions"><button class="primary" onclick="selectRoad('${row.id}')">Analisis Ruas</button></div>`;
+    }
+
+    function renderRoadRiskSummary(){
+      const box = document.getElementById("roadRiskSummary");
+      if(!box) return;
+      const active = (document.getElementById("toggleRoadNetwork")?.value || "off") === "on";
+      const rows = currentRoadNetwork.length ? currentRoadNetwork : computeRoadNetworkRows();
+      if(!active){
+        box.innerHTML = `<div class="road-card"><small>Network jalan masih nonaktif. Aktifkan untuk melihat ruas rawan di peta.</small></div>`;
+        return;
+      }
+      box.innerHTML = rows.slice(0,4).map(row => {
+        const cls = row.category === "Tinggi" ? "high" : row.category === "Sedang" ? "med" : "low";
+        return `<div class="road-card" onclick="selectRoad('${row.id}')">
+          <div class="line"><b>${escapeHtml(row.name)}</b><span class="tag ${cls}">${row.category}</span></div>
+          <div class="meter"><i style="width:${row.score}%;background:linear-gradient(90deg,#70ffb8,#ffd166,#ff3f68)"></i></div>
+          <small>${row.incidents} kejadian dekat ruas · ${row.cctv} CCTV dekat ruas · kepadatan ${row.densityIndex}/100</small>
+        </div>`;
+      }).join("");
+    }
+
+    function renderRoadNetwork(){
+      if(!roadNetworkLayer) return;
+      roadNetworkLayer.clearLayers();
+      const active = (document.getElementById("toggleRoadNetwork")?.value || "off") === "on";
+      currentRoadNetwork = computeRoadNetworkRows();
+      if(!active){ renderRoadRiskSummary(); updateMapStatus(); return; }
+      currentRoadNetwork.forEach(row => {
+        const color = roadRiskColor(row.category);
+        const line = L.polyline(row.path, {
+          color, weight: row.category === "Tinggi" ? 7 : row.category === "Sedang" ? 5 : 4, opacity:.86, smoothFactor:1.2
+        }).bindPopup(roadPopupHtml(row));
+        line.on("click", () => selectRoad(row.id));
+        line.addTo(roadNetworkLayer);
+      });
+      renderRoadRiskSummary();
+      updateMapStatus();
+    }
+
+    function fitRoadNetwork(){
+      const active = currentRoadNetwork.length ? currentRoadNetwork : computeRoadNetworkRows();
+      if(!active.length) return alert("Belum ada network jalan yang dapat ditampilkan.");
+      const bounds = L.latLngBounds(active.flatMap(row => row.path));
+      if(bounds.isValid()) map.fitBounds(bounds.pad(.20));
+    }
+
+    function focusTopRoad(){
+      const rows = currentRoadNetwork.length ? currentRoadNetwork : computeRoadNetworkRows();
+      if(!rows.length) return;
+      const toggle = document.getElementById("toggleRoadNetwork");
+      if(toggle) toggle.value = "on";
+      renderRoadNetwork();
+      selectRoad(rows[0].id);
+    }
+
+    window.selectRoad = function(id){
+      const rows = currentRoadNetwork.length ? currentRoadNetwork : computeRoadNetworkRows();
+      const row = rows.find(item => item.id === id);
+      if(!row) return;
+      const tag = document.getElementById("selectedTag");
+      document.getElementById("selectedSubtitle").textContent = row.name;
+      tag.textContent = `Network ${row.category}`;
+      tag.className = "tag " + (row.category === "Tinggi" ? "high" : row.category === "Sedang" ? "med" : "low");
+      document.getElementById("videoWrap").innerHTML = `<div class="empty-video">Ruas network dipilih. Panel ini menampilkan analisis kerawanan jalan, bukan live video.</div>`;
+      document.getElementById("analysisPanel").innerHTML = `
+        <div class="analysis-box">
+          <h4>Network Analysis Ruas Jalan</h4>
+          <p><b>${escapeHtml(row.name)}</b> memiliki skor kerawanan <b>${row.score}/100</b> dengan kategori <b>${row.category}</b>. Skor memakai mode <b>${escapeHtml(document.getElementById("roadRiskMode")?.selectedOptions?.[0]?.textContent || "Komposit")}</b>.</p>
+          <div class="score-row"><span class="tag">Indeks kejadian ${row.incidentIndex}</span><div class="meter"><i style="width:${row.incidentIndex}%"></i></div></div>
+          <div class="score-row"><span class="tag">Blind spot ${row.blindIndex}</span><div class="meter"><i style="width:${row.blindIndex}%"></i></div></div>
+          <div class="score-row"><span class="tag">Kepadatan ${row.densityIndex}</span><div class="meter"><i style="width:${row.densityIndex}%"></i></div></div>
+        </div>
+        <div class="analysis-box">
+          <h4>Indikator Ruas</h4>
+          <p>Dalam radius sekitar ruas terdapat <b>${row.incidents}</b> titik kejadian klitih dan <b>${row.cctv}</b> CCTV publik. Kecamatan terkait: <b>${row.kecamatan.join(", ")}</b>. Rata-rata kepadatan penduduk pendukung sekitar <b>${Math.round(row.avgDensity).toLocaleString("id-ID")} jiwa/km²</b>.</p>
+        </div>
+        <div class="analysis-box">
+          <h4>Rekomendasi</h4>
+          <p>${row.category === "Tinggi" ? "Prioritaskan patroli koridor, cek arah pandang CCTV terhadap ruas, serta tandai segmen gelap/blind spot untuk validasi lapangan." : row.category === "Sedang" ? "Gunakan sebagai ruas pemantauan berkala, terutama jika muncul kejadian baru pada radius dekat ruas." : "Tetap tampilkan sebagai pembanding network agar pola ruas rendah dan tinggi dapat dibedakan."}</p>
+        </div>`;
+      const bounds = L.latLngBounds(row.path);
+      if(bounds.isValid()) map.fitBounds(bounds.pad(.45), { animate:true });
+    };
 
 
     async function loadIncidentRows(){
@@ -1604,6 +1890,102 @@
       if(yearSelect) yearSelect.innerHTML = '<option value="all">Semua</option>' + years.map(y => `<option value="${escapeHtml(y)}">${escapeHtml(y)}</option>`).join("");
     }
 
+
+    function canonicalKecamatan(value){
+      const raw = cleanText(value);
+      const lower = raw.toLowerCase();
+      const aliases = {
+        "danurejan":"Danurejan", "gedongtengen":"Gedongtengen", "gondokusuman":"Gondokusuman",
+        "gondomanan":"Gondomanan", "gondomana":"Gondomanan", "jetis":"Jetis", "tugu":"Jetis", "bumijo":"Jetis",
+        "kotagede":"Kotagede", "gedongkuning":"Kotagede", "kraton":"Kraton", "mantrijeron":"Mantrijeron", "gedongkiwo":"Mantrijeron",
+        "mergangsan":"Mergangsan", "ngampilan":"Ngampilan", "pakualaman":"Pakualaman", "tegalrejo":"Tegalrejo",
+        "umbulharjo":"Umbulharjo", "wirobrajan":"Wirobrajan"
+      };
+      for(const [key, label] of Object.entries(aliases)){
+        if(lower.includes(key)) return label;
+      }
+      return raw || "Tidak diketahui";
+    }
+
+    function riskColor(category){
+      if(category === "Tinggi") return "#ff6b8b";
+      if(category === "Sedang") return "#ffd166";
+      if(category === "Rendah") return "#70ffb8";
+      return "#7aa7ff";
+    }
+
+    function buildDistrictRiskLookup(rows = currentIncidentFiltered){
+      const grouped = new Map();
+      rows.forEach(row => {
+        const key = canonicalKecamatan(row._kecamatan);
+        if(!grouped.has(key)) grouped.set(key, { kecamatan:key, count:0, high:0, covered:0, noCoverage:0, score:0, category:"Rendah" });
+        const item = grouped.get(key);
+        item.count += 1;
+        if(row._analysis.priorityClass === "Tinggi") item.high += 1;
+        if(row._analysis.cctv500 > 0) item.covered += 1;
+        else item.noCoverage += 1;
+      });
+      const maxCount = Math.max(1, ...[...grouped.values()].map(item => item.count));
+      grouped.forEach(item => {
+        const densityIndex = (item.count / maxCount) * 100;
+        const highIndex = item.count ? (item.high / item.count) * 100 : 0;
+        const blindIndex = item.count ? (item.noCoverage / item.count) * 100 : 0;
+        item.score = Math.min(100, Math.round((densityIndex * .55) + (highIndex * .25) + (blindIndex * .20)));
+        item.category = item.score >= 72 ? "Tinggi" : item.score >= 45 ? "Sedang" : "Rendah";
+      });
+      districtRiskLookup = grouped;
+      return grouped;
+    }
+
+    function styleBoundaryFeature(feature){
+      const props = feature?.properties || {};
+      const kec = canonicalKecamatan(props.WADMKC || props.NAMOBJ || props.WADMKD);
+      const risk = districtRiskLookup.get(kec);
+      const color = risk ? riskColor(risk.category) : "#62e6ff";
+      return {
+        color,
+        weight: risk ? 2.1 : 1.35,
+        opacity: risk ? .98 : .72,
+        fillColor: color,
+        fillOpacity: risk ? Math.min(.42, .10 + (risk.score / 100) * .30) : .045,
+        dashArray: risk ? null : "6 6"
+      };
+    }
+
+    function updateBoundaryRiskStyle(){
+      buildDistrictRiskLookup();
+      if(!jogjaBoundaryLayer) return;
+      jogjaBoundaryLayer.setStyle(styleBoundaryFeature);
+      jogjaBoundaryLayer.eachLayer(layer => {
+        const props = layer.feature?.properties || {};
+        const kel = cleanText(props.NAMOBJ || props.WADMKD || "Kelurahan/Desa");
+        const kec = canonicalKecamatan(props.WADMKC || props.NAMOBJ || "-");
+        const risk = districtRiskLookup.get(kec);
+        const riskHtml = risk
+          ? `<br/><b>Skor prioritas:</b> ${risk.score}/100 (${risk.category})<br/><b>Titik aktif:</b> ${risk.count} · Blind spot: ${risk.noCoverage}`
+          : `<br/><b>Skor prioritas:</b> belum ada titik aktif pada filter ini`;
+        layer.bindPopup(`<b>${kel}</b><br/>Kecamatan: ${kec}${riskHtml}`);
+      });
+    }
+
+    function renderDistrictRiskSummary(){
+      const box = document.getElementById("districtRiskSummary");
+      if(!box) return;
+      const items = [...buildDistrictRiskLookup().values()].sort((a,b) => b.score - a.score || b.count - a.count).slice(0,4);
+      if(!items.length){
+        box.innerHTML = `<div class="district-risk-card"><small>Belum ada titik kejadian yang lolos filter. Ubah filter kecamatan/tahun atau aktifkan semua kejadian.</small></div>`;
+        return;
+      }
+      box.innerHTML = items.map(item => {
+        const cls = item.category === "Tinggi" ? "high" : item.category === "Sedang" ? "med" : "low";
+        return `<div class="district-risk-card">
+          <div class="line"><b>${escapeHtml(item.kecamatan)}</b><span class="tag ${cls}">${item.category}</span></div>
+          <div class="meter"><i style="width:${item.score}%;background:linear-gradient(90deg,#70ffb8,#ffd166,#ff6b8b)"></i></div>
+          <small>${item.count} titik aktif · ${item.covered} dekat CCTV ≤500 m · ${item.noCoverage} blind spot relatif</small>
+        </div>`;
+      }).join("");
+    }
+
     function makeIncidentIcon(row){
       const a = row._analysis || {};
       const size = a.priorityClass === "Tinggi" ? 38 : a.priorityClass === "Sedang" ? 34 : 30;
@@ -1651,6 +2033,9 @@
       renderIncidents();
       renderIncidentList();
       updateIncidentStats();
+      renderDistrictRiskSummary();
+      updateBoundaryRiskStyle();
+      renderRoadNetwork();
     }
 
     function renderIncidents(){
@@ -1674,22 +2059,44 @@
 
     function renderIncidentList(){
       const list = document.getElementById("incidentList");
+      const dropdown = document.getElementById("incidentDropdown");
+      const note = document.getElementById("incidentDropdownNote");
+
+      if(dropdown){
+        const previous = selectedIncidentId || dropdown.value || "";
+        dropdown.innerHTML = '<option value="">Pilih kejadian dari hasil filter...</option>' + currentIncidentFiltered.map(row => {
+          const a = row._analysis || {};
+          const label = `#${row._no} · ${row._kecamatan} · ${row._tahun} · Prioritas ${a.priorityClass || "-"}`;
+          return `<option value="${escapeHtml(row._id)}">${escapeHtml(label)}</option>`;
+        }).join("");
+        if(previous && currentIncidentFiltered.some(row => String(row._id) === String(previous))) dropdown.value = previous;
+        else dropdown.value = "";
+      }
+
+      if(note) note.textContent = `${currentIncidentFiltered.length} kejadian cocok dengan filter. Daftar lengkap disimpan di dropdown agar panel tetap ringkas.`;
       if(!list) return;
-      if(!currentIncidentFiltered.length){ list.innerHTML = '<div class="analysis-box"><p>Tidak ada titik kejadian yang cocok dengan filter.</p></div>'; return; }
-      list.innerHTML = currentIncidentFiltered.slice(0,80).map(row => {
-        const a = row._analysis;
-        const cls = a.priorityClass === "Tinggi" ? "high" : a.priorityClass === "Sedang" ? "med" : "low";
-        return `
-          <div class="incident-card ${String(row._id)===String(selectedIncidentId)?"active":""}" onclick="selectIncident('${row._id}')">
-            <div class="camera-title"><span>Kejadian #${escapeHtml(row._no)}</span><span>${escapeHtml(row._tahun)}</span></div>
-            <div class="camera-meta">
-              <span class="tag ${cls}">Prioritas ${escapeHtml(a.priorityClass)}</span>
-              <span class="tag">${escapeHtml(row._kecamatan)}</span>
-              <span class="tag live">${escapeHtml(a.coverageLabel)}</span>
-            </div>
-            <div class="data-note">${escapeHtml(row._tanggal)} · CCTV terdekat ${escapeHtml(a.nearestCctvName)} (${formatDistance(a.nearestDistance)})</div>
-          </div>`;
-      }).join("");
+      if(!currentIncidentFiltered.length){
+        list.innerHTML = '<div class="analysis-box"><p>Tidak ada titik kejadian yang cocok dengan filter.</p></div>';
+        return;
+      }
+
+      const row = currentIncidentFiltered.find(item => String(item._id) === String(selectedIncidentId)) || currentIncidentFiltered[0];
+      const a = row._analysis || {};
+      const cls = a.priorityClass === "Tinggi" ? "high" : a.priorityClass === "Sedang" ? "med" : "low";
+      list.innerHTML = `
+        <div class="selected-incident-card">
+          <div class="camera-title"><span>Kejadian #${escapeHtml(row._no)}</span><span>${escapeHtml(row._tahun)}</span></div>
+          <div class="camera-meta">
+            <span class="tag ${cls}">Prioritas ${escapeHtml(a.priorityClass || "-")}</span>
+            <span class="tag">${escapeHtml(row._kecamatan)}</span>
+            <span class="tag live">${escapeHtml(a.coverageLabel || "-")}</span>
+          </div>
+          <div class="data-note">${escapeHtml(row._tanggal)} · CCTV terdekat ${escapeHtml(a.nearestCctvName || "-")} (${formatDistance(a.nearestDistance)})</div>
+          <div class="quick-actions">
+            <button class="primary" type="button" onclick="selectIncident('${String(row._id).replace(/'/g,"\\'")}')">Buka Analisis</button>
+            ${row._url ? `<a href="${escapeHtml(row._url)}" target="_blank" rel="noopener">Sumber</a>` : `<button type="button">Tidak ada URL</button>`}
+          </div>
+        </div>`;
     }
 
     function updateIncidentStats(){
@@ -1708,7 +2115,9 @@
       const cctvCount = currentFiltered?.length || 0;
       const incidentCount = currentIncidentFiltered?.length || 0;
       const el = document.getElementById("mapStatus");
-      if(el) el.textContent = `${cctvCount} CCTV tampil · ${incidentCount} titik kejadian tampil · batas Kota Jogja aktif jika layer termuat`;
+      const networkOn = (document.getElementById("toggleRoadNetwork")?.value || "off") === "on";
+      const roadCount = networkOn ? (currentRoadNetwork?.length || 0) : 0;
+      if(el) el.textContent = `${cctvCount} CCTV tampil · ${incidentCount} titik kejadian tampil${networkOn ? ` · ${roadCount} ruas network rawan aktif` : ""} · batas Kota Jogja aktif jika layer termuat`;
     }
 
     function fitIncidents(){
@@ -1774,21 +2183,37 @@
 
     function renderList(){
       const list = document.getElementById("cameraList");
+      const dropdown = document.getElementById("cctvDropdown");
+      const note = document.getElementById("cctvDropdownNote");
+      if(dropdown){
+        const previous = dropdown.value || selectedId || "";
+        dropdown.innerHTML = '<option value="">Pilih CCTV dari hasil filter...</option>' + currentFiltered.map(row => {
+          const label = `${cleanText(row.nama_cctv)} · ${isPTZ(row) ? "PTZ" : "Fixed"} · ${row._analysis.riskClass}`;
+          return `<option value="${escapeHtml(row._id)}">${escapeHtml(label)}</option>`;
+        }).join("");
+        if(previous && currentFiltered.some(row => String(row._id) === String(previous))) dropdown.value = previous;
+        else dropdown.value = "";
+      }
+      if(note) note.textContent = `${currentFiltered.length} CCTV cocok dengan filter. Daftar lengkap disimpan di dropdown agar panel tetap ringkas.`;
+      if(!list) return;
       if(!currentFiltered.length){ list.innerHTML = '<div class="analysis-box"><p>Tidak ada CCTV yang cocok dengan filter.</p></div>'; return; }
-      list.innerHTML = currentFiltered.map(row => {
-        const a = row._analysis;
-        const riskCls = a.riskClass === "Tinggi" ? "high" : a.riskClass === "Sedang" ? "med" : "low";
-        return `
-          <div class="camera-card ${String(row._id)===String(selectedId)?"active":""}" onclick="selectCamera('${String(row._id).replace(/'/g,"\'")}')">
-            <div class="camera-title"><span>${cleanText(row.nama_cctv)}</span><span>${isPTZ(row)?"PTZ":"Fixed"}</span></div>
-            <div class="camera-meta">
-              <span class="tag live">YouTube</span>
-              <span class="tag ${isPTZ(row)?"ptz":""}">${cleanText(row.jenis_view)||"View"}</span>
-              <span class="tag ${riskCls}">${a.safeLabel}</span>
-            </div>
-            <div class="data-note">${cleanText(row.playlist_group)} · ${row._coordNote}</div>
-          </div>`;
-      }).join("");
+      const row = currentFiltered.find(item => String(item._id) === String(selectedId)) || currentFiltered[0];
+      const a = row._analysis;
+      const riskCls = a.riskClass === "Tinggi" ? "high" : a.riskClass === "Sedang" ? "med" : "low";
+      list.innerHTML = `
+        <div class="selected-camera-card">
+          <div class="camera-title"><span>${escapeHtml(row.nama_cctv)}</span><span>${isPTZ(row)?"PTZ":"Fixed"}</span></div>
+          <div class="camera-meta">
+            <span class="tag live">YouTube</span>
+            <span class="tag ${isPTZ(row)?"ptz":""}">${escapeHtml(row.jenis_view)||"View"}</span>
+            <span class="tag ${riskCls}">${escapeHtml(a.safeLabel)}</span>
+          </div>
+          <div class="data-note">${escapeHtml(row.playlist_group)} · ${escapeHtml(row._coordNote)}</div>
+          <div class="quick-actions">
+            <button class="primary" type="button" onclick="selectCamera('${String(row._id).replace(/'/g,"\'")}')">Buka Analisis</button>
+            <a href="${getWatch(row)}" target="_blank" rel="noopener">Live YouTube</a>
+          </div>
+        </div>`;
     }
 
     function updateStats(){
@@ -1804,6 +2229,7 @@
     function renderAnalysis(row){
       const a = row._analysis;
       selectedIncidentId = null;
+      renderIncidentList();
       const videoWrap = document.getElementById("videoWrap");
       const embed = getEmbed(row);
       if(embed){
@@ -1936,29 +2362,25 @@
       const normalized = normalizeGeoJson(geojson);
       if(!normalized.features || !normalized.features.length) throw new Error("GeoJSON tidak memiliki feature.");
       if(jogjaBoundaryLayer) map.removeLayer(jogjaBoundaryLayer);
+      buildDistrictRiskLookup();
       jogjaBoundaryLayer = L.geoJSON(normalized, {
-        style: feature => {
-          const kec = cleanText(feature?.properties?.WADMKC);
-          return {
-            color:"#62e6ff",
-            weight: kec ? 1.5 : 2,
-            opacity:.95,
-            fillColor:"#62e6ff",
-            fillOpacity:.055,
-            dashArray:"6 6"
-          };
-        },
+        style: styleBoundaryFeature,
         onEachFeature: (feature, layer) => {
           const props = feature.properties || {};
           const kel = cleanText(props.NAMOBJ || props.WADMKD || "Kelurahan/Desa");
-          const kec = cleanText(props.WADMKC || "-");
+          const kec = canonicalKecamatan(props.WADMKC || props.NAMOBJ || "-");
           const sumber = normalized._sourceLayer || JOGJA_BOUNDARY_LAYER_KEYWORD;
-          layer.bindPopup(`<b>${kel}</b><br/>Kecamatan: ${kec}<br/>Layer: ${sumber}`);
+          const risk = districtRiskLookup.get(kec);
+          const riskText = risk
+            ? `<br/>Skor prioritas: <b>${risk.score}/100 (${risk.category})</b><br/>Titik aktif: ${risk.count} · Blind spot: ${risk.noCoverage}`
+            : `<br/>Skor prioritas: belum ada titik aktif pada filter ini`;
+          layer.bindPopup(`<b>${kel}</b><br/>Kecamatan: ${kec}<br/>Layer: ${sumber}${riskText}`);
         }
       }).addTo(map);
+      updateBoundaryRiskStyle();
       const bounds = jogjaBoundaryLayer.getBounds();
       if(bounds.isValid()) map.fitBounds(bounds.pad(.12));
-      document.getElementById("mapStatus").textContent = `Layer ${JOGJA_BOUNDARY_LABEL} berhasil dimuat · ${normalized.features.length} feature administrasi`;
+      document.getElementById("mapStatus").textContent = `Layer ${JOGJA_BOUNDARY_LABEL} berhasil dimuat · ${normalized.features.length} feature administrasi · choropleth prioritas aktif`;
     }
 
     async function loadSpatialLayerFromPath(path = JOGJA_BOUNDARY_PATH, showAlert = false){
@@ -2027,6 +2449,8 @@
     window.selectIncident = function(id){
       selectedIncidentId = id;
       selectedId = null;
+      const cctvDropdown = document.getElementById("cctvDropdown");
+      if(cctvDropdown) cctvDropdown.value = "";
       const row = incidentRows.find(r => String(r._id) === String(id));
       if(!row) return;
       const a = row._analysis;
@@ -2099,6 +2523,7 @@
       const raw = await loadCsvRows();
       cctvRows = enrichRows(raw);
       currentFiltered = [...cctvRows];
+      await loadSocioRows();
       const rawIncidents = AUTO_LOAD_INCIDENTS ? await loadIncidentRows() : [];
       enrichIncidentRows(rawIncidents);
       currentIncidentFiltered = [...incidentRows];
@@ -2127,8 +2552,15 @@
       document.getElementById("btnClearJogja").addEventListener("click", clearJogjaBoundary);
       document.getElementById("btnFitIncidents").addEventListener("click", fitIncidents);
       document.getElementById("btnResetIncidentFilter").addEventListener("click", resetIncidentFilters);
+      document.getElementById("btnFitRoadNetwork").addEventListener("click", fitRoadNetwork);
+      document.getElementById("btnTopRoad").addEventListener("click", focusTopRoad);
+      document.getElementById("btnCloseLegend").addEventListener("click", () => document.getElementById("mapLegend").classList.add("is-closed"));
+      document.getElementById("btnLegend").addEventListener("click", () => document.getElementById("mapLegend").classList.toggle("is-closed"));
+      document.getElementById("cctvDropdown").addEventListener("change", e => { if(e.target.value) selectCamera(e.target.value); });
+      document.getElementById("incidentDropdown").addEventListener("change", e => { if(e.target.value) selectIncident(e.target.value); });
       ["searchInput","groupFilter","typeFilter","riskFilter","toggleBuffer","bufferRadius"].forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
       ["incidentSearchInput","incidentKecamatanFilter","incidentYearFilter","toggleIncidentLayer","incidentBufferRadius"].forEach(id => document.getElementById(id).addEventListener("input", applyIncidentFilters));
+      ["toggleRoadNetwork","roadRiskMode"].forEach(id => document.getElementById(id).addEventListener("input", renderRoadNetwork));
       document.getElementById("basemapSelect").addEventListener("change", e => {
         if(activeBasemap) map.removeLayer(activeBasemap);
         activeBasemap = basemaps[e.target.value].addTo(map);
@@ -2138,6 +2570,7 @@
       document.getElementById("btnReload").addEventListener("click", async () => {
         const raw = await loadCsvRows();
         cctvRows = enrichRows(raw);
+        await loadSocioRows();
         const rawIncidents = AUTO_LOAD_INCIDENTS ? await loadIncidentRows() : [];
         enrichIncidentRows(rawIncidents);
         populateFilters();
