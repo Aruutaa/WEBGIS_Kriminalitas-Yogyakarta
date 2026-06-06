@@ -290,8 +290,8 @@
           <div class="form-group">
             <label>Network analysis kerawanan jalan</label>
             <div class="analysis-box" style="margin-bottom:0">
-              <h4 style="margin-bottom:6px">Ruas jalan berbasis kejadian + CCTV + data sosial ekonomi</h4>
-              <p>Layer ini membentuk garis network indikatif pada koridor utama. Skor dihitung dari titik kejadian dekat ruas, blind spot CCTV, dan kepadatan penduduk dari <b>Data Pendukung - Sosial dan Ekonomi.csv</b>.</p>
+              <h4 style="margin-bottom:6px">Network jalan evidence-based</h4>
+              <p>Layer network sekarang tidak lagi menaikkan skor hanya karena garis jalan manual. Skor dihitung dari <b>kejadian klitih yang benar-benar dekat koridor</b>, ketersediaan CCTV di sekitar ruas, dan kepadatan penduduk kecamatan terkait. Ruas tanpa kejadian akan otomatis dibatasi sebagai risiko rendah.</p>
             </div>
           </div>
           <div class="mini-grid">
@@ -301,7 +301,17 @@
             </div>
             <div class="form-group">
               <label for="roadRiskMode">Mode skor</label>
-              <select class="select" id="roadRiskMode"><option value="komposit" selected>Komposit</option><option value="kejadian">Dominan kejadian</option><option value="blindspot">Dominan blind spot</option></select>
+              <select class="select" id="roadRiskMode"><option value="komposit" selected>Komposit evidence-based</option><option value="kejadian">Dominan kejadian</option><option value="blindspot">Celah CCTV pada ruas berkejadian</option><option value="patroli">Prioritas patroli</option></select>
+            </div>
+          </div>
+          <div class="mini-grid">
+            <div class="form-group">
+              <label for="roadBufferRadius">Radius asosiasi kejadian</label>
+              <select class="select" id="roadBufferRadius"><option value="200">±200 m</option><option value="300" selected>±300 m</option><option value="450">±450 m</option><option value="600">±600 m</option></select>
+            </div>
+            <div class="form-group">
+              <label for="roadDisplayMode">Ruas yang ditampilkan</label>
+              <select class="select" id="roadDisplayMode"><option value="all" selected>Semua koridor</option><option value="incident">Hanya ada kejadian</option><option value="priority">Sedang–tinggi saja</option></select>
             </div>
           </div>
           <div class="mini-grid">
@@ -311,7 +321,7 @@
           <div class="risk-summary" id="roadRiskSummary"></div>
 
           <div class="warning">
-            Catatan: koordinat CCTV masih memakai estimasi <b>coordinateOverrides</b>. Titik kejadian memakai koordinat dari CSV dan dinormalisasi otomatis jika desimal memakai koma atau lintang tertulis positif. Analisis jarak bersifat indikatif, bukan data resmi kepolisian.
+            Catatan: network memakai koridor jalan yang ditautkan dengan lokasi CCTV Pemkot dan titik kejadian dari CSV. Ini lebih aman daripada menebak semua jalan, tetapi tetap indikatif karena belum memakai data jaringan jalan resmi bersegmen lengkap.
           </div>
 
           <div style="height:14px"></div>
@@ -867,18 +877,79 @@
     const INCIDENT_CSV_PATH = "assets/data/Data%20Kejahatan%20Klitih.csv";
     const AUTO_LOAD_INCIDENTS = true;
     const SOCIO_ECON_CSV_PATH = "assets/data/Data%20Pendukung%20-%20Sosial%20dan%20Ekonomi.csv";
-    const ROAD_SEGMENTS = [
-      { id:"malioboro", name:"Jl. Malioboro - Margo Mulyo", kecamatan:["Danurejan","Gedongtengen","Gondomanan"], path:[[-7.7834,110.3670],[-7.7890,110.3664],[-7.7946,110.3657],[-7.8010,110.3652]] },
-      { id:"margo_utomo", name:"Jl. Margo Utomo - Tugu", kecamatan:["Jetis","Gedongtengen"], path:[[-7.7727,110.3637],[-7.7782,110.3652],[-7.7834,110.3670]] },
-      { id:"sudirman", name:"Jl. Jenderal Sudirman", kecamatan:["Jetis","Gondokusuman"], path:[[-7.7829,110.3770],[-7.7824,110.3843],[-7.7822,110.3910]] },
-      { id:"cik_ditiro", name:"Jl. Cik Di Tiro", kecamatan:["Gondokusuman","Jetis"], path:[[-7.7737,110.3750],[-7.7809,110.3766],[-7.7909,110.3784]] },
-      { id:"mataram", name:"Jl. Mataram - Hayam Wuruk", kecamatan:["Danurejan","Pakualaman","Gondomanan"], path:[[-7.7878,110.3738],[-7.7950,110.3745],[-7.8032,110.3749]] },
-      { id:"kusumanegara", name:"Jl. Kusumanegara", kecamatan:["Umbulharjo","Pakualaman"], path:[[-7.8010,110.3820],[-7.8046,110.3922],[-7.8082,110.4050]] },
-      { id:"veteran", name:"Jl. Veteran", kecamatan:["Umbulharjo"], path:[[-7.8094,110.3890],[-7.8106,110.3973],[-7.8120,110.4072]] },
-      { id:"parangtritis", name:"Jl. Parangtritis - Sisingamangaraja", kecamatan:["Mantrijeron","Mergangsan"], path:[[-7.8088,110.3630],[-7.8174,110.3610],[-7.8314,110.3597]] },
-      { id:"bantul", name:"Jl. Bantul - Gedongkiwo", kecamatan:["Mantrijeron"], path:[[-7.8109,110.3544],[-7.8235,110.3499],[-7.8461,110.3422]] },
-      { id:"wirobrajan", name:"Jl. KH Ahmad Dahlan - Wirobrajan", kecamatan:["Ngampilan","Wirobrajan","Gondomanan"], path:[[-7.8010,110.3515],[-7.8011,110.3586],[-7.8012,110.3658]] },
-      { id:"timoho", name:"Jl. Timoho", kecamatan:["Gondokusuman","Umbulharjo"], path:[[-7.7850,110.3920],[-7.7945,110.3920],[-7.8040,110.3920]] }
+    const ROAD_CORRIDOR_DEFINITIONS = [
+      {
+        id:"jokteng_wetan",
+        name:"Koridor Jokteng Wetan / Jl. Brigjen Katamso",
+        kecamatan:["Mergangsan","Kraton","Mantrijeron"],
+        seedCctv:["SIMPANG JOKTENG WETAN (PTZ)","SIMPANG JOKTENG WETAN V. TIMUR"],
+        path:[[-7.81515,110.36895],[-7.813764,110.370091],[-7.813693,110.370222],[-7.81220,110.37245]],
+        note:"Koridor pendek di sekitar CCTV Jokteng Wetan."
+      },
+      {
+        id:"tugu_margo_utomo",
+        name:"Koridor Tugu - Margo Utomo",
+        kecamatan:["Jetis","Gedongtengen"],
+        seedCctv:["SIMPANG TUGU","MARGO UTOMO - OPTIC TUGU","SIMPANG BOROBUDUR PLAZA V. UTARA"],
+        path:[[-7.77268,110.36367],[-7.77815,110.36525],[-7.78293,110.36707],[-7.78424,110.36692],[-7.78720,110.36665]],
+        note:"Koridor utara pusat kota dan akses Tugu."
+      },
+      {
+        id:"malioboro_nolkm",
+        name:"Koridor Malioboro - Margo Mulyo - Nol KM",
+        kecamatan:["Danurejan","Gedongtengen","Gondomanan"],
+        seedCctv:["NOL KM - UTARA","NOL KM (PTZ)","NOL KM - GEDUNG AGUNG","SIMPANG MELIA PUROSANI (PTZ)"],
+        path:[[-7.78920,110.36685],[-7.79528,110.36715],[-7.79840,110.36610],[-7.80135,110.36472],[-7.80113,110.36412]],
+        note:"Koridor wisata dan simpul aktivitas pusat kota."
+      },
+      {
+        id:"gramedia_galeria_sudirman",
+        name:"Koridor Gramedia - Galeria - Sudirman",
+        kecamatan:["Gondokusuman","Jetis"],
+        seedCctv:["SIMPANG GRAMEDIA V. UTARA-TIMUR","SIMPANG GRAMEDIA (PTZ)","SIMPANG GRAMEDIA V. TIMUR","SIMPANG GALERIA (PTZ)"],
+        path:[[-7.78379,110.37796],[-7.78369,110.37782],[-7.78272,110.37866],[-7.78255,110.38460],[-7.78235,110.39085]],
+        note:"Koridor timur pusat kota dengan simpul pergerakan Gramedia-Galeria."
+      },
+      {
+        id:"kotabaru",
+        name:"Koridor Kotabaru / Yos Sudarso - Sajiono - Wardhani",
+        kecamatan:["Gondokusuman"],
+        seedCctv:["KOTABARU - JL. YOS SUDARSO","KOTABARU - JL. SAJIONO","KOTABARU - JL. WARDHANI"],
+        path:[[-7.78655,110.37290],[-7.78610,110.37310],[-7.78650,110.37440],[-7.78435,110.37640]],
+        note:"Koridor internal Kotabaru berdasarkan tiga CCTV dalam grup yang sama."
+      },
+      {
+        id:"balai_dprd",
+        name:"Koridor Balai Kota - DPRD",
+        kecamatan:["Umbulharjo"],
+        seedCctv:["SIMPANG BALAIKOTA V. UTARA-BARAT","DEPAN DPRD V. UTARA"],
+        path:[[-7.79755,110.39495],[-7.79815,110.39379],[-7.79855,110.39090]],
+        note:"Koridor pemerintahan, memakai dua CCTV referensi."
+      },
+      {
+        id:"wirobrajan",
+        name:"Koridor Simpang Wirobrajan - KH Ahmad Dahlan barat",
+        kecamatan:["Wirobrajan","Ngampilan"],
+        seedCctv:["SIMPANG WIROBRAJAN (PTZ)"],
+        path:[[-7.80120,110.34490],[-7.80127,110.34986],[-7.80120,110.35580],[-7.80115,110.36040]],
+        note:"Koridor barat kota, satu CCTV seed sehingga confidence mengikuti bukti kejadian."
+      },
+      {
+        id:"menteri_supeno",
+        name:"Koridor Menteri Supeno",
+        kecamatan:["Mergangsan","Umbulharjo"],
+        seedCctv:["SIMPANG MENTERI SUPENO V. TIMUR"],
+        path:[[-7.81318,110.37536],[-7.81345,110.38160],[-7.81370,110.38790]],
+        note:"Koridor selatan-timur kota dengan satu CCTV seed."
+      },
+      {
+        id:"mas_suharto_hayam_wuruk",
+        name:"Koridor Mas Suharto - Hayam Wuruk",
+        kecamatan:["Danurejan","Pakualaman"],
+        seedCctv:["JL. MAS SUHARTO V. SELATAN"],
+        path:[[-7.78835,110.36946],[-7.78925,110.37145],[-7.79025,110.37355],[-7.79120,110.37550]],
+        note:"Koridor pendek yang mengikuti CCTV Mas Suharto."
+      }
     ];
     const FALLBACK_INCIDENT_ROWS = [
   {
@@ -1652,6 +1723,10 @@
       }
     }
 
+    function getRoadBufferRadius(){
+      return Number(document.getElementById("roadBufferRadius")?.value || 300);
+    }
+
     function pointToSegmentDistanceMeters(lat, lng, lat1, lng1, lat2, lng2){
       const refLat = (lat + lat1 + lat2) / 3 * Math.PI / 180;
       const x = val => val * 111320 * Math.cos(refLat);
@@ -1676,35 +1751,107 @@
       return min;
     }
 
+    function roadLengthMeters(road){
+      let total = 0;
+      for(let i = 0; i < road.path.length - 1; i++){
+        const a = road.path[i], b = road.path[i + 1];
+        total += haversineMeters(a[0], a[1], b[0], b[1]);
+      }
+      return total;
+    }
+
+    function canonicalKecamatanList(values){
+      return [...new Set((values || []).map(canonicalKecamatan).filter(v => v && v !== "Tidak diketahui"))];
+    }
+
+    function buildRoadCorridors(){
+      return ROAD_CORRIDOR_DEFINITIONS.map(def => {
+        const seedRows = cctvRows.filter(cam => def.seedCctv.some(seed => cleanText(cam.nama_cctv).toUpperCase() === seed.toUpperCase()));
+        const seedKec = seedRows.map(cam => cam._kecamatan || cam.kecamatan || cam.wilayah).filter(Boolean);
+        const kecamatan = canonicalKecamatanList([...(def.kecamatan || []), ...seedKec]);
+        return {
+          ...def,
+          kecamatan: kecamatan.length ? kecamatan : (def.kecamatan || []),
+          seedRows,
+          seedCount: seedRows.length,
+          lengthMeters: roadLengthMeters(def)
+        };
+      });
+    }
+
     function getRoadSocialIndex(road){
-      const densities = road.kecamatan.map(k => socioLookup.get(k)?._density || 0).filter(Boolean);
+      const densities = (road.kecamatan || []).map(k => socioLookup.get(canonicalKecamatan(k))?._density || 0).filter(Boolean);
       const avgDensity = densities.length ? densities.reduce((a,b)=>a+b,0) / densities.length : 0;
       const maxDensity = Math.max(1, ...[...socioLookup.values()].map(item => item._density || 0));
       return { avgDensity, densityIndex: Math.round((avgDensity / maxDensity) * 100) };
     }
 
+    function getDisplayRoadRows(rows){
+      const mode = document.getElementById("roadDisplayMode")?.value || "all";
+      if(mode === "incident") return rows.filter(row => row.incidents > 0);
+      if(mode === "priority") return rows.filter(row => row.category !== "Rendah");
+      return rows;
+    }
+
     function computeRoadNetworkRows(){
-      const base = ROAD_SEGMENTS.map(road => {
-        const nearIncidents = currentIncidentFiltered.filter(row => distanceToRoadMeters(row, road) <= 450);
-        const nearCctv = cctvRows.filter(row => distanceToRoadMeters(row, road) <= 320);
-        const highIncidents = nearIncidents.filter(row => row._analysis?.priorityClass === "Tinggi").length;
+      const radius = getRoadBufferRadius();
+      const corridors = buildRoadCorridors();
+      const base = corridors.map(road => {
+        const nearIncidents = currentIncidentFiltered
+          .map(row => ({ row, distance: distanceToRoadMeters(row, road) }))
+          .filter(item => item.distance <= radius)
+          .sort((a,b) => a.distance - b.distance);
+        const nearCctv = cctvRows
+          .map(row => ({ row, distance: distanceToRoadMeters(row, road) }))
+          .filter(item => item.distance <= Math.min(260, Math.max(180, radius * .75)))
+          .sort((a,b) => a.distance - b.distance);
+        const weightedIncidents = nearIncidents.reduce((sum, item) => sum + Math.max(.35, 1 - (item.distance / radius) * .65), 0);
+        const highIncidents = nearIncidents.filter(item => item.row._analysis?.priorityClass === "Tinggi").length;
         const social = getRoadSocialIndex(road);
-        return { ...road, incidents:nearIncidents.length, cctv:nearCctv.length, highIncidents, avgDensity:social.avgDensity, densityIndex:social.densityIndex };
+        const lengthKm = Math.max(.15, road.lengthMeters / 1000);
+        const cctvPerKm = nearCctv.length / lengthKm;
+        const coverageIndex = Math.min(100, Math.round((cctvPerKm / 3) * 100));
+        let blindIndex = Math.max(0, 100 - coverageIndex);
+        if(!nearIncidents.length) blindIndex = Math.min(blindIndex, 35);
+        return {
+          ...road,
+          nearIncidents,
+          nearCctv,
+          incidents:nearIncidents.length,
+          weightedIncidents,
+          cctv:nearCctv.length,
+          cctvPerKm,
+          coverageIndex,
+          blindIndex,
+          highIncidents,
+          avgDensity:social.avgDensity,
+          densityIndex:social.densityIndex,
+          radius,
+          lengthKm
+        };
       });
-      const maxIncident = Math.max(1, ...base.map(item => item.incidents));
+
+      const maxWeightedIncident = Math.max(1, ...base.map(item => item.weightedIncidents));
       const mode = document.getElementById("roadRiskMode")?.value || "komposit";
       return base.map(item => {
-        const incidentIndex = Math.round((item.incidents / maxIncident) * 100);
-        const blindIndex = Math.max(0, Math.round(((5 - Math.min(5, item.cctv)) / 5) * 100));
+        const incidentIndex = Math.round((item.weightedIncidents / maxWeightedIncident) * 100);
         const highIndex = item.incidents ? Math.round((item.highIncidents / item.incidents) * 100) : 0;
         let score;
-        if(mode === "kejadian") score = incidentIndex * .70 + item.densityIndex * .20 + blindIndex * .10;
-        else if(mode === "blindspot") score = blindIndex * .50 + incidentIndex * .30 + item.densityIndex * .20;
-        else score = incidentIndex * .45 + blindIndex * .25 + item.densityIndex * .20 + highIndex * .10;
+        if(mode === "kejadian") score = incidentIndex * .78 + highIndex * .12 + item.densityIndex * .10;
+        else if(mode === "blindspot") score = incidentIndex * .38 + item.blindIndex * .42 + item.densityIndex * .12 + highIndex * .08;
+        else if(mode === "patroli") score = incidentIndex * .42 + highIndex * .28 + item.blindIndex * .18 + item.densityIndex * .12;
+        else score = incidentIndex * .55 + item.blindIndex * .18 + item.densityIndex * .15 + highIndex * .12;
+
+        // Pengaman utama supaya ruas tanpa bukti kejadian tidak langsung terlihat rawan.
+        if(item.incidents === 0) score = Math.min(score, 35);
+        if(item.incidents === 1) score = Math.min(score, 64);
         score = Math.max(0, Math.min(100, Math.round(score)));
-        const category = score >= 72 ? "Tinggi" : score >= 45 ? "Sedang" : "Rendah";
-        return { ...item, incidentIndex, blindIndex, highIndex, score, category };
-      }).sort((a,b) => b.score - a.score || b.incidents - a.incidents);
+
+        const category = score >= 70 ? "Tinggi" : score >= 45 ? "Sedang" : "Rendah";
+        const confidenceScore = Math.min(100, Math.round(item.seedCount * 18 + item.incidents * 18 + Math.min(2, item.cctv) * 12));
+        const confidence = confidenceScore >= 70 ? "Tinggi" : confidenceScore >= 38 ? "Sedang" : "Rendah";
+        return { ...item, incidentIndex, highIndex, score, category, confidence, confidenceScore };
+      }).sort((a,b) => b.score - a.score || b.incidents - a.incidents || b.confidenceScore - a.confidenceScore);
     }
 
     function roadRiskColor(category){
@@ -1714,13 +1861,16 @@
     }
 
     function roadPopupHtml(row){
+      const nearestIncident = row.nearIncidents?.[0];
+      const nearestCctv = row.nearCctv?.[0];
       return `<div class="popup-title">${escapeHtml(row.name)}</div>
         <div class="popup-meta">
           <b>Skor kerawanan:</b> ${row.score}/100 (${row.category})<br/>
-          <b>Kejadian dekat ruas:</b> ${row.incidents} titik dalam ±450 m<br/>
-          <b>CCTV dekat ruas:</b> ${row.cctv} kamera dalam ±320 m<br/>
-          <b>Indeks kepadatan:</b> ${row.densityIndex}/100 · rata-rata ${Math.round(row.avgDensity).toLocaleString("id-ID")} jiwa/km²<br/>
-          <b>Kecamatan terkait:</b> ${row.kecamatan.join(", ")}
+          <b>Confidence:</b> ${row.confidence} · metode evidence-based<br/>
+          <b>Kejadian dekat ruas:</b> ${row.incidents} titik dalam ±${row.radius} m${nearestIncident ? ` · terdekat ${formatDistance(nearestIncident.distance)}` : ""}<br/>
+          <b>CCTV sekitar ruas:</b> ${row.cctv} kamera · coverage ${row.coverageIndex}/100${nearestCctv ? ` · terdekat ${escapeHtml(nearestCctv.row.nama_cctv)}` : ""}<br/>
+          <b>Panjang ruas:</b> ${row.lengthKm.toFixed(2)} km · kepadatan ${row.densityIndex}/100<br/>
+          <b>Kecamatan terkait:</b> ${row.kecamatan.join(", ") || "-"}
         </div>
         <div class="popup-actions"><button class="primary" onclick="selectRoad('${row.id}')">Analisis Ruas</button></div>`;
     }
@@ -1729,17 +1879,21 @@
       const box = document.getElementById("roadRiskSummary");
       if(!box) return;
       const active = (document.getElementById("toggleRoadNetwork")?.value || "off") === "on";
-      const rows = currentRoadNetwork.length ? currentRoadNetwork : computeRoadNetworkRows();
+      const rows = getDisplayRoadRows(currentRoadNetwork.length ? currentRoadNetwork : computeRoadNetworkRows());
       if(!active){
-        box.innerHTML = `<div class="road-card"><small>Network jalan masih nonaktif. Aktifkan untuk melihat ruas rawan di peta.</small></div>`;
+        box.innerHTML = `<div class="road-card"><small>Network jalan masih nonaktif. Aktifkan untuk melihat koridor kerawanan yang dihitung dari bukti kejadian dekat ruas.</small></div>`;
         return;
       }
-      box.innerHTML = rows.slice(0,4).map(row => {
+      if(!rows.length){
+        box.innerHTML = `<div class="road-card"><small>Tidak ada ruas yang cocok dengan mode tampilan. Coba pilih “Semua koridor” atau perbesar radius asosiasi kejadian.</small></div>`;
+        return;
+      }
+      box.innerHTML = rows.slice(0,5).map(row => {
         const cls = row.category === "Tinggi" ? "high" : row.category === "Sedang" ? "med" : "low";
         return `<div class="road-card" onclick="selectRoad('${row.id}')">
           <div class="line"><b>${escapeHtml(row.name)}</b><span class="tag ${cls}">${row.category}</span></div>
           <div class="meter"><i style="width:${row.score}%;background:linear-gradient(90deg,#70ffb8,#ffd166,#ff3f68)"></i></div>
-          <small>${row.incidents} kejadian dekat ruas · ${row.cctv} CCTV dekat ruas · kepadatan ${row.densityIndex}/100</small>
+          <small>${row.incidents} kejadian dalam ±${row.radius} m · ${row.cctv} CCTV sekitar ruas · confidence ${row.confidence}</small>
         </div>`;
       }).join("");
     }
@@ -1749,11 +1903,16 @@
       roadNetworkLayer.clearLayers();
       const active = (document.getElementById("toggleRoadNetwork")?.value || "off") === "on";
       currentRoadNetwork = computeRoadNetworkRows();
+      const rowsToDraw = getDisplayRoadRows(currentRoadNetwork);
       if(!active){ renderRoadRiskSummary(); updateMapStatus(); return; }
-      currentRoadNetwork.forEach(row => {
+      rowsToDraw.forEach(row => {
         const color = roadRiskColor(row.category);
         const line = L.polyline(row.path, {
-          color, weight: row.category === "Tinggi" ? 7 : row.category === "Sedang" ? 5 : 4, opacity:.86, smoothFactor:1.2
+          color,
+          weight: row.category === "Tinggi" ? 8 : row.category === "Sedang" ? 6 : 4,
+          opacity: row.incidents ? .88 : .48,
+          dashArray: row.incidents ? null : "7 8",
+          smoothFactor:1.1
         }).bindPopup(roadPopupHtml(row));
         line.on("click", () => selectRoad(row.id));
         line.addTo(roadNetworkLayer);
@@ -1763,14 +1922,14 @@
     }
 
     function fitRoadNetwork(){
-      const active = currentRoadNetwork.length ? currentRoadNetwork : computeRoadNetworkRows();
-      if(!active.length) return alert("Belum ada network jalan yang dapat ditampilkan.");
-      const bounds = L.latLngBounds(active.flatMap(row => row.path));
+      const rows = getDisplayRoadRows(currentRoadNetwork.length ? currentRoadNetwork : computeRoadNetworkRows());
+      if(!rows.length) return alert("Belum ada network jalan yang dapat ditampilkan.");
+      const bounds = L.latLngBounds(rows.flatMap(row => row.path));
       if(bounds.isValid()) map.fitBounds(bounds.pad(.20));
     }
 
     function focusTopRoad(){
-      const rows = currentRoadNetwork.length ? currentRoadNetwork : computeRoadNetworkRows();
+      const rows = getDisplayRoadRows(currentRoadNetwork.length ? currentRoadNetwork : computeRoadNetworkRows());
       if(!rows.length) return;
       const toggle = document.getElementById("toggleRoadNetwork");
       if(toggle) toggle.value = "on";
@@ -1786,22 +1945,24 @@
       document.getElementById("selectedSubtitle").textContent = row.name;
       tag.textContent = `Network ${row.category}`;
       tag.className = "tag " + (row.category === "Tinggi" ? "high" : row.category === "Sedang" ? "med" : "low");
-      document.getElementById("videoWrap").innerHTML = `<div class="empty-video">Ruas network dipilih. Panel ini menampilkan analisis kerawanan jalan, bukan live video.</div>`;
+      document.getElementById("videoWrap").innerHTML = `<div class="empty-video">Ruas network dipilih. Panel ini menampilkan analisis kerawanan jalan berbasis bukti, bukan live video.</div>`;
+      const nearestIncident = row.nearIncidents?.[0];
+      const nearestCctv = row.nearCctv?.[0];
       document.getElementById("analysisPanel").innerHTML = `
         <div class="analysis-box">
           <h4>Network Analysis Ruas Jalan</h4>
-          <p><b>${escapeHtml(row.name)}</b> memiliki skor kerawanan <b>${row.score}/100</b> dengan kategori <b>${row.category}</b>. Skor memakai mode <b>${escapeHtml(document.getElementById("roadRiskMode")?.selectedOptions?.[0]?.textContent || "Komposit")}</b>.</p>
-          <div class="score-row"><span class="tag">Indeks kejadian ${row.incidentIndex}</span><div class="meter"><i style="width:${row.incidentIndex}%"></i></div></div>
-          <div class="score-row"><span class="tag">Blind spot ${row.blindIndex}</span><div class="meter"><i style="width:${row.blindIndex}%"></i></div></div>
+          <p><b>${escapeHtml(row.name)}</b> memiliki skor <b>${row.score}/100</b> dengan kategori <b>${row.category}</b>. Confidence data: <b>${row.confidence}</b>. Mode skor: <b>${escapeHtml(document.getElementById("roadRiskMode")?.selectedOptions?.[0]?.textContent || "Komposit")}</b>.</p>
+          <div class="score-row"><span class="tag">Kejadian ${row.incidentIndex}</span><div class="meter"><i style="width:${row.incidentIndex}%"></i></div></div>
+          <div class="score-row"><span class="tag">Celah CCTV ${row.blindIndex}</span><div class="meter"><i style="width:${row.blindIndex}%"></i></div></div>
           <div class="score-row"><span class="tag">Kepadatan ${row.densityIndex}</span><div class="meter"><i style="width:${row.densityIndex}%"></i></div></div>
         </div>
         <div class="analysis-box">
-          <h4>Indikator Ruas</h4>
-          <p>Dalam radius sekitar ruas terdapat <b>${row.incidents}</b> titik kejadian klitih dan <b>${row.cctv}</b> CCTV publik. Kecamatan terkait: <b>${row.kecamatan.join(", ")}</b>. Rata-rata kepadatan penduduk pendukung sekitar <b>${Math.round(row.avgDensity).toLocaleString("id-ID")} jiwa/km²</b>.</p>
+          <h4>Bukti yang Dipakai</h4>
+          <p>Radius asosiasi <b>±${row.radius} m</b>. Ditemukan <b>${row.incidents}</b> kejadian dekat ruas dan <b>${row.cctv}</b> CCTV sekitar ruas. ${nearestIncident ? `Kejadian terdekat berjarak <b>${formatDistance(nearestIncident.distance)}</b> di ${escapeHtml(nearestIncident.row._kecamatan)}.` : "Tidak ada kejadian yang masuk radius; skor otomatis dibatasi rendah."} ${nearestCctv ? `CCTV terdekat: <b>${escapeHtml(nearestCctv.row.nama_cctv)}</b>.` : "Belum ada CCTV yang masuk radius coverage ruas."}</p>
         </div>
         <div class="analysis-box">
           <h4>Rekomendasi</h4>
-          <p>${row.category === "Tinggi" ? "Prioritaskan patroli koridor, cek arah pandang CCTV terhadap ruas, serta tandai segmen gelap/blind spot untuk validasi lapangan." : row.category === "Sedang" ? "Gunakan sebagai ruas pemantauan berkala, terutama jika muncul kejadian baru pada radius dekat ruas." : "Tetap tampilkan sebagai pembanding network agar pola ruas rendah dan tinggi dapat dibedakan."}</p>
+          <p>${row.category === "Tinggi" ? "Prioritaskan patroli koridor pada jam rawan, cek arah pandang CCTV terhadap ruas, dan validasi titik gelap di lapangan." : row.category === "Sedang" ? "Pantau sebagai koridor prioritas menengah. Perbesar observasi jika tren kejadian bertambah atau coverage CCTV belum memadai." : "Jadikan sebagai pembanding. Jangan diperlakukan sebagai ruas rawan utama kecuali ada data kejadian baru yang dekat dengan koridor."}</p>
         </div>`;
       const bounds = L.latLngBounds(row.path);
       if(bounds.isValid()) map.fitBounds(bounds.pad(.45), { animate:true });
@@ -2117,7 +2278,7 @@
       const el = document.getElementById("mapStatus");
       const networkOn = (document.getElementById("toggleRoadNetwork")?.value || "off") === "on";
       const roadCount = networkOn ? (currentRoadNetwork?.length || 0) : 0;
-      if(el) el.textContent = `${cctvCount} CCTV tampil · ${incidentCount} titik kejadian tampil${networkOn ? ` · ${roadCount} ruas network rawan aktif` : ""} · batas Kota Jogja aktif jika layer termuat`;
+      if(el) el.textContent = `${cctvCount} CCTV tampil · ${incidentCount} titik kejadian tampil${networkOn ? ` · ${roadCount} koridor network aktif` : ""} · batas Kota Jogja aktif jika layer termuat`;
     }
 
     function fitIncidents(){
@@ -2560,7 +2721,7 @@
       document.getElementById("incidentDropdown").addEventListener("change", e => { if(e.target.value) selectIncident(e.target.value); });
       ["searchInput","groupFilter","typeFilter","riskFilter","toggleBuffer","bufferRadius"].forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
       ["incidentSearchInput","incidentKecamatanFilter","incidentYearFilter","toggleIncidentLayer","incidentBufferRadius"].forEach(id => document.getElementById(id).addEventListener("input", applyIncidentFilters));
-      ["toggleRoadNetwork","roadRiskMode"].forEach(id => document.getElementById(id).addEventListener("input", renderRoadNetwork));
+      ["toggleRoadNetwork","roadRiskMode","roadBufferRadius","roadDisplayMode"].forEach(id => document.getElementById(id).addEventListener("input", renderRoadNetwork));
       document.getElementById("basemapSelect").addEventListener("change", e => {
         if(activeBasemap) map.removeLayer(activeBasemap);
         activeBasemap = basemaps[e.target.value].addTo(map);
