@@ -4,75 +4,209 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GeoSafe Yogyakarta | WebGIS Zona Kriminalitas</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <link rel="preload" as="image" href="assets/img/hero-bg.png" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
+
 <body data-page="home">
   <div class="cursor-glow" id="cursorGlow"></div>
+
   <div class="shell">
     <header class="topbar">
-     <a href="index.html" class="brand">
-  <div class="brand-logo-box">
-    <img src="assets/img/logo-crimescope.png" alt="Logo CrimeScope YK" class="brand-logo">
-  </div>
-  <div class="brand-text">
-    <strong>GeoSafe Yogyakarta</strong>
-    <span>WebGIS Zona Kriminalitas</span>
-  </div>
-</a>
+      <a href="index.html" class="brand">
+        <div class="brand-logo-box">
+          <img src="assets/img/logo-crimescope.png" alt="Logo CrimeScope YK" class="brand-logo" />
+        </div>
+        <div class="brand-text">
+          <strong>GeoSafe Yogyakarta</strong>
+          <span>WebGIS Zona Kriminalitas</span>
+        </div>
+      </a>
+
       <nav class="navlinks" id="navlinks">
         <a href="index.html" data-page="home">Utama</a>
         <a href="peta.html" data-page="peta">Peta</a>
         <a href="analisis.html" data-page="analisis">Analisis</a>
         <a href="berita.html" data-page="berita">Berita</a>
       </nav>
-      <div class="top-actions"><a class="btn" href="berita.html">Berita</a><a class="btn primary" href="peta.html">Buka Peta</a><button class="mobile-toggle" id="mobileToggle">☰</button></div>
+
+      <div class="top-actions">
+        <a class="btn" href="berita.html">Berita</a>
+        <a class="btn primary" href="peta.html">Buka Peta</a>
+        <button class="mobile-toggle" id="mobileToggle" type="button">☰</button>
+      </div>
     </header>
 
     <main class="container">
-      <section class="hero">
-        <div>
-          <div class="eyebrow"><span class="pulse-dot"></span> Multi-page WebGIS prototype</div>
-          <h1><span class="gradient-text">Peta Zona</span><br />Kriminalitas<br />Yogyakarta</h1>
-          <p class="lead">Dashboard WebGIS multi-halaman untuk menampilkan peta zona kriminalitas, mengatur parameter analisis, membaca hasil melalui diagram dan tabel, serta membuka katalog berita kriminalitas dari berbagai sumber.</p>
+      <section class="hero hero-with-bg">
+        <div class="hero-content">
+          <div class="eyebrow">
+            <span class="pulse-dot"></span>
+            Multi-page WebGIS prototype
+          </div>
+
+          <h1>
+            <span class="gradient-text">Peta Zona</span><br />
+            Kriminalitas<br />
+            Yogyakarta
+          </h1>
+
+          <p class="lead">
+            Dashboard WebGIS multi-halaman untuk menampilkan peta zona kriminalitas,
+            mengatur parameter analisis, membaca hasil melalui diagram dan tabel,
+            serta membuka katalog berita kriminalitas dari berbagai sumber.
+          </p>
+
           <div class="hero-actions">
             <a class="btn primary" href="peta.html">Mulai dari Peta</a>
             <a class="btn" href="analisis.html">Lihat Analisis</a>
             <a class="btn" href="berita.html">Buka Berita</a>
           </div>
-          <p class="small-note">Data saat ini masih demo agar struktur UI dan alur navigasi bisa dicoba. Setelah data asli siap, ganti isi <span class="code">assets/js/data.js</span>.</p>
+
+          <p class="small-note">
+            Data saat ini masih demo agar struktur UI dan alur navigasi bisa dicoba.
+            Setelah data asli siap, ganti isi
+            <span class="code">assets/js/data.js</span>.
+          </p>
         </div>
-        <div class="hero-visual" aria-hidden="true">
-          <div class="visual-card"><div class="scan-line"></div><span class="hotpoint p1"></span><span class="hotpoint p2"></span><span class="hotpoint p3"></span></div>
-          <div class="float-card one"><small>Alur WebGIS</small><strong>4 Page</strong><div class="bar"><span></span></div></div>
-          <div class="float-card two"><small>Zona Demo</small><strong>14</strong><div class="bar"><span style="width:88%"></span></div></div>
+
+        <div class="hero-visual asset-hero" aria-hidden="true">
+          <img src="assets/img/hero-bg.png" alt="" class="hero-bg-asset" />
+
+          <div class="visual-card">
+            <div class="scan-line"></div>
+            <span class="hotpoint p1"></span>
+            <span class="hotpoint p2"></span>
+            <span class="hotpoint p3"></span>
+          </div>
+
+          <div class="float-card one">
+            <small>Alur WebGIS</small>
+            <strong>4 Page</strong>
+            <div class="bar"><span></span></div>
+          </div>
+
+          <div class="float-card two">
+            <small>Zona Demo</small>
+            <strong>14</strong>
+            <div class="bar"><span style="width:88%"></span></div>
+          </div>
         </div>
       </section>
 
       <section class="section">
         <div class="section-head">
-          <div><div class="eyebrow"><span class="pulse-dot"></span> Struktur Halaman</div><h2>Alur web dibuat jelas, bukan semuanya ditumpuk di satu halaman.</h2></div>
-          <p>Pemisahan halaman membuat user lebih mudah memahami proses: masuk dari halaman utama, memilih parameter di peta, melihat hasil di halaman analisis, lalu membaca berita pendukung di halaman berita.</p>
+          <div>
+            <div class="eyebrow">
+              <span class="pulse-dot"></span>
+              Struktur Halaman
+            </div>
+            <h2>Alur web dibuat jelas, bukan semuanya ditumpuk di satu halaman.</h2>
+          </div>
+
+          <p>
+            Pemisahan halaman membuat user lebih mudah memahami proses: masuk dari
+            halaman utama, memilih parameter di peta, melihat hasil di halaman
+            analisis, lalu membaca berita pendukung di halaman berita.
+          </p>
         </div>
+
         <div class="grid-4">
-          <article class="card"><div class="icon">🏠</div><h3>Halaman Utama</h3><p>Berisi identitas web, tujuan, ringkasan fitur, struktur data, dan tombol menuju peta, analisis, serta berita.</p><br><a class="btn small" href="index.html">Buka Utama</a></article>
-          <article class="card"><div class="icon">🗺️</div><h3>Halaman Peta</h3><p>Berisi peta Leaflet, basemap Esri/OSM/Carto, panel filter parameter, layer toggle, dan tombol proses analisis.</p><br><a class="btn small primary" href="peta.html">Buka Peta</a></article>
-          <article class="card"><div class="icon">📊</div><h3>Halaman Analisis</h3><p>Menampilkan hasil dari parameter peta dalam bentuk diagram, tabel prioritas wilayah, dan deskripsi interpretatif.</p><br><a class="btn small" href="analisis.html">Buka Analisis</a></article>
-          <article class="card"><div class="icon">📰</div><h3>Halaman Berita</h3><p>Berisi kartu berita/poster, ringkasan, sumber, kategori, dan tombol menuju halaman berita asli.</p><br><a class="btn small" href="berita.html">Buka Berita</a></article>
+          <article class="card">
+            <div class="icon">🏠</div>
+            <h3>Halaman Utama</h3>
+            <p>
+              Berisi identitas web, tujuan, ringkasan fitur, struktur data,
+              dan tombol menuju peta, analisis, serta berita.
+            </p>
+            <br />
+            <a class="btn small" href="index.html">Buka Utama</a>
+          </article>
+
+          <article class="card">
+            <div class="icon">🗺️</div>
+            <h3>Halaman Peta</h3>
+            <p>
+              Berisi peta Leaflet, basemap Esri/OSM/Carto, panel filter parameter,
+              layer toggle, dan tombol proses analisis.
+            </p>
+            <br />
+            <a class="btn small primary" href="peta.html">Buka Peta</a>
+          </article>
+
+          <article class="card">
+            <div class="icon">📊</div>
+            <h3>Halaman Analisis</h3>
+            <p>
+              Menampilkan hasil dari parameter peta dalam bentuk diagram, tabel
+              prioritas wilayah, dan deskripsi interpretatif.
+            </p>
+            <br />
+            <a class="btn small" href="analisis.html">Buka Analisis</a>
+          </article>
+
+          <article class="card">
+            <div class="icon">📰</div>
+            <h3>Halaman Berita</h3>
+            <p>
+              Berisi kartu berita/poster, ringkasan, sumber, kategori, dan tombol
+              menuju halaman berita asli.
+            </p>
+            <br />
+            <a class="btn small" href="berita.html">Buka Berita</a>
+          </article>
         </div>
       </section>
 
       <section class="section">
         <div class="section-head">
-          <div><div class="eyebrow"><span class="pulse-dot"></span> Komponen Analisis</div><h2>Panel yang disiapkan untuk kebutuhan WebGIS kriminalitas.</h2></div>
-          <p>Komponen ini disusun supaya cocok untuk konteks semi-pemerintah: informatif, ringkas, punya filter, tetapi tetap tampil modern dan tidak kaku.</p>
+          <div>
+            <div class="eyebrow">
+              <span class="pulse-dot"></span>
+              Komponen Analisis
+            </div>
+            <h2>Panel yang disiapkan untuk kebutuhan WebGIS kriminalitas.</h2>
+          </div>
+
+          <p>
+            Komponen ini disusun supaya cocok untuk konteks semi-pemerintah:
+            informatif, ringkas, punya filter, tetapi tetap tampil modern dan
+            tidak kaku.
+          </p>
         </div>
+
         <div class="grid-3">
-          <div class="card"><div class="icon">🎚️</div><h3>Parameter peta</h3><p>Filter kecamatan, jenis kriminalitas, kategori risiko, ambang skor minimum, opacity overlay, dan pilihan basemap.</p></div>
-          <div class="card"><div class="icon">🧮</div><h3>Output analisis</h3><p>Skor risiko, peringkat wilayah, total kasus demo, komposisi jenis kasus, dan narasi rekomendasi awal.</p></div>
-          <div class="card"><div class="icon">🧾</div><h3>Berita pendukung</h3><p>Kartu berita bisa diisi dari banyak sumber, lalu diarahkan ke link artikel asli untuk memperkuat konteks spasial.</p></div>
+          <div class="card">
+            <div class="icon">🎚️</div>
+            <h3>Parameter peta</h3>
+            <p>
+              Filter kecamatan, jenis kriminalitas, kategori risiko, ambang skor
+              minimum, opacity overlay, dan pilihan basemap.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="icon">🧮</div>
+            <h3>Output analisis</h3>
+            <p>
+              Skor risiko, peringkat wilayah, total kasus demo, komposisi jenis
+              kasus, dan narasi rekomendasi awal.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="icon">🧾</div>
+            <h3>Berita pendukung</h3>
+            <p>
+              Kartu berita bisa diisi dari banyak sumber, lalu diarahkan ke link
+              artikel asli untuk memperkuat konteks spasial.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -80,19 +214,51 @@
         <div class="card wide">
           <div class="icon">⚙️</div>
           <h3>Alur kerja pengguna</h3>
+
           <div class="flow" style="margin-top:18px">
-            <div class="flow-step"><span>1</span><h4>Masuk Web</h4><p>User membaca konteks dan memilih halaman peta.</p></div>
-            <div class="flow-step"><span>2</span><h4>Atur Parameter</h4><p>User memilih jenis kasus, risiko, dan batas skor pada peta.</p></div>
-            <div class="flow-step"><span>3</span><h4>Proses Analisis</h4><p>Parameter disimpan dan dikirim ke halaman analisis.</p></div>
-            <div class="flow-step"><span>4</span><h4>Baca Hasil</h4><p>Diagram, tabel, dan narasi ditampilkan sesuai filter.</p></div>
-            <div class="flow-step"><span>5</span><h4>Cek Berita</h4><p>User membuka berita pendukung dari berbagai sumber.</p></div>
+            <div class="flow-step">
+              <span>1</span>
+              <h4>Masuk Web</h4>
+              <p>User membaca konteks dan memilih halaman peta.</p>
+            </div>
+
+            <div class="flow-step">
+              <span>2</span>
+              <h4>Atur Parameter</h4>
+              <p>User memilih jenis kasus, risiko, dan batas skor pada peta.</p>
+            </div>
+
+            <div class="flow-step">
+              <span>3</span>
+              <h4>Proses Analisis</h4>
+              <p>Parameter disimpan dan dikirim ke halaman analisis.</p>
+            </div>
+
+            <div class="flow-step">
+              <span>4</span>
+              <h4>Baca Hasil</h4>
+              <p>Diagram, tabel, dan narasi ditampilkan sesuai filter.</p>
+            </div>
+
+            <div class="flow-step">
+              <span>5</span>
+              <h4>Cek Berita</h4>
+              <p>User membuka berita pendukung dari berbagai sumber.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <footer class="footer"><div><strong>GeoSafe Yogyakarta</strong><p class="muted">Prototype UI multi-page untuk WebGIS zona kriminalitas.</p></div><a class="btn" href="peta.html">Mulai Peta →</a></footer>
+      <footer class="footer">
+        <div>
+          <strong>GeoSafe Yogyakarta</strong>
+          <p class="muted">Prototype UI multi-page untuk WebGIS zona kriminalitas.</p>
+        </div>
+        <a class="btn" href="peta.html">Mulai Peta →</a>
+      </footer>
     </main>
   </div>
+
   <script src="assets/js/common.js"></script>
 </body>
 </html>
