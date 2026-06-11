@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="assets/styles/theme.css" />
   <link rel="stylesheet" href="assets/styles/base.css" />
   <link rel="stylesheet" href="assets/styles/analysis.css" />
+  <link rel="stylesheet" href="assets/styles/style.css" />
 </head>
 <body data-page="analisis">
   <div class="cursor-glow" id="cursorGlow"></div>
@@ -19,50 +20,29 @@
       <nav class="navlinks" id="navlinks"><a href="index.html" data-page="home">Utama</a><a href="peta.html" data-page="peta">Peta</a><a href="analisis.html" data-page="analisis">Analisis</a><a href="berita.html" data-page="berita">Berita</a></nav>
       <div class="top-actions"><a class="btn" href="peta.html">← Peta</a><button class="btn primary" id="exportCsv" type="button">Export CSV</button><button class="mobile-toggle" id="mobileToggle" type="button">☰</button></div>
     </header>
-
     <main class="container">
       <section class="page-head">
         <div class="breadcrumb"><a href="index.html">Utama</a><span>/</span><a href="peta.html">Peta</a><span>/</span><span>Analisis</span></div>
         <div class="analysis-hero">
           <div>
             <div class="eyebrow"><span class="pulse-dot"></span> Hasil pembacaan zona kerawanan</div>
-            <h1 class="h2">Analisis skor zona, kejadian klitih, CCTV, blind spot, dan sumber berita.</h1>
-            <p class="lead">Halaman ini membaca <span class="code">Data Kejahatan Klitih.csv</span>, <span class="code">cctv_pemkot_yogyakarta_youtube_links.csv</span>, dan <span class="code">zona_kerawanan.geojson</span>. Klasifikasi zona tidak lagi dipaksa dari nama kecamatan, tetapi dibaca langsung dari atribut <span class="code">Klasifikas</span> pada GeoJSON.</p>
+            <h1 class="h2">Analisis skor zona, kejadian, CCTV, blind spot, sumber berita, dan koridor jalan.</h1>
+            <p class="lead">Halaman ini membaca data yang sudah tersedia di <span class="code">assets/data</span>, termasuk hasil pembobotan zona apabila file <span class="code">hasil_pembobotan_zona.csv/json</span> tersedia.</p>
             <div class="row-actions"><a class="btn" href="peta.html">Lihat Sebaran Peta</a><button class="btn primary" id="resetFilter" type="button">Reset Filter</button></div>
           </div>
           <div class="card"><div class="icon">🎚️</div><h3>Parameter aktif</h3><ul class="summary-list" id="settingsList" style="margin:14px 0 0 18px; color:#cab7ad; line-height:1.8"></ul></div>
         </div>
       </section>
-
-      <section class="section card wide">
-        <div class="icon">🔎</div><h3>Filter analisis</h3><p>Pilih zona, tahun, dan tipe sumber untuk membaca perubahan diagram, tabel prioritas, berita, dan narasi interpretasi.</p>
-        <div class="filters">
-          <div><label for="filterZone">Zona</label><select class="select" id="filterZone"><option value="all">Semua zona</option></select></div>
-          <div><label for="filterYear">Tahun</label><select class="select" id="filterYear"><option value="all">Semua tahun</option></select></div>
-          <div><label for="filterSource">Sumber</label><select class="select" id="filterSource"><option value="all">Semua sumber</option><option value="url">URL berita/medsos</option><option value="title">Judul/referensi saja</option></select></div>
-          <div><label for="filterTop">Berita tampil</label><select class="select" id="filterTop"><option value="6">6 sumber</option><option value="9" selected>9 sumber</option><option value="12">12 sumber</option><option value="99">Semua</option></select></div>
-          <div><label>Output utama</label><a class="btn" href="#tabel-zona">Tabel Zona</a></div>
-        </div>
-      </section>
-
+      <section class="section card wide"><div class="icon">🔎</div><h3>Filter analisis</h3><p>Pilih zona, tahun, dan tipe sumber untuk membaca perubahan diagram, tabel prioritas, berita, dan narasi interpretasi.</p><div class="filters"><div><label for="filterZone">Zona</label><select class="select" id="filterZone"><option value="all">Semua zona</option></select></div><div><label for="filterYear">Tahun</label><select class="select" id="filterYear"><option value="all">Semua tahun</option></select></div><div><label for="filterSource">Sumber</label><select class="select" id="filterSource"><option value="all">Semua sumber</option><option value="url">URL berita/medsos</option><option value="title">Judul/referensi saja</option></select></div><div><label for="filterTop">Berita tampil</label><select class="select" id="filterTop"><option value="6">6 sumber</option><option value="9" selected>9 sumber</option><option value="12">12 sumber</option><option value="99">Semua</option></select></div><div><label>Output utama</label><a class="btn" href="#tabel-zona">Tabel Zona</a></div></div></section>
       <section class="section"><div class="grid-4" id="statCards"></div></section>
-
-      <section class="section"><div class="grid-2">
-        <article class="card chart-card"><div class="icon">📊</div><h3>Skor dan kejadian per zona</h3><p>Skor mengikuti klasifikasi GeoJSON: Aman, Rawan, dan Sangat Rawan. Bar tambahan menampilkan jumlah kejadian sesuai filter.</p><div class="chart-wrap"><canvas id="riskBarChart"></canvas></div></article>
-        <article class="card chart-card"><div class="icon">🧩</div><h3>Komposisi kejadian per zona</h3><p>Diagram donat menampilkan persebaran titik kejadian terhadap zona kerawanan yang terbaca.</p><div class="chart-wrap"><canvas id="zoneDonutChart"></canvas></div></article>
-      </div></section>
-
-      <section class="section"><div class="grid-2">
-        <article class="card chart-card"><div class="icon">📈</div><h3>Tren kejadian per tahun</h3><p>Grafik garis menunjukkan jumlah kejadian berdasarkan tahun pada kolom tanggal.</p><div class="chart-wrap"><canvas id="trendLineChart"></canvas></div></article>
-        <article class="card chart-card"><div class="icon">📰</div><h3>Sumber paling sering muncul</h3><p>Grafik ini membantu membaca domain atau judul sumber yang paling banyak menjadi rujukan.</p><div class="chart-wrap"><canvas id="sourceBarChart"></canvas></div></article>
-      </div></section>
-
-      <section class="section"><div class="card wide"><div class="icon">🗞️</div><h3>Berita dan sumber kejadian</h3><p>Daftar ini berasal dari kolom URL/judul pada data kejadian. Jika berupa URL, tombol akan membuka sumber asli.</p><div class="news-grid" id="newsList"></div></div></section>
+      <section class="section"><div class="grid-2"><article class="card chart-card"><div class="icon">📊</div><h3>Skor dan kejadian per zona</h3><p>Skor memakai hasil pembobotan bila tersedia, lalu dikaitkan dengan jumlah kejadian.</p><div class="chart-wrap"><canvas id="riskBarChart"></canvas></div></article><article class="card chart-card"><div class="icon">🧩</div><h3>Komposisi kejadian per zona</h3><p>Diagram menampilkan persebaran titik kejadian terhadap zona kerawanan yang terbaca.</p><div class="chart-wrap"><canvas id="zoneDonutChart"></canvas></div></article></div></section>
+      <section class="section"><div class="grid-2"><article class="card chart-card"><div class="icon">📈</div><h3>Tren kejadian per tahun</h3><p>Grafik garis menunjukkan jumlah kejadian berdasarkan tahun pada data.</p><div class="chart-wrap"><canvas id="trendLineChart"></canvas></div></article><article class="card chart-card"><div class="icon">📰</div><h3>Sumber paling sering muncul</h3><p>Grafik membaca domain atau judul sumber yang paling banyak menjadi rujukan.</p><div class="chart-wrap"><canvas id="sourceBarChart"></canvas></div></article></div></section>
+      <section class="section"><div class="card wide"><div class="icon">🛣️</div><h3>Analisis koridor jalan rawan</h3><p>Ringkasan ini dibuat dari nama jalan/koridor yang muncul di data kejadian, tanpa menambahkan data jalan baru.</p><div class="corridor-grid" id="corridorCards"></div></div></section>
+      <section class="section"><div class="card wide"><div class="icon">🗞️</div><h3>Berita dan sumber kejadian</h3><p>Daftar ini berasal dari kolom URL/judul pada data kejadian. Jika berupa URL, tombol membuka sumber asli.</p><div class="news-grid" id="newsList"></div></div></section>
       <section class="section"><div class="card wide"><div class="icon">🧭</div><h3>Insight spasial dan rekomendasi awal</h3><p>Bagian ini menggabungkan klasifikasi zona, titik kejadian, jumlah CCTV, dan titik yang tidak tercakup radius 500 meter.</p><div class="recommendation-grid" id="insightCards"></div></div></section>
       <section class="section" id="tabel-zona"><div class="card wide"><div class="icon">🧾</div><h3>Tabel prioritas zona</h3><p>Tabel ini menjadi output utama untuk membaca hasil klasifikasi dan blind spot pada layer zona kerawanan.</p><br><div class="table-wrap"><table id="analysisTable"><thead><tr><th>Peringkat</th><th>Zona</th><th>Kejadian</th><th>Skor</th><th>Klasifikasi</th><th>CCTV dalam zona</th><th>Tercakup 500 m</th><th>Blind spot</th><th>Arahan</th></tr></thead><tbody></tbody></table></div></div></section>
       <section class="section"><div class="card wide"><div class="icon">💬</div><h3>Narasi interpretasi</h3><div id="narrative" class="narrative-box muted"></div></div></section>
-
-      <footer class="footer"><div class="footer-top"><div><strong>GeoSafe Yogyakarta</strong><p class="muted">Analisis pembobotan zona kerawanan kriminalitas, CCTV, blind spot, dan sumber kejadian.</p></div><div class="row-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="peta.html">Ke Peta →</a></div></div></footer>
+      <footer class="footer"><div class="footer-top"><div><strong>GeoSafe Yogyakarta</strong><p class="muted">Analisis pembobotan zona kerawanan kriminalitas, CCTV, blind spot, koridor, dan sumber kejadian.</p></div><div class="row-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="peta.html">Ke Peta →</a></div></div></footer>
     </main>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
