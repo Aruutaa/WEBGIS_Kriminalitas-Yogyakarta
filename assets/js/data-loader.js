@@ -1,19 +1,24 @@
 (function(){
+  const makePaths=(names)=>['assets/data/','data/','./assets/data/','./data/'].flatMap(base=>names.map(n=>base+n));
   const DATA_PATHS={
-    incidents:[
-      'assets/data/Data Kejahatan Klitih.csv','assets/data/Data Kejahatan Klitih.CSV','assets/data/data_kejahatan_klitih.csv','assets/data/kejadian_klitih.csv','assets/data/kejadian.csv'
-    ],
-    cctv:[
-      'assets/data/cctv_yogyakarta.csv','assets/data/cctv_pemkot_yogyakarta_youtube_links.csv','assets/data/cctv_pemkot_yogyakarta_youtube.csv','assets/data/cctv.csv','assets/data/data_cctv.csv'
-    ],
-    crowd:['assets/data/keramaian.csv','assets/data/titik_keramaian.csv','assets/data/titik_keramaian_yogyakarta.csv'],
-    zones:['assets/data/zona_kerawanan.geojson','assets/data/zona_kerawanan.json','assets/data/zona.geojson'],
-    admin:['assets/data/kota_yogyakarta_admin.geojson','assets/data/batas_administrasi.geojson','assets/data/admin.geojson','assets/data/kota_yogyakarta_admin.json'],
-    weights:['assets/data/hasil_pembobotan_zona.json','assets/data/hasil_pembobotan_zona.csv'],
-    support:['assets/data/Data Pendukung - Sosial dan Ekonomi.csv','assets/data/Data Pendukung - Sosial dan Ekonomi.json','assets/data/data_pendukung_sosial_ekonomi.csv']
+    incidents:makePaths(['Data Kejahatan Klitih.csv','Data Kejahatan Klitih.CSV','data_kejahatan_klitih.csv','kejadian_klitih.csv','kejadian.csv']),
+    cctv:makePaths(['cctv_yogyakarta.csv','cctv_yogyakarta(5).csv','cctv_pemkot_yogyakarta_youtube_links.csv','cctv_pemkot_yogyakarta_youtube_links(5).csv','cctv_pemkot_yogyakarta_youtube.csv','cctv.csv','data_cctv.csv']),
+    cctvStreams:makePaths(['cctv_pemkot_yogyakarta_youtube_links.csv','cctv_pemkot_yogyakarta_youtube_links(5).csv','cctv_pemkot_yogyakarta_youtube.csv']),
+    crowd:makePaths(['keramaian.csv','titik_keramaian.csv','titik_keramaian_yogyakarta.csv']),
+    zones:makePaths(['zona_kerawanan.geojson','zona_kerawanan.json','zona_kerawanan(2).geojson','zona.geojson']),
+    admin:makePaths(['kota_yogyakarta_admin.geojson','kota_yogyakarta_admin(4).geojson','batas_administrasi.geojson','admin.geojson','kota_yogyakarta_admin.json']),
+    weights:makePaths(['hasil_pembobotan_zona.json','hasil_pembobotan_zona.csv','hasil_pembobotan_zona(1).json','hasil_pembobotan_zona(2).csv']),
+    support:makePaths(['Data Pendukung - Sosial dan Ekonomi.csv','Data Pendukung - Sosial dan Ekonomi.json','Data Pendukung - Sosial dan Ekonomi(4).csv','data_pendukung_sosial_ekonomi.csv'])
   };
-  async function fetchText(path){ try{ const r=await fetch(path,{cache:'no-store'}); if(r.ok) return await r.text(); }catch(e){} return null; }
-  async function fetchJson(path){ try{ const r=await fetch(path,{cache:'no-store'}); if(r.ok) return await r.json(); }catch(e){} return null; }
+  async function tryFetch(path){
+    const tries=[path, encodeURI(path)];
+    for(const p of tries){
+      try{ const r=await fetch(p,{cache:'no-store'}); if(r.ok) return r; }catch(e){}
+    }
+    return null;
+  }
+  async function fetchText(path){ const r=await tryFetch(path); return r?await r.text():null; }
+  async function fetchJson(path){ const r=await tryFetch(path); return r?await r.json():null; }
   async function loadFirstJson(paths){ for(const p of paths){ const j=await fetchJson(p); if(j) return {path:p,data:j}; } return {path:null,data:{type:'FeatureCollection',features:[]}}; }
   async function loadAllCsv(paths){ const out=[],loaded=[]; for(const p of paths){ const t=await fetchText(p); if(t&&t.trim()){ out.push(...parseCSV(t).map(r=>({...r,__file:p}))); loaded.push(p); } } return {paths:loaded,data:out}; }
   async function loadSupport(paths){ const rows=[],loaded=[]; for(const p of paths){ if(/\.json$/i.test(p)){ const j=await fetchJson(p); if(j){ loaded.push(p); if(Array.isArray(j)) rows.push(...j); else if(Array.isArray(j.data)) rows.push(...j.data); else if(j.features) rows.push(...j.features.map(f=>({...f.properties,__geometry:f.geometry,__file:p}))); } } else { const t=await fetchText(p); if(t){ rows.push(...parseCSV(t).map(r=>({...r,__file:p}))); loaded.push(p); } } } return {paths:loaded,data:rows}; }
@@ -55,7 +60,31 @@
   function sourceType(src){ const s=String(src||'').toLowerCase(); if(!s) return 'Judul/referensi'; if(/instagram|tiktok|twitter|x\.com|facebook|youtube|youtu\.be|threads|whatsapp|medsos/.test(s)) return 'Media sosial'; if(/^https?:\/\//.test(s)) return 'Berita online'; return 'Judul/referensi'; }
   function corridor(text){ const s=String(text||'').replace(/\s+/g,' '); const pats=[/(?:Jl\.?|Jalan)\s+([A-Za-zÀ-ÿ0-9 .,'\-]{3,70})/i,/(Ring\s*Road\s*(?:Utara|Selatan|Barat|Timur)?)/i,/(Malioboro|Tugu|Gejayan|Seturan|Babarsari|Kaliurang|Magelang|Solo|Parangtritis|Imogiri|Godean|Wonosari|Palagan|Monjali|Affandi|Laksda Adisucipto|Sudirman|Mangkubumi|Tamansiswa|Veteran|Kusumanegara|HOS Cokroaminoto|Ahmad Dahlan|Janti)/i]; for(const p of pats){ const m=s.match(p); if(!m)continue; let v=(m[1]||m[0]).trim().replace(/[,;:|].*$/,'').replace(/\b(kecamatan|kelurahan|kota|kabupaten|yogyakarta|sleman|bantul).*$/i,'').trim(); if(!/^jalan/i.test(v)&&!/^ring/i.test(v)&&!['Malioboro','Tugu'].includes(v)) v='Jalan '+v; return v; } return ''; }
   function normalizeIncident(row,i){ const ll=latLon(row), dt=dateInfo(pick(row,['tanggal','tgl','date','waktu','tahun','tanggal kejadian','tanggal_kejadian'])); const src=pick(row,['url','link','tautan','sumber','berita','referensi','judul berita','source','media','link berita']); const title=pick(row,['judul','kejadian','kasus','peristiwa','keterangan','deskripsi','title','nama','ringkasan'])||`Kejadian ${i+1}`; const loc=pick(row,['lokasi','alamat','tempat','jalan','ruas jalan','nama jalan','tkp'])||title; const kec=pick(row,['kecamatan','kapanewon','wilayah','kelurahan','daerah','wadmkc','nama kecamatan'])||''; const zone=pick(row,['zona','klasifikasi','klasifikas','kelas','kerawanan','kelas zona'])||''; const image=pick(row,['gambar','image','foto','thumbnail','thumb','og_image','url gambar','link gambar','berita gambar']); const cor=corridor([loc,title,src,kec].join(' ')); return {id:'inc-'+i,raw:row,lat:ll.lat,lon:ll.lon,title,location:loc,kecamatan:kec,date:dt.text,year:dt.year,source:src,domain:domain(src),sourceType:sourceType(src),image,zone,corridor:cor}; }
-  function normalizeCctv(row,i){ const ll=latLon(row); const src=pick(row,['url','link','tautan','sumber','source','youtube','link cctv','link youtube','stream','link_stream']); const name=pick(row,['nama','nama cctv','cctv','lokasi cctv','lokasi','name','title','nama lokasi','nama_kamera'])||`CCTV ${i+1}`; const loc=pick(row,['lokasi','alamat','jalan','lokasi cctv','keterangan'])||name; return {id:'cam-'+i,raw:row,lat:ll.lat,lon:ll.lon,name,type:pick(row,['jenis','tipe','type','kategori','fungsi'])||'CCTV',location:loc,source:src,domain:domain(src)}; }
+  function normalizeCctv(row,i){
+    const ll=latLon(row);
+    const src=pick(row,['youtube_watch_url','youtube_embed_url','youtube_nocookie_embed_url','url','link','tautan','sumber','source','youtube','link cctv','link youtube','stream','link_stream','official_cctv_portal']);
+    const road=pick(row,['nama_jalan','jalan','ruas_jalan','ruas jalan','alamat_lengkap','alamat']);
+    const nm=pick(row,['nama_cctv','nama cctv','nama','cctv','lokasi cctv','lokasi','name','title','nama lokasi','nama_kamera','lokasi_tag']);
+    const name=nm||road||`CCTV ${i+1}`;
+    const loc=pick(row,['alamat_lengkap','alamat','lokasi','nama_jalan','jalan','lokasi cctv','keterangan','wilayah'])||name;
+    const type=pick(row,['jenis_cctv','jenis_view','jenis','tipe','type','kategori','fungsi','playlist_group'])||'CCTV';
+    const operator=pick(row,['operator','wilayah','sumber','channel_streams_url','official_cctv_portal'])||'';
+    return {id:'cam-'+i,raw:row,lat:ll.lat,lon:ll.lon,name,type,location:loc,source:src,domain:domain(src),operator,osmId:pick(row,['osm_id','id']),road,tag:pick(row,['lokasi_tag','tag','amenity']),file:row.__file||'',sourceLabel:operator||domain(src)||row.__file||'Data CCTV'};
+  }
+  function normalizeCctvStream(row,i){
+    return {
+      id:'stream-'+i,
+      raw:row,
+      name:pick(row,['nama_cctv','nama cctv','nama','title'])||`Live CCTV ${i+1}`,
+      wilayah:pick(row,['wilayah','lokasi','kecamatan'])||'',
+      group:pick(row,['playlist_group','grup','kategori'])||'',
+      type:pick(row,['jenis_view','jenis','tipe'])||'Live CCTV',
+      watch:pick(row,['youtube_watch_url','url','link','youtube'])||'',
+      embed:pick(row,['youtube_embed_url','youtube_nocookie_embed_url'])||'',
+      portal:pick(row,['official_cctv_portal','portal'])||'',
+      retrieved:pick(row,['retrieved_at','tanggal','date'])||''
+    };
+  }
   function normalizeCrowd(row,i){ const ll=latLon(row); const name=pick(row,['nama','lokasi','tempat','name','title','kawasan'])||`Keramaian ${i+1}`; return {id:'crowd-'+i,raw:row,lat:ll.lat,lon:ll.lon,name,location:pick(row,['lokasi','alamat','jalan','keterangan'])||name}; }
   function normalizeLighting(row,i){ const ll=latLon(row); const txt=Object.entries(row||{}).map(([k,v])=>`${k} ${v}`).join(' ').toLowerCase(); const maybeLight=/lampu|penerangan|pju|street\s*light|lighting|jalan terang|jalan gelap/.test(txt); if(!maybeLight && !(ll.lat!=null&&ll.lon!=null)) return null; if(!maybeLight && /sosial|ekonomi|penduduk|kemiskinan/.test(txt)) return null; const name=pick(row,['nama','lokasi','tempat','jalan','name','title','keterangan'])||`Penerangan ${i+1}`; return {id:'light-'+i,raw:row,lat:ll.lat,lon:ll.lon,name,location:pick(row,['lokasi','alamat','jalan','keterangan'])||name,type:pick(row,['jenis','tipe','type','kategori','status'])||'PJU/Penerangan'}; }
   function risk(z){ const s=String(z||'').toLowerCase(); if(s.includes('sangat'))return{label:'Sangat Rawan',score:90,cls:'danger'}; if(s.includes('rawan'))return{label:'Rawan',score:65,cls:'warn'}; if(s.includes('aman'))return{label:'Aman',score:30,cls:'safe'}; return{label:z||'Tidak diketahui',score:0,cls:'med'}; }
@@ -69,15 +98,28 @@
   function zoneStats(incidents,cctv,zones,weights){ const fs=zones?.features||[]; if(!fs.length){ const map=new Map(); incidents.forEach(i=>{ const k=i.zone||'Tidak diketahui'; if(!map.has(k)) map.set(k,{label:k,classification:k,score:risk(k).score,incidents:[],cctv:[],covered:0,blind:0}); map.get(k).incidents.push(i); }); return [...map.values()].sort((a,b)=>b.score-a.score||b.incidents.length-a.incidents.length); } return fs.map(f=>{ const label=getLabel(f), cls=getZoneName(f), r=risk(cls), inc=incidents.filter(i=>pointInFeature(i,f)), cams=cctv.filter(c=>pointInFeature(c,f)); const w=weightFor(label,weights)||weightFor(cls,weights)||{}; const score=num(pick(w,['skor','score','nilai','bobot','total']))??r.score; const covered=inc.filter(i=>i.covered500).length; return {feature:f,label,classification:cls,score,incidents:inc,cctv:cams,covered,blind:inc.length-covered}; }).sort((a,b)=>b.score-a.score||b.incidents.length-a.incidents.length); }
   function corridorStats(incidents,cctv){ const m=new Map(); (incidents||[]).forEach(i=>{ if(!i.corridor)return; if(!m.has(i.corridor))m.set(i.corridor,[]); m.get(i.corridor).push(i); }); return [...m.entries()].map(([name,items])=>{ const blind=items.filter(i=>!i.covered500).length; const nearests=items.map(i=>nearest(i,cctv).distance).filter(Number.isFinite); const zones={}; items.forEach(i=>{ const z=i.zone||'Tidak diketahui'; zones[z]=(zones[z]||0)+1; }); const dominant=Object.entries(zones).sort((a,b)=>b[1]-a[1])[0]?.[0]||'-'; const count=items.length; return {name,count,blind,incidents:items,dominant,nearest:nearests.length?Math.min(...nearests):Infinity,status:count>=3?'Prioritas tinggi':count>=2?'Perlu dipantau':'Terindikasi'}; }).sort((a,b)=>b.count-a.count||b.blind-a.blind); }
   function dedupePoints(arr,prefix){ const seen=new Set(); return (arr||[]).filter((x,i)=>{ if(x.lat==null||x.lon==null)return false; const key=[prefix,Math.round(x.lat*1e5),Math.round(x.lon*1e5),String(x.name||x.title||'').toLowerCase()].join('|'); if(seen.has(key))return false; seen.add(key); return true; }); }
+  function normText(s){ return String(s||'').toLowerCase().replace(/\([^)]*\)/g,' ').replace(/[^a-z0-9]+/g,' ').trim(); }
+  function tokens(s){ return normText(s).split(/\s+/).filter(w=>w.length>=4 && !['cctv','simpang','jalan','kota','yogyakarta','utara','timur','barat','selatan','fixed','view'].includes(w)); }
+  function matchStreams(cam,streams){
+    if(!streams||!streams.length) return [];
+    const hay=tokens([cam.name,cam.location,cam.road,cam.operator].join(' '));
+    if(!hay.length) return [];
+    return streams.map(s=>{ const ts=tokens([s.name,s.group,s.wilayah].join(' ')); const score=ts.filter(t=>hay.includes(t)).length; return {stream:s,score}; })
+      .filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,3).map(x=>x.stream);
+  }
   async function loadAll(){
-    const [incRaw,cctvRaw,crowdRaw,zones,admin,weights,supportRaw]=await Promise.all([loadAllCsv(DATA_PATHS.incidents),loadAllCsv(DATA_PATHS.cctv),loadAllCsv(DATA_PATHS.crowd),loadFirstJson(DATA_PATHS.zones),loadFirstJson(DATA_PATHS.admin),loadWeights(DATA_PATHS.weights),loadSupport(DATA_PATHS.support)]);
+    const [incRaw,cctvRaw,cctvStreamRaw,crowdRaw,zones,admin,weights,supportRaw]=await Promise.all([loadAllCsv(DATA_PATHS.incidents),loadAllCsv(DATA_PATHS.cctv),loadAllCsv(DATA_PATHS.cctvStreams),loadAllCsv(DATA_PATHS.crowd),loadFirstJson(DATA_PATHS.zones),loadFirstJson(DATA_PATHS.admin),loadWeights(DATA_PATHS.weights),loadSupport(DATA_PATHS.support)]);
     let incidents=dedupePoints(incRaw.data.map(normalizeIncident),'inc');
-    let cctv=dedupePoints(cctvRaw.data.map(normalizeCctv),'cctv');
+    const normalizedCctv=cctvRaw.data.map(normalizeCctv);
+    let cctv=dedupePoints(normalizedCctv,'cctv');
+    const cctvNoCoord=normalizedCctv.filter(c=>c.lat==null||c.lon==null);
+    const cctvStreams=cctvStreamRaw.data.map(normalizeCctvStream);
+    cctv.forEach(cam=>{ cam.streams=matchStreams(cam,cctvStreams); });
     let crowd=dedupePoints(crowdRaw.data.map(normalizeCrowd),'crowd');
     let lighting=dedupePoints(supportRaw.data.map(normalizeLighting).filter(Boolean),'light');
     incidents.forEach(i=>{ if(!i.zone){ const f=(zones.data.features||[]).find(f=>pointInFeature(i,f)); if(f)i.zone=getZoneName(f); } const n=nearest(i,cctv); i.nearestCctv=n.item; i.nearestCctvDistance=n.distance; i.covered500=n.distance<=500; });
     const zs=zoneStats(incidents,cctv,zones.data,weights);
-    return {incidents,cctv,crowd,lighting,zones:zones.data,admin:admin.data,weights,support:supportRaw.data,zoneStats:zs,loaded:{incidents:incRaw.paths,cctv:cctvRaw.paths,crowd:crowdRaw.paths,zones:zones.path,admin:admin.path,weights:weights.paths,support:supportRaw.paths}};
+    return {incidents,cctv,cctvNoCoord,cctvStreams,crowd,lighting,zones:zones.data,admin:admin.data,weights,support:supportRaw.data,zoneStats:zs,loaded:{incidents:incRaw.paths,cctv:cctvRaw.paths,cctvStreams:cctvStreamRaw.paths,crowd:crowdRaw.paths,zones:zones.path,admin:admin.path,weights:weights.paths,support:supportRaw.paths}};
   }
   window.GeoSafeData={DATA_PATHS,parseCSV,pick,latLon,risk,getZoneName,getLabel,pointInFeature,meters,nearest,corridorStats,loadAll};
 })();
