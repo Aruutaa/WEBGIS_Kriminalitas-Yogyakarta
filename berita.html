@@ -3,52 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Berita Kriminalitas | GeoSafe Yogyakarta</title>
+  <title>GeoSafe Yogyakarta | Sumber Berita Kriminalitas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/styles/theme.css" />
+  <link rel="stylesheet" href="assets/styles/base.css" />
+  <link rel="stylesheet" href="assets/styles/analysis.css" />
+  <link rel="stylesheet" href="assets/styles/news.css" />
 </head>
 <body data-page="berita">
   <div class="cursor-glow" id="cursorGlow"></div>
   <div class="shell">
     <header class="topbar">
-      <a href="index.html" class="brand"><div class="brand-mark"></div><div class="brand-text"><strong>GeoSafe Yogyakarta</strong><span>Katalog Berita Kriminalitas</span></div></a>
+      <a href="index.html" class="brand"><div class="brand-logo-box compact"><img src="assets/img/logo/logo-crimescope.png" alt="Logo GeoSafe" class="brand-logo"></div><div class="brand-text"><strong>GeoSafe Yogyakarta</strong><span>Katalog sumber kejadian kriminalitas</span></div></a>
       <nav class="navlinks" id="navlinks"><a href="index.html" data-page="home">Utama</a><a href="peta.html" data-page="peta">Peta</a><a href="analisis.html" data-page="analisis">Analisis</a><a href="berita.html" data-page="berita">Berita</a></nav>
-      <div class="top-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="peta.html">Peta</a><button class="mobile-toggle" id="mobileToggle">☰</button></div>
+      <div class="top-actions"><a class="btn" href="analisis.html">Analisis</a><a class="btn primary" href="peta.html">Peta</a><button class="mobile-toggle" id="mobileToggle" type="button">☰</button></div>
     </header>
 
     <main class="container">
       <section class="page-head">
-        <div class="breadcrumb"><a href="index.html">Halaman utama</a><span>/</span><span>Berita kriminalitas</span></div>
+        <div class="breadcrumb"><a href="index.html">Utama</a><span>/</span><span>Berita</span></div>
         <div class="section-head">
-          <div><div class="eyebrow"><span class="pulse-dot"></span> Halaman Berita</div><h1 class="h2">Katalog sumber berita kriminalitas untuk mendukung pembacaan peta risiko.</h1></div>
-          <p>Halaman ini menampilkan ringkasan sumber berita kriminalitas yang dapat dipakai untuk memeriksa konteks titik kejadian pada peta. Setiap kartu berisi sumber, tanggal, kategori kasus, deskripsi singkat, dan tombol menuju artikel asli.</p>
+          <div><div class="eyebrow"><span class="pulse-dot"></span> Katalog sumber kriminalitas</div><h1 class="h2">Sumber berita dan referensi yang menguatkan titik kejadian.</h1></div>
+          <p>Halaman ini tidak menyalin isi artikel penuh. Web hanya menampilkan judul/ringkasan pendek, sumber, tanggal, kecamatan, dan tombol untuk membuka sumber asli jika tersedia.</p>
         </div>
       </section>
 
-      <section class="section" style="padding-top:20px">
-        <div class="card wide">
-          <div class="icon">⚠️</div>
-          <h3>Catatan validasi sumber berita</h3>
-          <p>Untuk menjaga akurasi, isi berita sebaiknya berupa ringkasan pendek dari sumber asli di array <span class="code">newsData</span> pada <span class="code">assets/js/data.js</span>. Hindari menyalin isi artikel penuh; tampilkan judul, tanggal, sumber, kategori, ringkasan, dan tautan referensi.</p>
-        </div>
-      </section>
-
-      <section class="section" style="padding-top:20px">
+      <section class="section compact"><div class="card wide"><div class="icon">🔎</div><h3>Filter sumber</h3><p>Cari sumber berdasarkan judul, domain, kecamatan, tahun, atau jenis sumber.</p>
         <div class="news-toolbar">
-          <input class="field" id="newsSearch" type="search" placeholder="Cari judul, sumber, atau deskripsi berita..." />
-          <select class="select" id="newsType"><option value="all">Semua jenis</option><option value="Curanmor">Curanmor</option><option value="Pencurian">Pencurian</option><option value="Penganiayaan">Penganiayaan</option><option value="Narkotika">Narkotika</option><option value="Penipuan">Penipuan</option><option value="Kejahatan jalanan">Kejahatan jalanan</option></select>
-          <select class="select" id="newsSort"><option value="default">Urutan default</option><option value="source">Urut sumber</option><option value="type">Urut jenis</option></select>
+          <input class="field" id="newsSearch" type="search" placeholder="Cari sumber, kecamatan, atau tanggal..." />
+          <select class="select" id="newsType"><option value="all">Semua jenis</option><option value="Berita online">Berita online</option><option value="Media sosial">Media sosial</option><option value="Judul/referensi">Judul/referensi</option></select>
+          <select class="select" id="newsSort"><option value="date">Terbaru</option><option value="source">Sumber A-Z</option><option value="kecamatan">Kecamatan A-Z</option></select>
         </div>
-        <div class="news-grid" id="newsGrid"></div>
-      </section>
+      </div></section>
 
-      <footer class="footer"><div><strong>GeoSafe Yogyakarta</strong><p class="muted">Katalog sumber berita pendukung analisis kriminalitas.</p></div><div class="row-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="peta.html">Ke Peta →</a></div></footer>
+      <section class="section compact"><div class="news-grid-main" id="newsGrid"></div></section>
+      <footer class="footer"><div class="footer-top"><div><strong>GeoSafe Yogyakarta</strong><p class="muted">Katalog sumber pendukung untuk validasi titik kejadian kriminalitas.</p></div><a class="btn primary" href="peta.html">Kembali ke Peta →</a></div></footer>
     </main>
   </div>
-  <script src="assets/js/data.js"></script>
   <script src="assets/js/common.js"></script>
-  <script src="assets/js/berita.js"></script>
+  <script src="assets/js/data-loader.js"></script>
+  <script src="assets/js/news.js"></script>
 </body>
 </html>

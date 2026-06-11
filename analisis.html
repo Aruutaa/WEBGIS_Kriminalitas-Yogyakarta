@@ -3,115 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hasil Analisis | GeoSafe Yogyakarta</title>
+  <title>GeoSafe Yogyakarta | Analisis Zona Kerawanan</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css" />
-
-  <style>
-    :root{
-      --bg:#F7CCA9;--card:rgba(9,16,32,.78);--card2:rgba(15,24,45,.9);--stroke:rgba(255,255,255,.12);
-      --text:#1F1E2B;--muted:#6f5750;--cyan:#C89290;--blue:#402A20;--green:#AE995B;--yellow:#AE995B;--red:#B33D38;
-      --shadow:0 24px 70px rgba(0,0,0,.34);--radius:24px
-    }
-    body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 8%,rgba(200,146,144,.12),transparent 28%),radial-gradient(circle at 80% 18%,rgba(64,42,32,.13),transparent 30%),var(--bg);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
-    a{color:inherit;text-decoration:none} button,select{font:inherit}
-    .shell{min-height:100vh}.topbar{position:sticky;top:0;z-index:20;min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 24px;background:rgba(255,246,235,.78);border-bottom:1px solid var(--stroke);backdrop-filter:blur(20px)}
-    .brand{display:flex;align-items:center;gap:12px}.brand-mark{width:42px;height:42px;border-radius:16px;background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 0 24px rgba(200,146,144,.28);position:relative}.brand-mark:after{content:"";position:absolute;inset:11px;border-radius:50%;border:3px solid rgba(255,249,241,.9)}.brand-text strong{display:block;font-size:15px}.brand-text span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
-    .navlinks,.top-actions,.row-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.navlinks a,.btn{border:1px solid var(--stroke);background:rgba(255,255,255,.05);color:var(--text);padding:10px 14px;border-radius:999px;font-size:13px;font-weight:800;cursor:pointer}.navlinks a:hover,.btn:hover{border-color:rgba(200,146,144,.35)}.navlinks a[data-page="analisis"],.btn.primary{background:linear-gradient(135deg,rgba(200,146,144,.22),rgba(64,42,32,.18));border-color:rgba(200,146,144,.34)}
-    .mobile-toggle{display:none;border:1px solid var(--stroke);background:rgba(255,255,255,.05);color:white;border-radius:14px;padding:9px 12px}.container{width:min(1240px,calc(100% - 32px));margin:0 auto;padding:28px 0 42px}.breadcrumb{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:13px;margin-bottom:18px}.breadcrumb a{color:#1F1E2B}.analysis-hero{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr);gap:18px;align-items:stretch}.eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(200,146,144,.28);background:rgba(200,146,144,.08);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900;color:#402A20}.pulse-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(174,153,91,.55);animation:pulse 1.8s infinite}@keyframes pulse{70%{box-shadow:0 0 0 12px rgba(174,153,91,0)}100%{box-shadow:0 0 0 0 rgba(174,153,91,0)}}
-    .h2{font-size:clamp(30px,4vw,52px);line-height:1.05;margin:16px 0 12px;letter-spacing:-.04em}.lead{font-size:16px;color:#6f5750;line-height:1.7;margin:0 0 18px;max-width:780px}.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;border:1px solid var(--stroke);background:rgba(255,255,255,.06);padding:2px 7px;border-radius:8px}.section{margin-top:20px}.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:var(--card);border:1px solid var(--stroke);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;backdrop-filter:blur(18px);overflow:hidden}.card.wide{grid-column:1/-1}.card h3{margin:8px 0 6px;font-size:17px}.card p{margin:0;color:#6f5750;line-height:1.55;font-size:13px}.icon{width:42px;height:42px;border-radius:16px;background:rgba(255,255,255,.06);display:grid;place-items:center;border:1px solid var(--stroke);font-size:20px}.summary-list{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}.summary-list li,.mini-list li{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--stroke);background:rgba(255,255,255,.045);padding:10px 12px;border-radius:14px;color:#6f5750;font-size:12px}.summary-list b{color:#fff}.stat-card strong{font-size:30px;display:block;margin-top:8px}.stat-card span{font-size:12px;color:var(--muted)}.stat-card em{font-style:normal;font-size:12px;color:#8b746a;display:block;margin-top:6px}.chart-card{min-height:390px}.chart-wrap{height:280px;margin-top:14px;position:relative}.chart-wrap.tall{height:340px}.filters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}.filter-field label{display:block;font-size:11px;font-weight:900;color:#6f5750;margin-bottom:7px}.filter-field select{width:100%;height:42px;border-radius:14px;border:1px solid var(--stroke);background:#fff6eb;color:#fff;padding:0 12px;outline:none}.news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}.news-card{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:185px}.news-card h4{margin:0;font-size:14px;line-height:1.35}.news-meta{display:flex;flex-wrap:wrap;gap:6px}.tag{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);font-size:10.5px;color:#6f5750;font-weight:800}.tag.high{border-color:rgba(179,61,56,.38);color:#B33D38}.tag.med{border-color:rgba(174,153,91,.38);color:#7b6636}.tag.low{border-color:rgba(174,153,91,.32);color:#8b5555}.tag.live{border-color:rgba(200,146,144,.3);color:#402A20}.news-card p{font-size:12px}.news-card .btn{margin-top:auto;text-align:center;padding:9px 12px}.table-wrap{width:100%;overflow:auto;border-radius:18px;border:1px solid var(--stroke)}table{width:100%;border-collapse:collapse;min-width:880px;background:rgba(255,255,255,.025)}th,td{padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;font-size:12.5px;vertical-align:top}th{color:#1F1E2B;background:rgba(255,255,255,.055);font-size:11px;text-transform:uppercase;letter-spacing:.04em}td{color:#5d4944}.muted{color:var(--muted)!important}.narrative-box{font-size:14px;color:#5d4944;line-height:1.75}.narrative-box b{color:white}.recommendation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}.rec-card{border:1px solid var(--stroke);border-radius:18px;background:rgba(255,255,255,.045);padding:14px}.rec-card h4{margin:0 0 8px;font-size:14px}.rec-card p{font-size:12.5px}.footer{margin-top:28px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:24px;border-top:1px solid var(--stroke)}
-    @media(max-width:980px){.analysis-hero,.grid-4,.grid-3,.grid-2,.filters,.news-grid,.recommendation-grid{grid-template-columns:1fr}.navlinks{display:none}.mobile-toggle{display:inline-block}.topbar{padding:12px 16px;align-items:flex-start}.chart-card{min-height:350px}.chart-wrap{height:250px}.footer{flex-direction:column;align-items:flex-start}} 
-  
-
-    /* Itadori Palette Override untuk halaman analisis */
-    :root{--bg:#F7CCA9;--card:rgba(255,249,241,.90);--card2:rgba(255,249,241,.97);--stroke:rgba(64,42,32,.18);--text:#1F1E2B;--muted:#6f5750;--cyan:#C89290;--blue:#402A20;--green:#AE995B;--yellow:#F7CCA9;--red:#B33D38;--shadow:0 22px 58px rgba(64,42,32,.17);--radius:24px;}
-    body{background:radial-gradient(circle at 10% 8%,rgba(200,146,144,.36),transparent 32%),radial-gradient(circle at 86% 12%,rgba(174,153,91,.28),transparent 32%),radial-gradient(circle at 22% 88%,rgba(179,61,56,.14),transparent 30%),linear-gradient(180deg,#fff6eb 0%,#F7CCA9 56%,#efbea0 100%)!important;color:var(--text)!important;}
-    .topbar,.card,.news-card,.rec-card,.table-wrap{background:var(--card)!important;border-color:var(--stroke)!important;box-shadow:var(--shadow)!important;color:var(--text)!important;}.topbar{backdrop-filter:blur(18px)!important;}
-    .brand-text span,.lead,.card p,.muted,.summary-list li,.mini-list li,.narrative-box,.stat-card span,.stat-card em{color:var(--muted)!important;}.brand-text strong,h1,h2,h3,h4,td b,.narrative-box b,.summary-list b{color:var(--text)!important;}
-    .navlinks a,.btn,.mobile-toggle,.filter-field select,.summary-list li,.mini-list li{background:rgba(255,249,241,.76)!important;border-color:var(--stroke)!important;color:var(--text)!important;} .filter-field select option{background:#fff6eb!important;color:var(--text)!important;}.btn:hover,.navlinks a:hover{border-color:rgba(179,61,56,.36)!important}.btn.primary,.navlinks a[data-page="analisis"]{background:linear-gradient(135deg,#B33D38,#C89290)!important;border-color:rgba(179,61,56,.55)!important;color:#fff9f1!important;}
-    .eyebrow,.code{background:rgba(174,153,91,.18)!important;border-color:rgba(174,153,91,.36)!important;color:#402A20!important;}.icon,.brand-mark{background:linear-gradient(135deg,rgba(179,61,56,.16),rgba(200,146,144,.22),rgba(174,153,91,.20))!important;box-shadow:none!important;border-color:var(--stroke)!important;}.brand-mark:after{border-color:rgba(31,30,43,.22)!important;}
-    th{background:rgba(174,153,91,.18)!important;color:#402A20!important;}td{color:#5d4944!important;}.tag.high{background:rgba(179,61,56,.12)!important;border-color:rgba(179,61,56,.42)!important;color:#B33D38!important;}.tag.med{background:rgba(174,153,91,.16)!important;border-color:rgba(174,153,91,.48)!important;color:#7b6636!important;}.tag.low,.tag.live{background:rgba(200,146,144,.16)!important;border-color:rgba(200,146,144,.42)!important;color:#8b5555!important;}.pulse-dot{background:#B33D38!important;box-shadow:0 0 0 0 rgba(179,61,56,.40)!important;}
-
-
-  </style>
+  <link rel="stylesheet" href="assets/styles/theme.css" />
+  <link rel="stylesheet" href="assets/styles/base.css" />
+  <link rel="stylesheet" href="assets/styles/analysis.css" />
 </head>
 <body data-page="analisis">
+  <div class="cursor-glow" id="cursorGlow"></div>
   <div class="shell">
     <header class="topbar">
-      <a href="index.html" class="brand"><div class="brand-mark"></div><div class="brand-text"><strong>GeoSafe Yogyakarta</strong><span>Analisis Zona Rawan Kriminalitas</span></div></a>
+      <a href="index.html" class="brand"><div class="brand-logo-box compact"><img src="assets/img/logo/logo-crimescope.png" alt="Logo GeoSafe" class="brand-logo"></div><div class="brand-text"><strong>GeoSafe Yogyakarta</strong><span>Analisis zona kerawanan kriminalitas</span></div></a>
       <nav class="navlinks" id="navlinks"><a href="index.html" data-page="home">Utama</a><a href="peta.html" data-page="peta">Peta</a><a href="analisis.html" data-page="analisis">Analisis</a><a href="berita.html" data-page="berita">Berita</a></nav>
-      <div class="top-actions"><a class="btn" href="peta.html">← Peta</a><button class="btn primary" id="exportCsv">Export CSV</button><button class="mobile-toggle" id="mobileToggle">☰</button></div>
+      <div class="top-actions"><a class="btn" href="peta.html">← Peta</a><button class="btn primary" id="exportCsv" type="button">Export CSV</button><button class="mobile-toggle" id="mobileToggle" type="button">☰</button></div>
     </header>
 
     <main class="container">
       <section class="page-head">
-        <div class="breadcrumb"><a href="index.html">Halaman utama</a><span>/</span><a href="peta.html">Peta</a><span>/</span><span>Hasil analisis</span></div>
+        <div class="breadcrumb"><a href="index.html">Utama</a><span>/</span><a href="peta.html">Peta</a><span>/</span><span>Analisis</span></div>
         <div class="analysis-hero">
           <div>
-            <div class="eyebrow"><span class="pulse-dot"></span> Halaman Analisis Klitih</div>
-            <h1 class="h2">Hasil pembobotan zona, tren kejadian, sumber berita, dan interpretasi wilayah rawan kriminalitas.</h1>
-            <p class="lead">Halaman ini membaca <span class="code">assets/data/Data Kejahatan Klitih.csv</span> dan <span class="code">assets/data/hasil_pembobotan_zona.json</span>. Data diringkas menjadi tren waktu, prioritas kecamatan, sumber berita, cakupan CCTV, blind spot, dan narasi analisis kriminalitas.</p>
-            <div class="row-actions"><a class="btn" href="peta.html">Lihat Sebaran Peta</a><button class="btn primary" id="resetFilter">Reset Filter</button></div>
+            <div class="eyebrow"><span class="pulse-dot"></span> Hasil pembacaan zona kerawanan</div>
+            <h1 class="h2">Analisis skor zona, kejadian klitih, CCTV, blind spot, dan sumber berita.</h1>
+            <p class="lead">Halaman ini membaca <span class="code">Data Kejahatan Klitih.csv</span>, <span class="code">cctv_pemkot_yogyakarta_youtube_links.csv</span>, dan <span class="code">zona_kerawanan.geojson</span>. Klasifikasi zona tidak lagi dipaksa dari nama kecamatan, tetapi dibaca langsung dari atribut <span class="code">Klasifikas</span> pada GeoJSON.</p>
+            <div class="row-actions"><a class="btn" href="peta.html">Lihat Sebaran Peta</a><button class="btn primary" id="resetFilter" type="button">Reset Filter</button></div>
           </div>
-          <div class="card"><div class="icon">🎚️</div><h3>Parameter aktif</h3><ul class="summary-list" id="settingsList"></ul></div>
+          <div class="card"><div class="icon">🎚️</div><h3>Parameter aktif</h3><ul class="summary-list" id="settingsList" style="margin:14px 0 0 18px; color:#cab7ad; line-height:1.8"></ul></div>
         </div>
       </section>
 
       <section class="section card wide">
-        <div class="icon">🔎</div><h3>Filter analisis</h3><p>Pilih kecamatan, tahun, cakupan wilayah, dan jenis sumber untuk melihat perubahan diagram, tabel prioritas, daftar berita, dan narasi analisis.</p>
+        <div class="icon">🔎</div><h3>Filter analisis</h3><p>Pilih zona, tahun, dan tipe sumber untuk membaca perubahan diagram, tabel prioritas, berita, dan narasi interpretasi.</p>
         <div class="filters">
-          <div class="filter-field"><label for="filterKecamatan">Kecamatan</label><select id="filterKecamatan"><option value="all">Semua</option></select></div>
-          <div class="filter-field"><label for="filterYear">Tahun</label><select id="filterYear"><option value="all">Semua</option></select></div>
-          <div class="filter-field"><label for="filterScope">Cakupan wilayah</label><select id="filterScope"><option value="all">Semua DIY</option><option value="kota">Kota Yogyakarta saja</option><option value="luar">Luar Kota Yogyakarta</option></select></div>
-          <div class="filter-field"><label for="filterSource">Sumber data</label><select id="filterSource"><option value="all">Semua sumber</option><option value="url">Tautan berita/medsos</option><option value="title">Judul/sumber tanpa link</option></select></div>
-          <div class="filter-field"><label for="filterTop">Jumlah berita tampil</label><select id="filterTop"><option value="6">6 berita</option><option value="9" selected>9 berita</option><option value="12">12 berita</option><option value="99">Semua</option></select></div>
+          <div><label for="filterZone">Zona</label><select class="select" id="filterZone"><option value="all">Semua zona</option></select></div>
+          <div><label for="filterYear">Tahun</label><select class="select" id="filterYear"><option value="all">Semua tahun</option></select></div>
+          <div><label for="filterSource">Sumber</label><select class="select" id="filterSource"><option value="all">Semua sumber</option><option value="url">URL berita/medsos</option><option value="title">Judul/referensi saja</option></select></div>
+          <div><label for="filterTop">Berita tampil</label><select class="select" id="filterTop"><option value="6">6 sumber</option><option value="9" selected>9 sumber</option><option value="12">12 sumber</option><option value="99">Semua</option></select></div>
+          <div><label>Output utama</label><a class="btn" href="#tabel-zona">Tabel Zona</a></div>
         </div>
       </section>
 
       <section class="section"><div class="grid-4" id="statCards"></div></section>
 
-      <section class="section">
-        <div class="grid-2">
-          <article class="card chart-card"><div class="icon">📊</div><h3>Skor risiko per kecamatan</h3><p>Skor menampilkan prioritas wilayah berdasarkan hasil pembobotan zona dan ringkasan titik kejadian yang terbaca.</p><div class="chart-wrap"><canvas id="riskBarChart"></canvas></div></article>
-          <article class="card chart-card"><div class="icon">🧩</div><h3>Komposisi cakupan wilayah</h3><p>Diagram donat membandingkan titik yang berada di Kota Yogyakarta dan luar Kota Yogyakarta.</p><div class="chart-wrap"><canvas id="scopeDonutChart"></canvas></div></article>
-        </div>
-      </section>
+      <section class="section"><div class="grid-2">
+        <article class="card chart-card"><div class="icon">📊</div><h3>Skor dan kejadian per zona</h3><p>Skor mengikuti klasifikasi GeoJSON: Aman, Rawan, dan Sangat Rawan. Bar tambahan menampilkan jumlah kejadian sesuai filter.</p><div class="chart-wrap"><canvas id="riskBarChart"></canvas></div></article>
+        <article class="card chart-card"><div class="icon">🧩</div><h3>Komposisi kejadian per zona</h3><p>Diagram donat menampilkan persebaran titik kejadian terhadap zona kerawanan yang terbaca.</p><div class="chart-wrap"><canvas id="zoneDonutChart"></canvas></div></article>
+      </div></section>
 
-      <section class="section">
-        <div class="grid-2">
-          <article class="card chart-card"><div class="icon">📈</div><h3>Tren kejadian per waktu</h3><p>Diagram garis menunjukkan jumlah titik berdasarkan bulan/tahun dari tanggal unggah atau tanggal kejadian pada data.</p><div class="chart-wrap"><canvas id="trendLineChart"></canvas></div></article>
-          <article class="card chart-card"><div class="icon">📰</div><h3>Sumber berita paling sering muncul</h3><p>Diagram ini membantu membaca sumber/tautan berita yang paling banyak menjadi rujukan titik kejadian.</p><div class="chart-wrap"><canvas id="sourceBarChart"></canvas></div></article>
-        </div>
-      </section>
+      <section class="section"><div class="grid-2">
+        <article class="card chart-card"><div class="icon">📈</div><h3>Tren kejadian per tahun</h3><p>Grafik garis menunjukkan jumlah kejadian berdasarkan tahun pada kolom tanggal.</p><div class="chart-wrap"><canvas id="trendLineChart"></canvas></div></article>
+        <article class="card chart-card"><div class="icon">📰</div><h3>Sumber paling sering muncul</h3><p>Grafik ini membantu membaca domain atau judul sumber yang paling banyak menjadi rujukan.</p><div class="chart-wrap"><canvas id="sourceBarChart"></canvas></div></article>
+      </div></section>
 
-      <section class="section">
-        <div class="card wide">
-          <div class="icon">🗞️</div><h3>Berita dan link sumber titik klitih</h3><p>Daftar ini diambil dari kolom <span class="code">URL</span> pada CSV. Jika isinya berupa tautan, tombol akan membuka sumber asli. Jika berupa judul saja, sistem tetap menampilkannya sebagai sumber data.</p>
-          <div class="news-grid" id="newsList"></div>
-        </div>
-      </section>
+      <section class="section"><div class="card wide"><div class="icon">🗞️</div><h3>Berita dan sumber kejadian</h3><p>Daftar ini berasal dari kolom URL/judul pada data kejadian. Jika berupa URL, tombol akan membuka sumber asli.</p><div class="news-grid" id="newsList"></div></div></section>
+      <section class="section"><div class="card wide"><div class="icon">🧭</div><h3>Insight spasial dan rekomendasi awal</h3><p>Bagian ini menggabungkan klasifikasi zona, titik kejadian, jumlah CCTV, dan titik yang tidak tercakup radius 500 meter.</p><div class="recommendation-grid" id="insightCards"></div></div></section>
+      <section class="section" id="tabel-zona"><div class="card wide"><div class="icon">🧾</div><h3>Tabel prioritas zona</h3><p>Tabel ini menjadi output utama untuk membaca hasil klasifikasi dan blind spot pada layer zona kerawanan.</p><br><div class="table-wrap"><table id="analysisTable"><thead><tr><th>Peringkat</th><th>Zona</th><th>Kejadian</th><th>Skor</th><th>Klasifikasi</th><th>CCTV dalam zona</th><th>Tercakup 500 m</th><th>Blind spot</th><th>Arahan</th></tr></thead><tbody></tbody></table></div></div></section>
+      <section class="section"><div class="card wide"><div class="icon">💬</div><h3>Narasi interpretasi</h3><div id="narrative" class="narrative-box muted"></div></div></section>
 
-      <section class="section">
-        <div class="card wide"><div class="icon">🧭</div><h3>Insight spasial dan prioritas</h3><p>Bagian ini membaca pola titik berdasarkan kecamatan, cakupan Kota Yogyakarta, kedekatan CCTV, dan pengulangan sumber berita.</p><div class="recommendation-grid" id="insightCards"></div></div>
-      </section>
-
-      <section class="section">
-        <div class="card wide"><div class="icon">🧾</div><h3>Tabel prioritas wilayah</h3><p>Tabel ini menjadi output utama untuk membaca wilayah prioritas berdasarkan skor pembobotan zona yang sudah dimasukkan ke web.</p><br><div class="table-wrap"><table id="analysisTable"><thead><tr><th>Peringkat</th><th>Kecamatan</th><th>Jumlah Titik</th><th>Skor Risiko</th><th>Kategori</th><th>Sumber Dominan</th><th>Detail Pembobotan</th><th>Arahan Analisis</th></tr></thead><tbody></tbody></table></div></div>
-      </section>
-
-      <section class="section">
-        <div class="card wide"><div class="icon">💬</div><h3>Narasi interpretasi</h3><div id="narrative" class="narrative-box muted"></div></div>
-      </section>
-
-      <footer class="footer"><div><strong>GeoSafe Yogyakarta</strong><p class="muted">Halaman hasil analisis data kriminalitas, pembobotan zona, dan sumber berita.</p></div><div class="row-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="peta.html">Ke Peta →</a></div></footer>
+      <footer class="footer"><div class="footer-top"><div><strong>GeoSafe Yogyakarta</strong><p class="muted">Analisis pembobotan zona kerawanan kriminalitas, CCTV, blind spot, dan sumber kejadian.</p></div><div class="row-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="peta.html">Ke Peta →</a></div></div></footer>
     </main>
   </div>
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="assets/js/common.js"></script>
-  <script src="assets/js/analisis.js"></script>
+  <script src="assets/js/data-loader.js"></script>
+  <script src="assets/js/analysis.js"></script>
 </body>
 </html>

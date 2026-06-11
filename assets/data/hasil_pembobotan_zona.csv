@@ -1,15 +1,4 @@
-﻿peringkat,kecamatan,jumlah_kejadian,kejadian_tercakup_cctv_500m,blindspot_kejadian,jumlah_cctv_resmi,kepadatan_jiwa_km2,jumlah_penduduk,luas_km2,jumlah_sumber_unik,indeks_kejadian,indeks_kepadatan,indeks_blindspot_cctv,indeks_sumber,skor_akhir,kategori,rekomendasi
-1,Jetis,9,2,7,3,13646,23500,1.72,8,100,74,61,100,87,Tinggi,"Prioritaskan patroli, validasi blind spot CCTV, dan evaluasi penerangan/akses pada jam rawan."
-2,Umbulharjo,8,1,7,2,8220,68400,8.32,6,89,45,89,75,78,Tinggi,"Prioritaskan patroli, validasi blind spot CCTV, dan evaluasi penerangan/akses pada jam rawan."
-3,Mantrijeron,5,0,5,0,12633,33800,2.68,3,56,69,100,38,65,Sedang,Pantau sebagai prioritas menengah; cek ulang bukti kejadian dan gap CCTV sebelum ditetapkan sebagai zona rawan utama.
-4,Kotagede,3,0,3,0,11253,33600,2.99,3,33,61,100,38,53,Sedang,Pantau sebagai prioritas menengah; cek ulang bukti kejadian dan gap CCTV sebelum ditetapkan sebagai zona rawan utama.
-5,Danurejan,3,2,1,2,17053,18900,1.11,3,33,93,33,38,46,Sedang,Pantau sebagai prioritas menengah; cek ulang bukti kejadian dan gap CCTV sebelum ditetapkan sebagai zona rawan utama.
-6,Gondomanan,4,2,2,3,11245,12800,1.14,3,44,61,31,38,44,Rendah,Monitoring rutin; jadikan pembanding dan tetap validasi jika muncul kejadian baru.
-7,Mergangsan,2,0,2,3,12561,28900,2.3,2,22,68,81,25,43,Rendah,Monitoring rutin; jadikan pembanding dan tetap validasi jika muncul kejadian baru.
-8,Pakualaman,1,0,1,0,14204,9200,0.65,1,11,77,100,12,42,Rendah,Monitoring rutin; jadikan pembanding dan tetap validasi jika muncul kejadian baru.
-9,Wirobrajan,3,3,0,1,14028,24800,1.77,2,33,76,30,25,40,Rendah,Monitoring rutin; jadikan pembanding dan tetap validasi jika muncul kejadian baru.
-10,Tegalrejo,1,0,1,0,11751,34800,2.96,1,11,64,100,12,40,Rendah,Monitoring rutin; jadikan pembanding dan tetap validasi jika muncul kejadian baru.
-11,Gondokusuman,2,0,2,7,9299,37100,3.99,2,22,51,75,25,39,Rendah,Monitoring rutin; jadikan pembanding dan tetap validasi jika muncul kejadian baru.
-12,Ngampilan,0,0,0,0,18345,15400,0.84,0,0,100,60,0,32,Rendah,Monitoring rutin; jadikan pembanding dan tetap validasi jika muncul kejadian baru.
-13,Gedongtengen,0,0,0,0,16798,16600,0.99,0,0,92,60,0,30,Rendah,Monitoring rutin; jadikan pembanding dan tetap validasi jika muncul kejadian baru.
-14,Kraton,0,0,0,0,13101,18000,1.37,0,0,71,60,0,26,Rendah,Monitoring rutin; jadikan pembanding dan tetap validasi jika muncul kejadian baru.
+id,nama_zona,gridcode,klasifikasi,kategori,skor_akhir,shape_area,shape_length,rekomendasi
+1,Zona Aman,1,Aman,Rendah,25,0.00068104714,0.42020564274,Pertahankan pemantauan rutin dan jadikan area pembanding aman.
+2,Zona Rawan,2,Rawan,Sedang,65,0.00067813737,0.53603545398,"Monitoring berkala, cek blind spot CCTV, dan validasi titik kejadian."
+3,Zona Sangat Rawan,3,Sangat Rawan,Tinggi,90,0.00071237258,0.26183402662,Patroli intensif dan pemantauan CCTV prioritas pada jam rawan.
