@@ -13,7 +13,7 @@
   <div class="cursor-glow" id="cursorGlow"></div>
   <div class="shell">
     <header class="topbar">
-      <a href="index.html" class="brand"><div class="brand-mark"></div><div class="brand-text"><strong>CrimeScope YK</strong><span>WebGIS Zona Kriminalitas</span></div></a>
+      <a href="index.html" class="brand"><div class="brand-mark"></div><div class="brand-text"><strong>GeoSafe Yogyakarta</strong><span>Katalog Berita Kriminalitas</span></div></a>
       <nav class="navlinks" id="navlinks"><a href="index.html" data-page="home">Utama</a><a href="peta.html" data-page="peta">Peta</a><a href="analisis.html" data-page="analisis">Analisis</a><a href="berita.html" data-page="berita">Berita</a></nav>
       <div class="top-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="peta.html">Peta</a><button class="mobile-toggle" id="mobileToggle">☰</button></div>
     </header>
@@ -22,16 +22,16 @@
       <section class="page-head">
         <div class="breadcrumb"><a href="index.html">Halaman utama</a><span>/</span><span>Berita kriminalitas</span></div>
         <div class="section-head">
-          <div><div class="eyebrow"><span class="pulse-dot"></span> Halaman Berita</div><h1 class="h2">Katalog berita kriminalitas dalam format poster digital.</h1></div>
-          <p>Halaman ini disiapkan untuk menampilkan berita dari berbagai sumber. Setiap kartu berisi visual/poster, sumber, tanggal, kategori, deskripsi singkat, dan tombol menuju artikel asli.</p>
+          <div><div class="eyebrow"><span class="pulse-dot"></span> Halaman Berita</div><h1 class="h2">Katalog sumber berita kriminalitas untuk mendukung pembacaan peta risiko.</h1></div>
+          <p>Halaman ini menampilkan ringkasan sumber berita kriminalitas yang dapat dipakai untuk memeriksa konteks titik kejadian pada peta. Setiap kartu berisi sumber, tanggal, kategori kasus, deskripsi singkat, dan tombol menuju artikel asli.</p>
         </div>
       </section>
 
       <section class="section" style="padding-top:20px">
         <div class="card wide">
           <div class="icon">⚠️</div>
-          <h3>Catatan pengisian berita</h3>
-          <p>Karena project ini masih HTML statis, berita aktual perlu dimasukkan ke array <span class="code">newsData</span> di <span class="code">assets/js/data.js</span>. Jangan menulis ulang isi berita secara penuh; cukup gunakan ringkasan pendek, sumber, tanggal, dan link ke artikel asli.</p>
+          <h3>Catatan validasi sumber berita</h3>
+          <p>Untuk menjaga akurasi, isi berita sebaiknya berupa ringkasan pendek dari sumber asli di array <span class="code">newsData</span> pada <span class="code">assets/js/data.js</span>. Hindari menyalin isi artikel penuh; tampilkan judul, tanggal, sumber, kategori, ringkasan, dan tautan referensi.</p>
         </div>
       </section>
 
@@ -44,7 +44,7 @@
         <div class="news-grid" id="newsGrid"></div>
       </section>
 
-      <footer class="footer"><div><strong>GeoSafe Yogyakarta</strong><p class="muted">Halaman katalog berita pendukung WebGIS.</p></div><div class="row-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="peta.html">Ke Peta →</a></div></footer>
+      <footer class="footer"><div><strong>GeoSafe Yogyakarta</strong><p class="muted">Katalog sumber berita pendukung analisis kriminalitas.</p></div><div class="row-actions"><a class="btn" href="index.html">← Utama</a><a class="btn primary" href="peta.html">Ke Peta →</a></div></footer>
     </main>
   </div>
   <script src="assets/js/data.js"></script>

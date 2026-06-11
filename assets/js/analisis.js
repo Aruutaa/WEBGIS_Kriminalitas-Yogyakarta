@@ -1,5 +1,5 @@
 // ============================================================
-// CrimeScope Yogyakarta - analisis.js
+// GeoSafe Yogyakarta - analisis.js
 // Membaca Data Kejahatan Klitih.csv lalu membuat diagram, berita,
 // tabel prioritas, insight spasial sederhana, dan narasi otomatis.
 // ============================================================
@@ -872,8 +872,8 @@ function renderCharts() {
   destroyChart("riskBarChart");
   state.charts.riskBarChart = new Chart(document.getElementById("riskBarChart"), {
     type:"bar",
-    data:{ labels:areaTop.map(x=>x.kecamatan), datasets:[{ label:"Skor risiko", data:areaTop.map(x=>x.score), borderWidth:1, borderRadius:10, backgroundColor:"rgba(255,200,87,.72)", borderColor:"rgba(255,184,77,.95)" }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:"#dbeafe" } } }, scales:{ x:{ ticks:{ color:"#9fb0c8" }, grid:{ color:"rgba(255,255,255,.06)" } }, y:{ beginAtZero:true, max:100, ticks:{ color:"#9fb0c8" }, grid:{ color:"rgba(255,255,255,.06)" } } } }
+    data:{ labels:areaTop.map(x=>x.kecamatan), datasets:[{ label:"Skor risiko", data:areaTop.map(x=>x.score), borderWidth:1, borderRadius:10, backgroundColor:"rgba(174,153,91,.76)", borderColor:"rgba(174,153,91,.95)" }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:"#1F1E2B" } } }, scales:{ x:{ ticks:{ color:"#6f5750" }, grid:{ color:"rgba(64,42,32,.10)" } }, y:{ beginAtZero:true, max:100, ticks:{ color:"#6f5750" }, grid:{ color:"rgba(64,42,32,.10)" } } } }
   });
 
   const kota = state.filtered.filter(r=>r.kotaYogya).length;
@@ -881,24 +881,24 @@ function renderCharts() {
   destroyChart("scopeDonutChart");
   state.charts.scopeDonutChart = new Chart(document.getElementById("scopeDonutChart"), {
     type:"doughnut",
-    data:{ labels:["Kota Yogyakarta", "Luar Kota Yogyakarta"], datasets:[{ data:[kota, luar], backgroundColor:["rgba(82,217,155,.72)", "rgba(141,123,255,.60)"], borderColor:["rgba(82,217,155,.95)", "rgba(141,123,255,.88)"], borderWidth:1 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ color:"#dbeafe" } } } }
+    data:{ labels:["Kota Yogyakarta", "Luar Kota Yogyakarta"], datasets:[{ data:[kota, luar], backgroundColor:["rgba(179,61,56,.72)", "rgba(200,146,144,.64)"], borderColor:["rgba(179,61,56,.95)", "rgba(200,146,144,.90)"], borderWidth:1 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ color:"#1F1E2B" } } } }
   });
 
   const trend = countBy(state.filtered, r=>r.bulan).filter(([k])=>k !== "Tidak diketahui").sort((a,b)=>a[0].localeCompare(b[0]));
   destroyChart("trendLineChart");
   state.charts.trendLineChart = new Chart(document.getElementById("trendLineChart"), {
     type:"line",
-    data:{ labels:trend.map(x=>x[0]), datasets:[{ label:"Jumlah titik", data:trend.map(x=>x[1]), tension:.35, fill:true, backgroundColor:"rgba(116,185,255,.18)", borderColor:"rgba(116,185,255,.95)", pointBackgroundColor:"rgba(116,185,255,.95)" }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:"#dbeafe" } } }, scales:{ x:{ ticks:{ color:"#9fb0c8", maxRotation:45, minRotation:0 }, grid:{ color:"rgba(255,255,255,.06)" } }, y:{ beginAtZero:true, ticks:{ color:"#9fb0c8", precision:0 }, grid:{ color:"rgba(255,255,255,.06)" } } } }
+    data:{ labels:trend.map(x=>x[0]), datasets:[{ label:"Jumlah titik", data:trend.map(x=>x[1]), tension:.35, fill:true, backgroundColor:"rgba(200,146,144,.20)", borderColor:"rgba(64,42,32,.92)", pointBackgroundColor:"rgba(179,61,56,.92)" }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:"#1F1E2B" } } }, scales:{ x:{ ticks:{ color:"#6f5750", maxRotation:45, minRotation:0 }, grid:{ color:"rgba(64,42,32,.10)" } }, y:{ beginAtZero:true, ticks:{ color:"#6f5750", precision:0 }, grid:{ color:"rgba(64,42,32,.10)" } } } }
   });
 
   const sources = state.newsStats.slice(0, 8);
   destroyChart("sourceBarChart");
   state.charts.sourceBarChart = new Chart(document.getElementById("sourceBarChart"), {
     type:"bar",
-    data:{ labels:sources.map(x=>x.domain.length>20 ? x.domain.slice(0,20)+"…" : x.domain), datasets:[{ label:"Jumlah titik", data:sources.map(x=>x.count), borderWidth:1, borderRadius:10, backgroundColor:"rgba(255,107,107,.58)", borderColor:"rgba(255,107,107,.95)" }] },
-    options:{ indexAxis:"y", responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:"#dbeafe" } } }, scales:{ x:{ beginAtZero:true, ticks:{ color:"#9fb0c8", precision:0 }, grid:{ color:"rgba(255,255,255,.06)" } }, y:{ ticks:{ color:"#9fb0c8" }, grid:{ color:"rgba(255,255,255,.06)" } } } }
+    data:{ labels:sources.map(x=>x.domain.length>20 ? x.domain.slice(0,20)+"…" : x.domain), datasets:[{ label:"Jumlah titik", data:sources.map(x=>x.count), borderWidth:1, borderRadius:10, backgroundColor:"rgba(179,61,56,.62)", borderColor:"rgba(179,61,56,.95)" }] },
+    options:{ indexAxis:"y", responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:"#1F1E2B" } } }, scales:{ x:{ beginAtZero:true, ticks:{ color:"#6f5750", precision:0 }, grid:{ color:"rgba(64,42,32,.10)" } }, y:{ ticks:{ color:"#6f5750" }, grid:{ color:"rgba(64,42,32,.10)" } } } }
   });
 }
 

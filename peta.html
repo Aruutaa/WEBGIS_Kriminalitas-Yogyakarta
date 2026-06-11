@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GeoSafe Yogyakarta | Peta CCTV + Kejadian Klitih</title>
+  <title>GeoSafe Yogyakarta | Peta Risiko Kriminalitas + CCTV</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,38 +13,38 @@
 
   <style>
     :root{
-      --bg:#06101c;
-      --panel:rgba(7,12,25,.84);
-      --panel2:rgba(13,22,42,.92);
+      --bg:#F7CCA9;
+      --panel:rgba(255,249,241,.84);
+      --panel2:rgba(255,249,241,.92);
       --stroke:rgba(255,255,255,.10);
-      --text:#f4f8ff;
-      --muted:#9fb0c8;
-      --cyan:#62e6ff;
-      --blue:#7aa7ff;
-      --green:#70ffb8;
-      --yellow:#ffd166;
-      --red:#ff6b8b;
+      --text:#1F1E2B;
+      --muted:#6f5750;
+      --cyan:#C89290;
+      --blue:#402A20;
+      --green:#C89290;
+      --yellow:#AE995B;
+      --red:#B33D38;
       --shadow:0 24px 80px rgba(0,0,0,.42);
       --radius:24px;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;width:100%;height:100%;background:radial-gradient(circle at 20% 5%,rgba(98,230,255,.14),transparent 30%),radial-gradient(circle at 75% 15%,rgba(122,167,255,.14),transparent 32%),var(--bg);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);overflow:hidden}
+    html,body{margin:0;width:100%;height:100%;background:radial-gradient(circle at 20% 5%,rgba(200,146,144,.14),transparent 30%),radial-gradient(circle at 75% 15%,rgba(64,42,32,.14),transparent 32%),var(--bg);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);overflow:hidden}
     a{color:inherit;text-decoration:none}
     button,input,select{font:inherit}
     .app{height:100vh;display:grid;grid-template-rows:72px minmax(0,1fr)}
-    .topbar{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--stroke);background:rgba(4,8,18,.72);backdrop-filter:blur(22px);z-index:2000}
+    .topbar{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--stroke);background:rgba(255,246,235,.72);backdrop-filter:blur(22px);z-index:2000}
     .topbar-left{display:flex;align-items:center;gap:12px;min-width:260px}
     .panel-toggle-btn{width:42px;height:42px;border-radius:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);color:var(--text);cursor:pointer;font-weight:900;font-size:18px}
-    .panel-toggle-btn:hover{border-color:rgba(98,230,255,.40);background:rgba(98,230,255,.08)}
+    .panel-toggle-btn:hover{border-color:rgba(200,146,144,.40);background:rgba(200,146,144,.08)}
     .brand{display:flex;align-items:center;gap:12px;min-width:260px}
-    .brand-mark{width:42px;height:42px;border-radius:16px;background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 0 28px rgba(98,230,255,.28);position:relative}
-    .brand-mark:after{content:"";position:absolute;inset:11px;border-radius:50%;border:3px solid rgba(7,12,25,.9)}
+    .brand-mark{width:42px;height:42px;border-radius:16px;background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 0 28px rgba(200,146,144,.28);position:relative}
+    .brand-mark:after{content:"";position:absolute;inset:11px;border-radius:50%;border:3px solid rgba(255,249,241,.9)}
     .brand strong{display:block;font-size:15px;letter-spacing:.2px}
     .brand span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
     .navlinks{display:flex;align-items:center;gap:8px}
     .navlinks a,.btn{border:1px solid var(--stroke);background:rgba(255,255,255,.04);color:var(--text);padding:10px 14px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer}
-    .navlinks a.active,.btn.primary{background:linear-gradient(135deg,rgba(98,230,255,.22),rgba(122,167,255,.18));border-color:rgba(98,230,255,.34)}
-    .btn:hover,.navlinks a:hover{border-color:rgba(98,230,255,.35)}
+    .navlinks a.active,.btn.primary{background:linear-gradient(135deg,rgba(200,146,144,.22),rgba(64,42,32,.18));border-color:rgba(200,146,144,.34)}
+    .btn:hover,.navlinks a:hover{border-color:rgba(200,146,144,.35)}
     .layout{height:calc(100vh - 72px);display:grid;grid-template-columns:340px minmax(0,1fr) 390px;gap:16px;padding:16px;transition:grid-template-columns .28s ease}
     .layout.left-collapsed{grid-template-columns:minmax(0,1fr) 390px}
     .left-panel{min-width:0}
@@ -55,19 +55,19 @@
     .panel-head span{font-size:12px;color:var(--muted);display:block;margin-top:4px;line-height:1.4}
     .panel-body{padding:16px;overflow:auto;min-height:0}
     .mapbox{position:relative;min-width:0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--stroke);box-shadow:var(--shadow)}
-    #map{width:100%;height:100%;background:#081020}
+    #map{width:100%;height:100%;background:#f5e0cf}
     .map-top{position:absolute;z-index:1200;left:16px;right:16px;top:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;pointer-events:none}
     .status-pill,.toolbox{pointer-events:auto}
-    .status-pill{max-width:620px;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;border:1px solid rgba(98,230,255,.24);background:rgba(7,12,25,.78);backdrop-filter:blur(18px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:12px;color:#dbeafe}
-    .pulse{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(112,255,184,.6);animation:pulse 1.8s infinite}
-    @keyframes pulse{70%{box-shadow:0 0 0 12px rgba(112,255,184,0)}100%{box-shadow:0 0 0 0 rgba(112,255,184,0)}}
+    .status-pill{max-width:620px;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;border:1px solid rgba(200,146,144,.24);background:rgba(255,249,241,.78);backdrop-filter:blur(18px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:12px;color:#1F1E2B}
+    .pulse{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(174,153,91,.6);animation:pulse 1.8s infinite}
+    @keyframes pulse{70%{box-shadow:0 0 0 12px rgba(174,153,91,0)}100%{box-shadow:0 0 0 0 rgba(174,153,91,0)}}
     .toolbox{display:flex;gap:8px}
-    .toolbox button{width:42px;height:42px;border-radius:14px;border:1px solid var(--stroke);background:rgba(7,12,25,.82);color:var(--text);cursor:pointer;font-weight:900}
-    .toolbox button:hover{border-color:rgba(98,230,255,.40)}
+    .toolbox button{width:42px;height:42px;border-radius:14px;border:1px solid var(--stroke);background:rgba(255,249,241,.82);color:var(--text);cursor:pointer;font-weight:900}
+    .toolbox button:hover{border-color:rgba(200,146,144,.40)}
     .form-group{margin-bottom:14px}
     label{font-size:12px;font-weight:800;color:#d5e3f8;display:block;margin-bottom:7px}
     .input,.select{width:100%;height:42px;border-radius:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);color:var(--text);outline:none;padding:0 12px}
-    .select option{background:#101827;color:#fff}
+    .select option{background:#fff6eb;color:#fff}
     .mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
     .stat{background:rgba(255,255,255,.045);border:1px solid var(--stroke);border-radius:18px;padding:12px}
@@ -76,17 +76,17 @@
     .stat em{font-style:normal;font-size:11px;color:#b8c6dc;display:block;margin-top:4px}
     .camera-list,.incident-list{display:flex;flex-direction:column;gap:10px}
     .camera-card,.incident-card{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:18px;padding:12px;cursor:pointer;transition:.18s ease}
-    .camera-card:hover,.camera-card.active{transform:translateY(-1px);border-color:rgba(98,230,255,.38);background:rgba(98,230,255,.075)}
-    .incident-card:hover,.incident-card.active{transform:translateY(-1px);border-color:rgba(255,107,139,.44);background:rgba(255,107,139,.08)}
+    .camera-card:hover,.camera-card.active{transform:translateY(-1px);border-color:rgba(200,146,144,.38);background:rgba(200,146,144,.075)}
+    .incident-card:hover,.incident-card.active{transform:translateY(-1px);border-color:rgba(179,61,56,.44);background:rgba(179,61,56,.08)}
     .camera-title{font-size:13px;font-weight:850;line-height:1.35;display:flex;gap:8px;justify-content:space-between}
     .camera-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
-    .tag{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);font-size:10.5px;color:#d9e7fb;font-weight:750}
-    .tag.ptz{border-color:rgba(98,230,255,.30);color:#baf6ff}
-    .tag.live{border-color:rgba(112,255,184,.30);color:#caffdf}
-    .tag.high{border-color:rgba(255,107,139,.36);color:#ffd1db}
-    .tag.med{border-color:rgba(255,209,102,.36);color:#ffe7a6}
-    .tag.low{border-color:rgba(112,255,184,.30);color:#caffdf}
-    .video-wrap{width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#020817;border:1px solid var(--stroke);margin-bottom:14px}
+    .tag{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);font-size:10.5px;color:#6f5750;font-weight:750}
+    .tag.ptz{border-color:rgba(200,146,144,.30);color:#baf6ff}
+    .tag.live{border-color:rgba(174,153,91,.30);color:#8b5555}
+    .tag.high{border-color:rgba(179,61,56,.36);color:#B33D38}
+    .tag.med{border-color:rgba(174,153,91,.36);color:#ffe7a6}
+    .tag.low{border-color:rgba(174,153,91,.30);color:#8b5555}
+    .video-wrap{width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#1F1E2B;border:1px solid var(--stroke);margin-bottom:14px}
     .video-wrap iframe{width:100%;height:100%;border:0;display:block}
     .empty-video{height:100%;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font-size:13px}
     .analysis-box{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:18px;padding:14px;margin-bottom:12px}
@@ -97,66 +97,69 @@
     .meter i{height:100%;display:block;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));border-radius:999px}
     .quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
     .quick-actions a,.quick-actions button{text-align:center;border-radius:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);padding:10px;color:#fff;font-size:12px;font-weight:850;cursor:pointer}
-    .quick-actions a.primary{background:linear-gradient(135deg,rgba(98,230,255,.22),rgba(122,167,255,.18));border-color:rgba(98,230,255,.32)}
-    .warning{font-size:11.5px;line-height:1.5;color:#c7d4e8;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.20);border-radius:16px;padding:12px;margin-top:12px}
-    .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:rgba(7,12,25,.96);color:var(--text);border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 60px rgba(0,0,0,.45)}
+    .quick-actions a.primary{background:linear-gradient(135deg,rgba(200,146,144,.22),rgba(64,42,32,.18));border-color:rgba(200,146,144,.32)}
+    .warning{font-size:11.5px;line-height:1.5;color:#c7d4e8;background:rgba(174,153,91,.08);border:1px solid rgba(174,153,91,.20);border-radius:16px;padding:12px;margin-top:12px}
+    .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:rgba(255,249,241,.96);color:var(--text);border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 60px rgba(0,0,0,.45)}
     .leaflet-popup-content{margin:14px;width:280px!important}
     .popup-title{font-weight:900;font-size:14px;line-height:1.35;margin-bottom:8px}
     .popup-meta{color:#b8c6dc;font-size:12px;line-height:1.45;margin-bottom:10px}
     .popup-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
     .popup-actions a,.popup-actions button{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;border-radius:12px;padding:8px;font-size:11px;font-weight:850;text-align:center;cursor:pointer}
-    .popup-actions .primary{background:rgba(98,230,255,.14);border-color:rgba(98,230,255,.30)}
+    .popup-actions .primary{background:rgba(200,146,144,.14);border-color:rgba(200,146,144,.30)}
     .cam-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;font-size:17px;color:#04111f;border:2px solid rgba(255,255,255,.72);box-shadow:0 10px 24px rgba(0,0,0,.34)}
-    .cam-icon.ptz{background:linear-gradient(135deg,#62e6ff,#7aa7ff)}
-    .cam-icon.fixed{background:linear-gradient(135deg,#70ffb8,#ffd166)}
-    .incident-icon{width:32px;height:32px;border-radius:50% 50% 50% 10px;display:grid;place-items:center;font-size:15px;color:#fff;background:linear-gradient(135deg,#ff6b8b,#ffd166);border:2px solid rgba(255,255,255,.78);box-shadow:0 10px 24px rgba(0,0,0,.34);transform:rotate(-45deg)}
+    .cam-icon.ptz{background:linear-gradient(135deg,#C89290,#402A20)}
+    .cam-icon.fixed{background:linear-gradient(135deg,#C89290,#AE995B)}
+    .incident-icon{width:32px;height:32px;border-radius:50% 50% 50% 10px;display:grid;place-items:center;font-size:15px;color:#fff;background:linear-gradient(135deg,#B33D38,#AE995B);border:2px solid rgba(255,255,255,.78);box-shadow:0 10px 24px rgba(0,0,0,.34);transform:rotate(-45deg)}
     .incident-icon span{transform:rotate(45deg);display:block}
     .incident-cluster-note{font-size:11px;color:#ffe7a6;margin-top:6px;line-height:1.45}
-    .legend{position:absolute;z-index:1200;left:16px;bottom:16px;width:260px;border:1px solid var(--stroke);background:rgba(7,12,25,.82);backdrop-filter:blur(18px);border-radius:18px;padding:12px;box-shadow:0 12px 30px rgba(0,0,0,.26)}
+    .legend{position:absolute;z-index:1200;left:16px;bottom:16px;width:260px;border:1px solid var(--stroke);background:rgba(255,249,241,.82);backdrop-filter:blur(18px);border-radius:18px;padding:12px;box-shadow:0 12px 30px rgba(0,0,0,.26)}
     .legend h4{margin:0 0 9px;font-size:12px}
-    .legend-row{display:flex;align-items:center;gap:8px;font-size:11px;color:#cbd8ed;margin:6px 0}
-    .dot{width:12px;height:12px;border-radius:50%;background:#62e6ff}
-    .dot.fixed{background:#70ffb8} .dot.buffer{background:#ffd166} .dot.safe{background:#7aa7ff} .dot.boundary{background:transparent;border:2px solid var(--cyan)} .dot.incident{background:#ff6b8b} .dot.incident-buffer{background:transparent;border:2px solid #ff6b8b}
-    .file-input{height:auto;padding:10px 12px;color:#dbeafe}
-    .file-input::file-selector-button{border:1px solid var(--stroke);border-radius:999px;background:rgba(98,230,255,.14);color:#fff;padding:8px 12px;margin-right:10px;font-weight:800;cursor:pointer}
+    .legend-row{display:flex;align-items:center;gap:8px;font-size:11px;color:#8b746a;margin:6px 0}
+    .dot{width:12px;height:12px;border-radius:50%;background:#C89290}
+    .dot.fixed{background:#C89290} .dot.buffer{background:#AE995B} .dot.safe{background:#402A20} .dot.boundary{background:transparent;border:2px solid var(--cyan)} .dot.incident{background:#B33D38} .dot.incident-buffer{background:transparent;border:2px solid #B33D38}
+    .file-input{height:auto;padding:10px 12px;color:#1F1E2B}
+    .file-input::file-selector-button{border:1px solid var(--stroke);border-radius:999px;background:rgba(200,146,144,.14);color:#fff;padding:8px 12px;margin-right:10px;font-weight:800;cursor:pointer}
     .data-note{font-size:11px;color:var(--muted);line-height:1.45;margin-top:6px}
     .hidden{display:none!important}
     @media(max-width:1180px){html,body{overflow:auto}.app{height:auto;min-height:100vh}.layout{height:auto;grid-template-columns:1fr;padding:12px}.layout.left-collapsed{grid-template-columns:1fr}.mapbox{height:70vh}.topbar{position:sticky;top:0}.topbar-left,.brand{min-width:0}.navlinks{display:none}}
 
     .app{position:relative;isolation:isolate}
-    .app:before{content:"";position:fixed;inset:72px 0 0;z-index:-1;background:linear-gradient(rgba(6,16,28,.72),rgba(6,16,28,.88)),url("assets/img/map-overlay.svg") center/cover no-repeat;opacity:.82;pointer-events:none}
+    .app:before{content:"";position:fixed;inset:72px 0 0;z-index:-1;background:linear-gradient(rgba(247,204,169,.72),rgba(247,204,169,.88)),url("assets/img/map-overlay.svg") center/cover no-repeat;opacity:.82;pointer-events:none}
     .brand-logo-box.compact{width:48px;height:48px;border-radius:16px}.brand-logo-box.compact .brand-logo{width:40px;height:40px}
-    .risk-method{border:1px solid rgba(98,230,255,.18);background:rgba(98,230,255,.055);border-radius:18px;padding:12px;margin-bottom:12px}
+    .risk-method{border:1px solid rgba(200,146,144,.18);background:rgba(200,146,144,.055);border-radius:18px;padding:12px;margin-bottom:12px}
     .risk-method h4{font-size:13px;margin:0 0 7px}.risk-method p{margin:0;color:#c9d7ec;font-size:11.8px;line-height:1.55}
     .risk-summary{display:grid;grid-template-columns:1fr;gap:9px;margin:10px 0 14px}
     .district-risk-card{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:16px;padding:11px;display:grid;gap:7px}
     .district-risk-card .line{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px}.district-risk-card b{font-size:13px}.district-risk-card small{color:var(--muted);line-height:1.45}.district-risk-card .meter{height:7px}
-    .dot.choro-high{background:#ff6b8b}.dot.choro-med{background:#ffd166}.dot.choro-low{background:#70ffb8}.dot.choro-none{background:#7aa7ff;opacity:.55}
-    .dot.network-high{background:#ff3f68}.dot.network-med{background:#ffd166}.dot.network-low{background:#70ffb8}
+    .dot.choro-high{background:#B33D38}.dot.choro-med{background:#AE995B}.dot.choro-low{background:#C89290}.dot.choro-none{background:#402A20;opacity:.55}
+    .dot.network-high{background:#B33D38}.dot.network-med{background:#AE995B}.dot.network-low{background:#C89290}
     .legend.is-closed{display:none!important}
     .legend-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
     .legend-head h4{margin:0!important}
     .legend-close{width:28px;height:28px;border-radius:10px;border:1px solid var(--stroke);background:rgba(255,255,255,.06);color:var(--text);font-weight:900;cursor:pointer}
-    .legend-close:hover{border-color:rgba(98,230,255,.42);background:rgba(98,230,255,.10)}
+    .legend-close:hover{border-color:rgba(200,146,144,.42);background:rgba(200,146,144,.10)}
     .camera-dropdown-note{font-size:11px;color:var(--muted);line-height:1.45;margin-top:7px}
-    .selected-camera-card{border:1px solid rgba(98,230,255,.22);background:rgba(98,230,255,.065);border-radius:18px;padding:12px}
-    .selected-incident-card{border:1px solid rgba(255,107,139,.28);background:rgba(255,107,139,.07);border-radius:18px;padding:12px}
+    .selected-camera-card{border:1px solid rgba(200,146,144,.22);background:rgba(200,146,144,.065);border-radius:18px;padding:12px}
+    .selected-incident-card{border:1px solid rgba(179,61,56,.28);background:rgba(179,61,56,.07);border-radius:18px;padding:12px}
     .road-card{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:16px;padding:11px;display:grid;gap:7px}
     .road-card .line{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px}.road-card b{font-size:13px}.road-card small{color:var(--muted);line-height:1.45}.road-card .meter{height:7px}
 
   
 
-    /* Soft Emotion Palette Override untuk halaman peta */
-    :root{--bg:#fff8eb;--panel:rgba(255,255,255,.90);--panel2:rgba(255,255,255,.96);--stroke:rgba(35,46,74,.13);--text:#24304f;--muted:#66718e;--cyan:#74b9ff;--blue:#8d7bff;--green:#52d99b;--yellow:#ffd166;--red:#ff6b6b;--shadow:0 20px 60px rgba(84,66,36,.16);--radius:24px;}
-    html,body{background:radial-gradient(circle at 10% 6%,rgba(255,209,102,.34),transparent 32%),radial-gradient(circle at 84% 10%,rgba(141,123,255,.22),transparent 32%),radial-gradient(circle at 20% 88%,rgba(82,217,155,.20),transparent 30%),radial-gradient(circle at 80% 78%,rgba(255,107,107,.16),transparent 32%),var(--bg)!important;color:var(--text)!important;}
-    .app:before{background:linear-gradient(rgba(255,248,235,.66),rgba(255,248,235,.88)),url("assets/img/map-overlay.svg") center/cover no-repeat!important;opacity:.9!important;}
+    /* Itadori Palette Override untuk halaman peta */
+    :root{--bg:#F7CCA9;--panel:rgba(255,249,241,.91);--panel2:rgba(255,249,241,.97);--stroke:rgba(64,42,32,.18);--text:#1F1E2B;--muted:#6f5750;--cyan:#C89290;--blue:#402A20;--green:#AE995B;--yellow:#F7CCA9;--red:#B33D38;--shadow:0 22px 58px rgba(64,42,32,.17);--radius:24px;}
+    html,body{background:radial-gradient(circle at 9% 7%,rgba(200,146,144,.36),transparent 32%),radial-gradient(circle at 86% 10%,rgba(174,153,91,.30),transparent 32%),radial-gradient(circle at 23% 88%,rgba(179,61,56,.14),transparent 30%),linear-gradient(180deg,#fff6eb 0%,#F7CCA9 56%,#efbea0 100%)!important;color:var(--text)!important;}
+    .app:before{background:linear-gradient(rgba(255,246,235,.70),rgba(247,204,169,.88)),url("assets/img/map-overlay.svg") center/cover no-repeat!important;opacity:.72!important;}
     .topbar,.panel,.legend,.status-pill,.toolbox button,.stat,.analysis-box,.risk-method,.district-risk-card,.road-card,.camera-card,.incident-card,.selected-camera-card,.selected-incident-card,.warning{background:var(--panel)!important;border-color:var(--stroke)!important;box-shadow:var(--shadow)!important;color:var(--text)!important;}
-    .topbar{backdrop-filter:blur(18px)!important;}.brand span,.panel-head span,.stat span,.camera-dropdown-note,.data-note,.district-risk-card small,.road-card small,.analysis-box p,.warning,.popup-meta{color:var(--muted)!important;}
-    .navlinks a,.btn,.panel-toggle-btn,.input,.select,.quick-actions a,.quick-actions button,.popup-actions a,.popup-actions button{background:rgba(255,255,255,.74)!important;border-color:var(--stroke)!important;color:var(--text)!important;}
-    .btn.primary,.navlinks a.active,.quick-actions a.primary,.popup-actions .primary{background:linear-gradient(135deg,rgba(255,209,102,.86),rgba(255,143,171,.62))!important;border-color:rgba(255,184,77,.55)!important;color:#24304f!important;}
-    #map{background:#eaf4ff!important;}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:rgba(255,255,255,.97)!important;color:var(--text)!important;border-color:var(--stroke)!important;box-shadow:var(--shadow)!important;}.leaflet-control-zoom a{background:#fff!important;color:#24304f!important;border-color:rgba(35,46,74,.16)!important;}
-    .tag{background:rgba(255,255,255,.70)!important;border-color:var(--stroke)!important;color:#4f5b77!important;}.tag.high{background:rgba(255,107,107,.14)!important;border-color:rgba(255,107,107,.42)!important;color:#bd3f45!important;}.tag.med{background:rgba(255,209,102,.18)!important;border-color:rgba(255,184,77,.48)!important;color:#95620f!important;}.tag.low,.tag.live{background:rgba(82,217,155,.16)!important;border-color:rgba(82,217,155,.42)!important;color:#1f7f59!important;}.tag.ptz{background:rgba(116,185,255,.16)!important;border-color:rgba(116,185,255,.42)!important;color:#2f6396!important;}
-    .meter{background:rgba(36,48,79,.10)!important;}.meter i{background:linear-gradient(90deg,#52d99b,#ffd166,#ff6b6b)!important;}.cam-icon.ptz{background:linear-gradient(135deg,#74b9ff,#8d7bff)!important;color:#fff!important;}.cam-icon.fixed{background:linear-gradient(135deg,#52d99b,#ffd166)!important;color:#24304f!important;}.incident-icon{background:linear-gradient(135deg,#ff6b6b,#ffd166)!important;}
+    .topbar{backdrop-filter:blur(18px)!important;}.brand span,.panel-head span,.stat span,.stat em,.camera-dropdown-note,.data-note,.district-risk-card small,.road-card small,.analysis-box p,.warning,.popup-meta{color:var(--muted)!important;}
+    .brand-logo{filter:drop-shadow(0 8px 14px rgba(64,42,32,.20))!important}.brand-logo-box.compact,.brand-mark{background:linear-gradient(135deg,rgba(179,61,56,.16),rgba(200,146,144,.22),rgba(174,153,91,.20))!important;border-color:var(--stroke)!important;box-shadow:none!important;}
+    .navlinks a,.btn,.panel-toggle-btn,.input,.select,.quick-actions a,.quick-actions button,.popup-actions a,.popup-actions button,.legend-close{background:rgba(255,249,241,.76)!important;border-color:var(--stroke)!important;color:var(--text)!important;}
+    .btn.primary,.navlinks a.active,.quick-actions a.primary,.popup-actions .primary{background:linear-gradient(135deg,#B33D38,#C89290)!important;border-color:rgba(179,61,56,.55)!important;color:#fff9f1!important;}
+    .btn:hover,.navlinks a:hover,.toolbox button:hover{border-color:rgba(179,61,56,.38)!important;background:rgba(255,249,241,.94)!important;}
+    #map{background:#f5e0cf!important;}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:rgba(255,249,241,.98)!important;color:var(--text)!important;border-color:var(--stroke)!important;box-shadow:var(--shadow)!important;}.leaflet-control-zoom a{background:#fff9f1!important;color:#1F1E2B!important;border-color:rgba(64,42,32,.16)!important;}.leaflet-control-attribution{background:rgba(255,249,241,.86)!important;color:#6f5750!important}.leaflet-control-attribution a{color:#B33D38!important;}
+    .tag{background:rgba(255,249,241,.70)!important;border-color:var(--stroke)!important;color:#6f5750!important;}.tag.high{background:rgba(179,61,56,.12)!important;border-color:rgba(179,61,56,.42)!important;color:#B33D38!important;}.tag.med{background:rgba(174,153,91,.16)!important;border-color:rgba(174,153,91,.48)!important;color:#7b6636!important;}.tag.low,.tag.live{background:rgba(200,146,144,.16)!important;border-color:rgba(200,146,144,.42)!important;color:#8b5555!important;}.tag.ptz{background:rgba(64,42,32,.10)!important;border-color:rgba(64,42,32,.30)!important;color:#402A20!important;}
+    .meter{background:rgba(64,42,32,.11)!important;}.meter i{background:linear-gradient(90deg,#C89290,#AE995B,#B33D38)!important;}.cam-icon.ptz{background:linear-gradient(135deg,#402A20,#B33D38)!important;color:#fff9f1!important;}.cam-icon.fixed{background:linear-gradient(135deg,#C89290,#AE995B)!important;color:#1F1E2B!important;}.incident-icon{background:linear-gradient(135deg,#B33D38,#AE995B)!important;}.file-input::file-selector-button{background:rgba(179,61,56,.12)!important;color:var(--text)!important;border-color:var(--stroke)!important;}
+
 
   </style>
 </head>
@@ -169,13 +172,13 @@
         <div class="brand-logo-box compact"><img src="assets/img/logo-crimescope.png" alt="Logo GeoSafe Yogyakarta" class="brand-logo"></div>
         <div>
           <strong>GeoSafe Yogyakarta</strong>
-          <span>Peta CCTV + Batas Kota + Kejadian Klitih</span>
+          <span>Peta Risiko Kriminalitas + CCTV Kota</span>
         </div>
         </a>
       </div>
       <nav class="navlinks">
         <a href="index.html" data-page="home">Utama</a>
-        <a href="peta.html" data-page="peta" class="active">Peta CCTV</a>
+        <a href="peta.html" data-page="peta" class="active">Peta Risiko</a>
         <a href="analisis.html" data-page="analisis">Analisis</a>
         <a href="berita.html" data-page="berita">Berita</a>
       </nav>
@@ -189,8 +192,8 @@
       <aside class="panel left-panel" id="leftPanel">
         <div class="panel-head">
           <div>
-            <h2>Data CCTV</h2>
-            <span>Filter dari <b>cctv_pemkot_yogyakarta_youtube_links.csv</b></span>
+            <h2>Layer Pemantauan</h2>
+            <span>CCTV, titik kejadian, batas administrasi, dan skor zona kriminalitas</span>
           </div>
           <span class="tag live" id="dataMode">CSV</span>
         </div>
@@ -211,7 +214,7 @@
 
           <div class="risk-method">
             <h4>Model analisis spasial</h4>
-            <p>Skor peta memakai hasil pembobotan zona dari <b>assets/data/hasil_pembobotan_zona.json</b>: 45% indeks kejadian, 20% kepadatan penduduk, 20% gap/blindspot CCTV, dan 15% keragaman sumber. Layer batas administrasi diberi warna choropleth agar prioritas per kecamatan langsung terbaca.</p>
+            <p>Peta risiko memakai hasil pembobotan zona dari <b>assets/data/hasil_pembobotan_zona.json</b>: 45% indeks kejadian, 20% kepadatan penduduk, 20% gap/blindspot CCTV, dan 15% keragaman sumber. Warna administrasi dibuat sebagai choropleth agar wilayah rawan, wilayah pemantauan, dan blind spot CCTV cepat terbaca.</p>
           </div>
           <div class="risk-summary" id="districtRiskSummary"></div>
 
@@ -359,11 +362,11 @@
 
       <section class="mapbox">
         <div class="map-top">
-          <div class="status-pill"><span class="pulse"></span><span id="mapStatus">Menyiapkan peta CCTV live...</span></div>
+          <div class="status-pill"><span class="pulse"></span><span id="mapStatus">Menyiapkan peta risiko kriminalitas...</span></div>
           <div class="toolbox">
             <button id="btnHome" title="Kembali ke Kota Yogyakarta">⌂</button>
             <button id="btnLocate" title="Lokasi saya">◎</button>
-            <button id="btnFit" title="Fit semua CCTV">□</button>
+            <button id="btnFit" title="Fit semua layer pemantauan">□</button>
             <button id="btnLegend" title="Tampilkan/sembunyikan legenda">☷</button>
           </div>
         </div>
@@ -1895,9 +1898,9 @@
     }
 
     function roadRiskColor(category){
-      if(category === "Tinggi") return "#ff3f68";
-      if(category === "Sedang") return "#ffd166";
-      return "#52d99b";
+      if(category === "Tinggi") return "#B33D38";
+      if(category === "Sedang") return "#AE995B";
+      return "#C89290";
     }
 
     function roadPopupHtml(row){
@@ -1932,7 +1935,7 @@
         const cls = row.category === "Tinggi" ? "high" : row.category === "Sedang" ? "med" : "low";
         return `<div class="road-card" onclick="selectRoad('${row.id}')">
           <div class="line"><b>${escapeHtml(row.name)}</b><span class="tag ${cls}">${row.category}</span></div>
-          <div class="meter"><i style="width:${row.score}%;background:linear-gradient(90deg,#70ffb8,#ffd166,#ff3f68)"></i></div>
+          <div class="meter"><i style="width:${row.score}%;background:linear-gradient(90deg,#C89290,#AE995B,#B33D38)"></i></div>
           <small>${row.incidents} kejadian dalam ±${row.radius} m · ${row.cctv} CCTV sekitar ruas · confidence ${row.confidence}</small>
         </div>`;
       }).join("");
@@ -2109,10 +2112,10 @@
     }
 
     function riskColor(category){
-      if(category === "Tinggi") return "#ff6b6b";
-      if(category === "Sedang") return "#ffd166";
-      if(category === "Rendah") return "#52d99b";
-      return "#74b9ff";
+      if(category === "Tinggi") return "#B33D38";
+      if(category === "Sedang") return "#AE995B";
+      if(category === "Rendah") return "#C89290";
+      return "#F7CCA9";
     }
 
     function buildDistrictRiskLookup(rows = currentIncidentFiltered){
@@ -2175,7 +2178,7 @@
       const props = feature?.properties || {};
       const kec = canonicalKecamatan(props.WADMKC || props.NAMOBJ || props.WADMKD);
       const risk = districtRiskLookup.get(kec);
-      const color = risk ? riskColor(risk.category) : "#62e6ff";
+      const color = risk ? riskColor(risk.category) : "#C89290";
       return {
         color,
         weight: risk ? 2.1 : 1.35,
@@ -2215,7 +2218,7 @@
         const z = item.zone || {};
         return `<div class="district-risk-card">
           <div class="line"><b>${escapeHtml(item.kecamatan)}</b><span class="tag ${cls}">${item.score}/100 · ${item.category}</span></div>
-          <div class="meter"><i style="width:${item.score}%;background:linear-gradient(90deg,#52d99b,#ffd166,#ff6b6b)"></i></div>
+          <div class="meter"><i style="width:${item.score}%;background:linear-gradient(90deg,#C89290,#AE995B,#B33D38)"></i></div>
           <small>${item.count} kejadian · ${item.covered} tercakup CCTV ≤500 m · ${item.noCoverage} blind spot · kepadatan ${Number(z.kepadatan_jiwa_km2 || 0).toLocaleString("id-ID")} jiwa/km²</small>
         </div>`;
       }).join("");
@@ -2282,7 +2285,7 @@
       if(!showIncident){ updateMapStatus(); return; }
       currentIncidentFiltered.forEach(row => {
         if(radius > 0){
-          const color = row._analysis.priorityClass === "Tinggi" ? "#ff6b8b" : row._analysis.priorityClass === "Sedang" ? "#ffd166" : "#7aa7ff";
+          const color = row._analysis.priorityClass === "Tinggi" ? "#B33D38" : row._analysis.priorityClass === "Sedang" ? "#AE995B" : "#402A20";
           L.circle([row._lat,row._lng], { radius, color, weight:1, opacity:.42, fillColor:color, fillOpacity:.08, dashArray:"5 5" }).addTo(incidentBuffersLayer);
         }
         const marker = L.marker([row._lat,row._lng], { icon: makeIncidentIcon(row), title:`Kejadian ${row._tanggal} ${row._kecamatan}` }).bindPopup(incidentPopupHtml(row));
@@ -2406,7 +2409,7 @@
 
       currentFiltered.forEach(row => {
         if(showBuffer){
-          const color = row._analysis.riskClass === "Tinggi" ? "#ff6b8b" : row._analysis.riskClass === "Sedang" ? "#ffd166" : "#70ffb8";
+          const color = row._analysis.riskClass === "Tinggi" ? "#B33D38" : row._analysis.riskClass === "Sedang" ? "#AE995B" : "#C89290";
           L.circle([row._lat,row._lng], { radius, color, weight:1, opacity:.45, fillColor:color, fillOpacity:.10 }).addTo(buffersLayer);
         }
         const marker = L.marker([row._lat,row._lng], { icon: makeIcon(row), title: cleanText(row.nama_cctv) }).bindPopup(popupHtml(row));
@@ -2825,7 +2828,7 @@
         if(!navigator.geolocation) return alert("Browser tidak mendukung geolocation.");
         navigator.geolocation.getCurrentPosition(pos => {
           const lat = pos.coords.latitude, lng = pos.coords.longitude;
-          L.circleMarker([lat,lng], {radius:8,color:"#62e6ff",fillColor:"#62e6ff",fillOpacity:.7}).addTo(map).bindPopup("Lokasi Anda").openPopup();
+          L.circleMarker([lat,lng], {radius:8,color:"#B33D38",fillColor:"#B33D38",fillOpacity:.7}).addTo(map).bindPopup("Lokasi Anda").openPopup();
           map.setView([lat,lng], 16);
         }, () => alert("Lokasi tidak dapat diakses."));
       });

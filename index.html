@@ -47,7 +47,7 @@
         <div class="hero-content">
           <div class="eyebrow">
             <span class="pulse-dot"></span>
-            Multi-page WebGIS prototype
+            Dashboard WebGIS Kriminalitas
           </div>
 
           <h1>
@@ -57,9 +57,7 @@
           </h1>
 
           <p class="lead">
-            Dashboard WebGIS multi-halaman untuk menampilkan peta zona kriminalitas,
-            mengatur parameter analisis, membaca hasil melalui diagram dan tabel,
-            serta membuka katalog berita kriminalitas dari berbagai sumber.
+            Dashboard WebGIS untuk membaca zona rawan kriminalitas di Yogyakarta berdasarkan titik kejadian klitih, CCTV, kepadatan penduduk, blind spot pemantauan, dan sumber berita pendukung.
           </p>
 
           <div class="hero-actions">
@@ -69,9 +67,7 @@
           </div>
 
           <p class="small-note">
-            Data hasil pembobotan zona sudah dimasukkan agar struktur UI, peta, dan analisis bisa dicoba dengan output terbaru.
-            Jika data lapangan diperbarui, ganti isi
-            <span class="code">assets/js/data.js</span>.
+            Hasil pembobotan zona sudah terhubung ke halaman peta dan analisis. Gunakan dashboard ini sebagai media eksplorasi awal untuk melihat prioritas wilayah, bukan sebagai putusan tunggal tanpa validasi lapangan.
           </p>
         </div>
 
@@ -92,7 +88,7 @@
           </div>
 
           <div class="float-card two">
-            <small>Zona Demo</small>
+            <small>Zona Dianalisis</small>
             <strong>14</strong>
             <div class="bar"><span style="width:88%"></span></div>
           </div>
@@ -104,15 +100,13 @@
           <div>
             <div class="eyebrow">
               <span class="pulse-dot"></span>
-              Struktur Halaman
+              Struktur Dashboard
             </div>
-            <h2>Alur web dibuat jelas, bukan semuanya ditumpuk di satu halaman.</h2>
+            <h2>Alur dashboard dibuat runtut dari pemetaan, pembobotan, sampai interpretasi.</h2>
           </div>
 
           <p>
-            Pemisahan halaman membuat user lebih mudah memahami proses: masuk dari
-            halaman utama, memilih parameter di peta, melihat hasil di halaman
-            analisis, lalu membaca berita pendukung di halaman berita.
+            Pemisahan halaman membantu pengguna membaca konteks kriminalitas secara bertahap: melihat sebaran titik, memahami skor zona, membandingkan prioritas kecamatan, lalu meninjau sumber berita pendukung.
           </p>
         </div>
 
@@ -121,8 +115,7 @@
             <div class="icon">🏠</div>
             <h3>Halaman Utama</h3>
             <p>
-              Berisi identitas web, tujuan, ringkasan fitur, struktur data,
-              dan tombol menuju peta, analisis, serta berita.
+              Berisi ringkasan tujuan, ruang lingkup data, akses cepat ke peta, analisis, dan berita pendukung kriminalitas.
             </p>
             <br />
             <a class="btn small" href="index.html">Buka Utama</a>
@@ -132,8 +125,7 @@
             <div class="icon">🗺️</div>
             <h3>Halaman Peta</h3>
             <p>
-              Berisi peta Leaflet, basemap Esri/OSM/Carto, panel filter parameter,
-              layer toggle, dan tombol proses analisis.
+              Berisi peta Leaflet dengan layer CCTV, titik kejadian, batas administrasi, choropleth skor zona, buffer, dan filter wilayah.
             </p>
             <br />
             <a class="btn small primary" href="peta.html">Buka Peta</a>
@@ -143,8 +135,7 @@
             <div class="icon">📊</div>
             <h3>Halaman Analisis</h3>
             <p>
-              Menampilkan hasil dari parameter peta dalam bentuk diagram, tabel
-              prioritas wilayah, dan deskripsi interpretatif.
+              Menampilkan skor pembobotan zona, diagram tren, tabel prioritas wilayah, insight spasial, dan narasi interpretasi.
             </p>
             <br />
             <a class="btn small" href="analisis.html">Buka Analisis</a>
@@ -154,8 +145,7 @@
             <div class="icon">📰</div>
             <h3>Halaman Berita</h3>
             <p>
-              Berisi kartu berita/poster, ringkasan, sumber, kategori, dan tombol
-              menuju halaman berita asli.
+              Berisi katalog berita kriminalitas, ringkasan sumber, kategori kasus, dan tautan ke artikel atau referensi asli.
             </p>
             <br />
             <a class="btn small" href="berita.html">Buka Berita</a>
@@ -174,9 +164,7 @@
           </div>
 
           <p>
-            Komponen ini disusun supaya cocok untuk konteks semi-pemerintah:
-            informatif, ringkas, punya filter, tetapi tetap tampil modern dan
-            tidak kaku.
+            Komponen dashboard disusun untuk membantu pembacaan risiko kriminalitas: informatif, mudah dipindai, memiliki filter, dan tetap menjaga konteks bahwa skor perlu diverifikasi dengan data lapangan.
           </p>
         </div>
 
@@ -185,8 +173,7 @@
             <div class="icon">🎚️</div>
             <h3>Parameter peta</h3>
             <p>
-              Filter kecamatan, jenis kriminalitas, kategori risiko, ambang skor
-              minimum, opacity overlay, dan pilihan basemap.
+              Filter kecamatan, kategori risiko, radius buffer, cakupan CCTV, layer kejadian, network jalan, dan pilihan basemap.
             </p>
           </div>
 
@@ -194,8 +181,7 @@
             <div class="icon">🧮</div>
             <h3>Output analisis</h3>
             <p>
-              Skor risiko, peringkat wilayah, total kasus demo, komposisi jenis
-              kasus, dan narasi rekomendasi awal.
+              Skor risiko, peringkat kecamatan, jumlah titik kejadian, cakupan CCTV, blind spot, tren waktu, dan rekomendasi awal.
             </p>
           </div>
 
@@ -203,8 +189,7 @@
             <div class="icon">🧾</div>
             <h3>Berita pendukung</h3>
             <p>
-              Kartu berita bisa diisi dari banyak sumber, lalu diarahkan ke link
-              artikel asli untuk memperkuat konteks spasial.
+              Kartu berita dipakai untuk menautkan titik kejadian dengan sumber asli sehingga analisis spasial tetap memiliki konteks peristiwa.
             </p>
           </div>
         </div>
@@ -219,42 +204,54 @@
             <div class="flow-step">
               <span>1</span>
               <h4>Masuk Web</h4>
-              <p>User membaca konteks dan memilih halaman peta.</p>
+              <p>Pengguna membaca tujuan dashboard dan masuk ke halaman peta risiko.</p>
             </div>
 
             <div class="flow-step">
               <span>2</span>
               <h4>Atur Parameter</h4>
-              <p>User memilih jenis kasus, risiko, dan batas skor pada peta.</p>
+              <p>Pengguna mengatur filter CCTV, kejadian, kecamatan, buffer, dan layer network jalan.</p>
             </div>
 
             <div class="flow-step">
               <span>3</span>
               <h4>Proses Analisis</h4>
-              <p>Parameter disimpan dan dikirim ke halaman analisis.</p>
+              <p>Data kejadian dan pembobotan zona diproses menjadi skor prioritas wilayah.</p>
             </div>
 
             <div class="flow-step">
               <span>4</span>
               <h4>Baca Hasil</h4>
-              <p>Diagram, tabel, dan narasi ditampilkan sesuai filter.</p>
+              <p>Diagram, tabel prioritas, insight spasial, dan narasi ditampilkan untuk dibaca bersama.</p>
             </div>
 
             <div class="flow-step">
               <span>5</span>
               <h4>Cek Berita</h4>
-              <p>User membuka berita pendukung dari berbagai sumber.</p>
+              <p>Pengguna meninjau berita dan tautan sumber untuk mengecek konteks tiap kejadian.</p>
             </div>
           </div>
         </div>
       </section>
 
       <footer class="footer">
-        <div>
-          <strong>GeoSafe Yogyakarta</strong>
-          <p class="muted">Prototype UI multi-page untuk WebGIS zona kriminalitas.</p>
+        <div class="footer-top">
+          <div>
+            <strong>GeoSafe Yogyakarta</strong>
+            <p class="muted">Dashboard WebGIS zona rawan kriminalitas Yogyakarta berbasis titik kejadian, CCTV, dan hasil pembobotan wilayah.</p>
+          </div>
+          <a class="btn" href="peta.html">Mulai Peta →</a>
         </div>
-        <a class="btn" href="peta.html">Mulai Peta →</a>
+        <div class="creator-panel" aria-label="Nama pembuat web">
+          <h3>Dibuat oleh</h3>
+          <div class="creator-list">
+            <div class="creator-card"><strong>Fayza Tsurraya</strong><span>117230018</span></div>
+            <div class="creator-card"><strong>Dendi Duandiarta</strong><span>117230024</span></div>
+            <div class="creator-card"><strong>Izza Anggitha Aryanawa</strong><span>117230030</span></div>
+            <div class="creator-card"><strong>Bunga Vania Amelinda</strong><span>117230039</span></div>
+            <div class="creator-card"><strong>Reinaldy Ocktavian Hakeem</strong><span>117230048</span></div>
+          </div>
+        </div>
       </footer>
     </main>
   </div>

@@ -13,13 +13,13 @@
       setStatus("Leaflet gagal dimuat. Cek koneksi internet/CDN.");
       const mapBox = $("map");
       if (mapBox) {
-        mapBox.innerHTML = `<div style="height:100%;display:grid;place-items:center;padding:24px;text-align:center;color:#eef4ff;background:#0b1328;border-radius:26px;">Leaflet gagal dimuat. Pastikan koneksi internet aktif dan CDN Leaflet tidak diblokir.</div>`;
+        mapBox.innerHTML = `<div style="height:100%;display:grid;place-items:center;padding:24px;text-align:center;color:#1F1E2B;background:#F7CCA9;border-radius:26px;">Leaflet gagal dimuat. Pastikan koneksi internet aktif dan CDN Leaflet tidak diblokir.</div>`;
       }
       return;
     }
 
     if (!window.CrimeScopeData) {
-      setStatus("Data demo gagal dimuat. Cek assets/js/data.js.");
+      setStatus("Data wilayah gagal dimuat. Cek assets/js/data.js.");
       return;
     }
 
@@ -67,7 +67,7 @@
     let activeBasemap = baseMaps[activeBasemapName].addTo(map);
 
     function attachTileStatus(layer, name) {
-      layer.on("tileload", () => setStatus(`${name} aktif — data demo`));
+      layer.on("tileload", () => setStatus(`${name} aktif — data wilayah`));
       layer.on("tileerror", () => setStatus(`Sebagian tile ${name} gagal dimuat. Cek koneksi atau coba basemap lain.`));
     }
     Object.entries(baseMaps).forEach(([name, layer]) => attachTileStatus(layer, name));
@@ -95,7 +95,7 @@
           <h4>${area.kecamatan}</h4>
           <p>Zona risiko <strong>${area.kategori}</strong> dengan indikator dominan: ${area.dominan}.</p>
           <div class="popup-grid">
-            <div class="popup-metric"><span>Kasus demo</span><strong>${area.kasus}</strong></div>
+            <div class="popup-metric"><span>Titik kasus</span><strong>${area.kasus}</strong></div>
             <div class="popup-metric"><span>Skor risiko</span><strong>${area.risiko}</strong></div>
             <div class="popup-metric"><span>Kepadatan</span><strong>${Number(area.kepadatan || 0).toLocaleString("id-ID")}</strong></div>
             <div class="popup-metric"><span>Kemiskinan</span><strong>${area.kemiskinan}%</strong></div>
@@ -117,7 +117,7 @@
     function updateInsight(area) {
       const box = $("insightBox");
       if (!box) return;
-      box.innerHTML = `<strong>${area.kecamatan}</strong> memiliki skor risiko <strong>${area.risiko}</strong> dan kategori <strong>${area.kategori}</strong>. Kasus dominan pada data demo adalah <strong>${area.dominan}</strong>.`;
+      box.innerHTML = `<strong>${area.kecamatan}</strong> memiliki skor risiko <strong>${area.risiko}</strong> dan kategori <strong>${area.kategori}</strong>. Jenis kasus dominan pada data adalah <strong>${area.dominan}</strong>.`;
     }
 
     function updateStats(areas) {
@@ -126,7 +126,7 @@
       if ($("statWilayah")) $("statWilayah").textContent = areas.length;
       if ($("statKasus")) $("statKasus").textContent = totalKasus.toLocaleString("id-ID");
       if ($("statPrioritas")) $("statPrioritas").textContent = top ? top.kecamatan : "-";
-      setStatus(`${areas.length} wilayah aktif — ${totalKasus} kasus demo — ${activeBasemapName}`);
+      setStatus(`${areas.length} wilayah aktif — ${totalKasus} titik kasus — ${activeBasemapName}`);
     }
 
     function renderMap() {
@@ -168,7 +168,7 @@
           interactive: false,
           icon: L.divIcon({
             className: "area-label",
-            html: `<div style="transform:translate(-50%,-160%);background:rgba(7,12,29,.78);border:1px solid rgba(255,255,255,.16);color:#eef4ff;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap;backdrop-filter:blur(12px);">${area.kecamatan}</div>`,
+            html: `<div style="transform:translate(-50%,-160%);background:rgba(255,249,241,.90);border:1px solid rgba(64,42,32,.18);color:#1F1E2B;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap;backdrop-filter:blur(12px);">${area.kecamatan}</div>`,
             iconSize: [1, 1]
           })
         }));
@@ -186,8 +186,8 @@
           [point.lat, point.lng],
           {
             radius: 6,
-            color: "#00d5ff",
-            fillColor: "#00d5ff",
+            color: "#B33D38",
+            fillColor: "#B33D38",
             fillOpacity: 0.8,
             weight: 1
           }
@@ -264,7 +264,7 @@
       L.circleMarker(e.latlng, {
         radius: 8,
         color: "#ffffff",
-        fillColor: "#68f0ff",
+        fillColor: "#B33D38",
         fillOpacity: 0.9,
         weight: 2
       }).addTo(map).bindPopup("Lokasi kamu saat ini").openPopup();
