@@ -1,8 +1,8 @@
 body.map-page { overflow: hidden; }
 .map-app { height:100vh; display:grid; grid-template-rows: 82px minmax(0,1fr); }
 .map-app .topbar { position:relative; top:0; margin-top:0; width:100%; border-radius:0; border-left:0; border-right:0; }
-.map-layout { height:calc(100vh - 82px); display:grid; grid-template-columns: 352px minmax(0,1fr) 390px; gap:16px; padding:16px; }
-.map-layout.left-collapsed { grid-template-columns: minmax(0,1fr) 390px; }
+.map-layout { height:calc(100vh - 82px); display:grid; grid-template-columns: 352px minmax(0,1fr); gap:16px; padding:16px; }
+.map-layout.left-collapsed { grid-template-columns: minmax(0,1fr); }
 .map-layout.left-collapsed .left-panel { display:none; }
 .panel {
   min-height:0; overflow:hidden; display:flex; flex-direction:column;
@@ -47,3 +47,18 @@ body.map-page { overflow: hidden; }
 .meter i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg, var(--safe), var(--cream), var(--red)); }
 .video-wrap{width:100%;aspect-ratio:16/9;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#050507;margin:12px 0}.video-wrap iframe{width:100%;height:100%;border:0;display:block}
 @media (max-width: 1180px) { body.map-page { overflow:auto; } .map-app { height:auto; min-height:100vh; } .map-layout, .map-layout.left-collapsed { height:auto; grid-template-columns:1fr; padding:12px; } .map-layout.left-collapsed .left-panel { display:flex; } .mapbox { height:70vh; min-height:520px; } }
+
+
+/* Peta fix v2: panel kiri, basemap, kelompok analisis, dan popup semua layer */
+.panel-subtitle{margin:16px 0 10px;color:var(--cream);font-size:.86rem;letter-spacing:.02em}
+.analysis-button-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px}
+.analysis-chip,.zone-focus{border:1px solid var(--line);background:rgba(255,255,255,.045);color:var(--ink);border-radius:15px;padding:10px 11px;font-weight:850;font-size:.78rem;text-align:left;transition:.18s ease;display:inline-flex;align-items:center;gap:7px;min-height:42px}
+.analysis-chip:hover,.zone-focus:hover{transform:translateY(-1px);border-color:rgba(247,204,169,.38);background:rgba(247,204,169,.09)}
+.analysis-chip.primary{background:linear-gradient(135deg,var(--red),#7f2928);color:#fffaf5;border-color:rgba(247,204,169,.24)}
+.zone-focus-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 16px}
+.zone-focus.safe{border-color:rgba(109,213,165,.35)}.zone-focus.warn{border-color:rgba(247,204,169,.42)}.zone-focus.danger{border-color:rgba(179,61,56,.44)}
+.dot.lighting{background:#ffd469}.dot.admin{background:#fff8ef;border:2px solid #402a20}.dot.corridor{background:#402a20}
+.geo-marker.lighting{background:#ffd469;border-color:#402a20}.geo-marker.corridor-node{background:#402a20;border-color:#f7cca9}
+.popup-card a{color:var(--cream);font-weight:850}.popup-card ul{margin:7px 0 0 18px}.popup-card li{color:#cab7ad;line-height:1.55;font-size:.82rem;margin:4px 0}.leaflet-popup-content{width:auto!important;min-width:310px;max-width:430px}.custom-popup .leaflet-popup-content-wrapper{border-radius:20px}
+.leaflet-pane.adminPane svg path{filter:drop-shadow(0 1px 2px rgba(0,0,0,.65))}.leaflet-pane.corridorPane svg path{filter:drop-shadow(0 2px 4px rgba(0,0,0,.45))}
+@media(max-width:1180px){.analysis-button-grid,.zone-focus-grid{grid-template-columns:1fr}.leaflet-popup-content{min-width:270px;max-width:340px}}
