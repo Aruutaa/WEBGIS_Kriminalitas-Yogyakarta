@@ -168,22 +168,3 @@ td { color:#ddcfc7; }
   .grid-2, .grid-3, .grid-4, .creator-list { grid-template-columns:1fr; }
   .footer-top { flex-direction:column; align-items:flex-start; }
 }
-
-
-/* Revisi interaktif: loading ringan, fokus warna, dan tombol lebih tegas */
-.page-loader { position:fixed; inset:0; z-index:5000; display:grid; place-items:center; background:rgba(5,5,7,.78); backdrop-filter:blur(10px); transition:opacity .28s ease, visibility .28s ease; }
-.page-loader.is-hidden { opacity:0; visibility:hidden; pointer-events:none; }
-.loader-card { display:grid; place-items:center; gap:8px; min-width:176px; padding:20px; border:1px solid var(--line); border-radius:24px; background:rgba(17,16,26,.88); box-shadow:var(--shadow-soft); color:var(--ink); }
-.loader-card small { color:#c9b8ae; }
-.loader-mark { width:42px; height:42px; border-radius:16px; display:grid; place-items:center; background:linear-gradient(135deg,rgba(179,61,56,.28),rgba(247,204,169,.14)); border:1px solid rgba(247,204,169,.24); }
-.loader-mark span { width:18px; height:18px; border-radius:50%; border:3px solid rgba(247,204,169,.28); border-top-color:var(--cream); animation:spinLoader .72s linear infinite; }
-@keyframes spinLoader { to { transform:rotate(360deg); } }
-.btn.primary, .navlinks a.active { box-shadow:0 10px 32px rgba(179,61,56,.26); }
-.btn.primary { background:linear-gradient(135deg,#cf4741,var(--red) 46%,#7b2c28); color:#fffdf8; }
-.btn:focus-visible, .input:focus, .select:focus, .field:focus { outline:2px solid rgba(247,204,169,.45); outline-offset:2px; }
-.card, .news-card, .item-card { position:relative; }
-.card::after, .news-card::after { content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background:linear-gradient(135deg,rgba(247,204,169,.065),transparent 34%,rgba(179,61,56,.04)); opacity:.68; }
-.card > *, .news-card > * { position:relative; z-index:1; }
-.tag.high, .pill.warning { color:#fff9f1; background:rgba(179,61,56,.28); border-color:rgba(179,61,56,.42); }
-.tag.med, .pill.accent { color:#fff2df; background:rgba(174,153,91,.18); border-color:rgba(247,204,169,.26); }
-.tag.low { color:#dffff0; background:rgba(109,213,165,.12); border-color:rgba(109,213,165,.24); }

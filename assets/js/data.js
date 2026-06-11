@@ -1,5 +1,5 @@
 /* =========================================================
-   CrimeScope Yogyakarta - Data Demo + Helper Functions
+   GeoSafe Yogyakarta - Data Dashboard + Helper Functions
    ---------------------------------------------------------
    File ini sengaja dibuat global/namespace agar aman dipakai
    oleh peta.html, analisis.html, dan berita.html.
@@ -61,7 +61,7 @@
       tag: "Kota Yogyakarta",
       type: "Kejahatan jalanan",
       title: "Contoh headline berita kriminalitas di Kota Jogja",
-      description: "Kartu ini masih placeholder. Ganti dengan judul, deskripsi, tanggal, sumber, poster, dan URL berita aktual.",
+      description: "Masukkan ringkasan pendek dari sumber asli agar pembaca dapat menghubungkan berita dengan pola spasial pada peta.",
       url: "#"
     },
     {
@@ -71,7 +71,7 @@
       tag: "Keamanan lingkungan",
       type: "Curanmor",
       title: "Contoh berita curanmor dan pemetaan titik rawan",
-      description: "Gunakan kartu ini untuk menampilkan ringkasan berita. Setelah diklik, pengguna diarahkan ke halaman sumber asli.",
+      description: "Gunakan kartu ini untuk menampilkan ringkasan kasus dan arahkan pengguna ke sumber asli untuk verifikasi lanjutan.",
       url: "#"
     },
     {
@@ -101,7 +101,7 @@
       tag: "Data pendukung",
       type: "Penipuan",
       title: "Contoh berita penipuan dan literasi keamanan warga",
-      description: "Untuk HTML statis, isi data berita dari array newsData. Untuk sistem besar, bagian ini bisa dihubungkan ke backend/API.",
+      description: "Pada versi statis, data berita diisi dari array newsData. Pada pengembangan lanjut, bagian ini dapat dihubungkan ke API berita atau basis data internal.",
       url: "#"
     },
     {
@@ -117,9 +117,9 @@
   ];
 
   function colorByRisk(kategori) {
-    if (kategori === "Tinggi") return "#ff4f73";
-    if (kategori === "Sedang") return "#ffb84d";
-    return "#38e6a0";
+    if (kategori === "Tinggi") return "#B33D38";
+    if (kategori === "Sedang") return "#AE995B";
+    return "#C89290";
   }
 
   function tagClass(kategori) {

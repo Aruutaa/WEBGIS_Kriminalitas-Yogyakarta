@@ -1,102 +1,28 @@
 id,nama_lokasi,kabupaten_kota,kategori,latitude,longitude
-1,Universitas Muhammadiyah Yogyakarta,Kabupaten Bantul,Kampus dan sekolah,-7.8098455,110.3218608
-2,Institut Seni Indonesia Yogyakarta,Kabupaten Bantul,Kampus dan sekolah,-7.8507711,110.3567486
-3,Universitas Ahmad Dahlan Kampus 4,Kabupaten Bantul,Kampus dan sekolah,-7.8328242,110.3832271
-4,SMA Negeri 1 Bantul,Kabupaten Bantul,Kampus dan sekolah,-7.8961578,110.3228892
-5,SMA Negeri 1 Kasihan,Kabupaten Bantul,Kampus dan sekolah,-7.818078,110.3493516
-6,SMA Negeri 1 Wonosari,Kabupaten Gunungkidul,Kampus dan sekolah,-7.9648835,110.5991408
-7,Universitas Gunungkidul,Kabupaten Gunungkidul,Kampus dan sekolah,-7.9531495,110.5897172
-8,Universitas Negeri Yogyakarta Kampus Wates,Kabupaten Kulon Progo,Kampus dan sekolah,-7.8542051,110.1642989
-9,SMA Negeri 1 Wates,Kabupaten Kulon Progo,Kampus dan sekolah,-7.8545896,110.158352
-10,Universitas Gadjah Mada,Kabupaten Sleman,Kampus dan sekolah,-7.7714,110.3775
-11,Universitas Negeri Yogyakarta,Kabupaten Sleman,Kampus dan sekolah,-7.7751,110.3863
-12,UIN Sunan Kalijaga Yogyakarta,Kabupaten Sleman,Kampus dan sekolah,-7.7843,110.3942
-13,Universitas Sanata Dharma Mrican,Kabupaten Sleman,Kampus dan sekolah,-7.7755,110.3905
-14,Universitas Islam Indonesia Kampus Terpadu,Kabupaten Sleman,Kampus dan sekolah,-7.6874,110.4146
-15,Universitas Amikom Yogyakarta,Kabupaten Sleman,Kampus dan sekolah,-7.7598,110.4087
-16,UPN Veteran Yogyakarta,Kabupaten Sleman,Kampus dan sekolah,-7.7623,110.4104
-17,Institut Pertanian Stiper Yogyakarta,Kabupaten Sleman,Kampus dan sekolah,-7.7611296,110.4245755
-18,SMA Negeri 1 Sleman,Kabupaten Sleman,Kampus dan sekolah,-7.6830898,110.3393022
-19,SMA Negeri 1 Depok Sleman,Kabupaten Sleman,Kampus dan sekolah,-7.7736914,110.4127918
-20,SMA Negeri 1 Yogyakarta,Kota Yogyakarta,Kampus dan sekolah,-7.7996758,110.3525385
-21,SMA Negeri 3 Yogyakarta,Kota Yogyakarta,Kampus dan sekolah,-7.7860815,110.3736531
-22,SMA Negeri 8 Yogyakarta,Kota Yogyakarta,Kampus dan sekolah,-7.8001524,110.3953743
-23,Universitas Ahmad Dahlan Kampus 1,Kota Yogyakarta,Kampus dan sekolah,-7.7984202,110.3828464
-24,Universitas Ahmad Dahlan Kampus 2,Kota Yogyakarta,Kampus dan sekolah,-7.8197338,110.3879748
-25,Universitas Ahmad Dahlan Kampus 3,Kota Yogyakarta,Kampus dan sekolah,-7.8078904,110.389486
-26,Universitas Ahmad Dahlan Kampus 5,Kota Yogyakarta,Kampus dan sekolah,-7.8261812,110.3800473
-27,Pasar Bantul,Kabupaten Bantul,Pasar,-7.8846435,110.3303246
-28,Pasar Imogiri,Kabupaten Bantul,Pasar,-7.8352842,110.4708975
-29,Pasar Piyungan,Kabupaten Bantul,Pasar,-7.8357519,110.4706829
-30,Pasar Niten,Kabupaten Bantul,Pasar,-7.8394549,110.3499869
-31,Pasar Argosari Wonosari,Kabupaten Gunungkidul,Pasar,-7.9673256,110.6025232
-32,Pasar Playen,Kabupaten Gunungkidul,Pasar,-7.9418235,110.5500142
-33,Pasar Semin,Kabupaten Gunungkidul,Pasar,-7.8653957,110.7359855
-34,Pasar Karangmojo,Kabupaten Gunungkidul,Pasar,-7.9525256,110.6785373
-35,Pasar Wates,Kabupaten Kulon Progo,Pasar,-7.8605502,110.1585469
-36,Pasar Sentolo,Kabupaten Kulon Progo,Pasar,-7.8462055,110.2188013
-37,Pasar Bendungan,Kabupaten Kulon Progo,Pasar,-7.8927664,110.1432605
-38,Pasar Dekso,Kabupaten Kulon Progo,Pasar,-7.714797,110.2264314
-39,Pasar Sleman,Kabupaten Sleman,Pasar,-7.7008613,110.3467817
-40,Pasar Godean,Kabupaten Sleman,Pasar,-7.7661835,110.2908742
-41,Pasar Pakem,Kabupaten Sleman,Pasar,-7.6648073,110.419825
-42,Pasar Prambanan,Kabupaten Sleman,Pasar,-7.7568102,110.4891599
-43,Pasar Condongcatur,Kabupaten Sleman,Pasar,-7.759685,110.4071788
-44,Pasar Ngijon,Kabupaten Sleman,Pasar,-7.7583446,110.2519125
-45,Pasar Beringharjo,Kota Yogyakarta,Pasar,-7.7986,110.3672
-46,Pasar Kranggan,Kota Yogyakarta,Pasar,-7.7826,110.3665
-47,Pasar Demangan,Kota Yogyakarta,Pasar,-7.7809309,110.3885432
-48,Pasar Sentul Yogyakarta,Kota Yogyakarta,Pasar,-7.801754,110.3772954
-49,Pasar Prawirotaman,Kota Yogyakarta,Pasar,-7.819936,110.3681618
-50,Pasar Seni Gabusan,Kabupaten Bantul,Pasar/pusat seni,-7.8766667,110.3499796
-51,Plaza Ambarrukmo,Kabupaten Sleman,Pusat perbelanjaan (mall),-7.7827,110.4016
-52,Pakuwon Mall Jogja,Kabupaten Sleman,Pusat perbelanjaan (mall),-7.7582,110.399
-53,Jogja City Mall,Kabupaten Sleman,Pusat perbelanjaan (mall),-7.7531628,110.3605803
-54,Sleman City Hall,Kabupaten Sleman,Pusat perbelanjaan (mall),-7.719943,110.3618986
-55,Sahid J-Walk,Kabupaten Sleman,Pusat perbelanjaan (mall),-7.7792474,110.4143622
-56,Transmart Maguwo,Kabupaten Sleman,Pusat perbelanjaan (mall),-7.7828055,110.4200363
-57,Malioboro Mall,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7931045,110.3669354
-58,Plaza Malioboro,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7930135,110.3660317
-59,Galeria Mall Yogyakarta,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7820956,110.3787874
-60,Lippo Plaza Jogja,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7829,110.3909
-61,XT Square Yogyakarta,Kota Yogyakarta,Pusat perbelanjaan/pasar seni,-7.8165805,110.386331
-62,Pantai Parangtritis,Kabupaten Bantul,Tempat wisata,-8.0240986,110.3298635
-63,Gumuk Pasir Parangkusumo,Kabupaten Bantul,Tempat wisata,-8.0173709,110.3165001
-64,Pantai Depok Bantul,Kabupaten Bantul,Tempat wisata,-8.0124145,110.2916437
-65,Hutan Pinus Mangunan,Kabupaten Bantul,Tempat wisata,-7.9253212,110.4300395
-66,Kebun Buah Mangunan,Kabupaten Bantul,Tempat wisata,-7.9406163,110.4244493
-67,Puncak Becici,Kabupaten Bantul,Tempat wisata,-7.9012265,110.436995
-68,HeHa Sky View,Kabupaten Gunungkidul,Tempat wisata,-7.8492,110.4789
-69,Pantai Baron,Kabupaten Gunungkidul,Tempat wisata,-8.1280827,110.5488145
-70,Pantai Kukup,Kabupaten Gunungkidul,Tempat wisata,-8.1333723,110.5543999
-71,Pantai Krakal,Kabupaten Gunungkidul,Tempat wisata,-8.1442101,110.5991009
-72,Pantai Indrayanti,Kabupaten Gunungkidul,Tempat wisata,-8.1498964,110.6124372
-73,Pantai Timang,Kabupaten Gunungkidul,Tempat wisata,-8.1752861,110.6625626
-74,Goa Pindul,Kabupaten Gunungkidul,Tempat wisata,-7.9301464,110.6492774
-75,Gunung Api Purba Nglanggeran,Kabupaten Gunungkidul,Tempat wisata,-7.842616,110.5378561
-76,Embung Nglanggeran,Kabupaten Gunungkidul,Tempat wisata,-7.8462045,110.5471163
-77,Pantai Glagah,Kabupaten Kulon Progo,Tempat wisata,-7.9107602,110.064934
-78,Pantai Congot,Kabupaten Kulon Progo,Tempat wisata,-7.8992235,110.034404
-79,Waduk Sermo,Kabupaten Kulon Progo,Tempat wisata,-7.8245619,110.1237254
-80,Kalibiru,Kabupaten Kulon Progo,Tempat wisata,-7.8058034,110.1288972
-81,Kebun Teh Nglinggo,Kabupaten Kulon Progo,Tempat wisata,-7.6453562,110.1441463
-82,Candi Prambanan,Kabupaten Sleman,Tempat wisata,-7.752,110.4915
-83,Tebing Breksi,Kabupaten Sleman,Tempat wisata,-7.7813588,110.5046256
-84,Obelix Hills,Kabupaten Sleman,Tempat wisata,-7.806663,110.5214561
-85,Museum Ullen Sentalu,Kabupaten Sleman,Tempat wisata,-7.5979834,110.4227606
-86,Kaliurang Park Botanical Garden,Kabupaten Sleman,Tempat wisata,-7.5985072,110.4263127
-87,Tlogo Putri Kaliurang,Kabupaten Sleman,Tempat wisata,-7.5934885,110.4323572
-88,The Lost World Castle,Kabupaten Sleman,Tempat wisata,-7.6040053,110.4510793
-89,Tugu Pal Putih Yogyakarta,Kota Yogyakarta,Tempat wisata,-7.7829,110.3671
-90,Keraton Yogyakarta,Kota Yogyakarta,Tempat wisata,-7.8053,110.3642
-91,Taman Sari Yogyakarta,Kota Yogyakarta,Tempat wisata,-7.8101,110.3594
-92,Gembira Loka Zoo,Kota Yogyakarta,Tempat wisata,-7.8037231,110.3981351
-93,Taman Pintar Yogyakarta,Kota Yogyakarta,Tempat wisata/edukasi,-7.8013,110.3678
-94,Jalan Malioboro,Kota Yogyakarta,Tempat wisata/pusat komersial,-7.7928,110.3658
-95,Alun-Alun Kidul Yogyakarta,Kota Yogyakarta,Tempat wisata/ruang publik,-7.8117,110.3631
-96,Bandara Internasional Yogyakarta,Kabupaten Kulon Progo,Transportasi/keramaian,-7.9026787,110.0571928
-97,Stasiun Wates,Kabupaten Kulon Progo,Transportasi/keramaian,-7.8593185,110.158068
-98,Terminal Jombor,Kabupaten Sleman,Transportasi/keramaian,-7.7473468,110.3611563
-99,Stasiun Yogyakarta Tugu,Kota Yogyakarta,Transportasi/keramaian,-7.7892,110.3635
-100,Terminal Giwangan,Kota Yogyakarta,Transportasi/keramaian,-7.833898,110.3916893
-101,Stasiun Lempuyangan,Kota Yogyakarta,Transportasi/keramaian,-7.7902,110.3751
+1,SMA Negeri 1 Yogyakarta,Kota Yogyakarta,Kampus dan sekolah,-7.7996758,110.3525385
+2,SMA Negeri 3 Yogyakarta,Kota Yogyakarta,Kampus dan sekolah,-7.7860815,110.3736531
+3,SMA Negeri 8 Yogyakarta,Kota Yogyakarta,Kampus dan sekolah,-7.8001524,110.3953743
+4,Universitas Ahmad Dahlan Kampus 1,Kota Yogyakarta,Kampus dan sekolah,-7.7984202,110.3828464
+5,Universitas Ahmad Dahlan Kampus 2,Kota Yogyakarta,Kampus dan sekolah,-7.8197338,110.3879748
+6,Universitas Ahmad Dahlan Kampus 3,Kota Yogyakarta,Kampus dan sekolah,-7.8078904,110.389486
+7,Universitas Ahmad Dahlan Kampus 5,Kota Yogyakarta,Kampus dan sekolah,-7.8261812,110.3800473
+8,Pasar Beringharjo,Kota Yogyakarta,Pasar,-7.7986,110.3672
+9,Pasar Kranggan,Kota Yogyakarta,Pasar,-7.7826,110.3665
+10,Pasar Demangan,Kota Yogyakarta,Pasar,-7.7809309,110.3885432
+11,Pasar Sentul Yogyakarta,Kota Yogyakarta,Pasar,-7.801754,110.3772954
+12,Pasar Prawirotaman,Kota Yogyakarta,Pasar,-7.819936,110.3681618
+13,Malioboro Mall,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7931045,110.3669354
+14,Plaza Malioboro,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7930135,110.3660317
+15,Galeria Mall Yogyakarta,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7820956,110.3787874
+16,Lippo Plaza Jogja,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7829,110.3909
+17,XT Square Yogyakarta,Kota Yogyakarta,Pusat perbelanjaan/pasar seni,-7.8165805,110.386331
+18,Tugu Pal Putih Yogyakarta,Kota Yogyakarta,Tempat wisata,-7.7829,110.3671
+19,Keraton Yogyakarta,Kota Yogyakarta,Tempat wisata,-7.8053,110.3642
+20,Taman Sari Yogyakarta,Kota Yogyakarta,Tempat wisata,-7.8101,110.3594
+21,Gembira Loka Zoo,Kota Yogyakarta,Tempat wisata,-7.8037231,110.3981351
+22,Taman Pintar Yogyakarta,Kota Yogyakarta,Tempat wisata/edukasi,-7.8013,110.3678
+23,Jalan Malioboro,Kota Yogyakarta,Tempat wisata/pusat komersial,-7.7928,110.3658
+24,Alun-Alun Kidul Yogyakarta,Kota Yogyakarta,Tempat wisata/ruang publik,-7.8117,110.3631
+25,Stasiun Yogyakarta Tugu,Kota Yogyakarta,Transportasi/keramaian,-7.7892,110.3635
+26,Terminal Giwangan,Kota Yogyakarta,Transportasi/keramaian,-7.833898,110.3916893
+27,Stasiun Lempuyangan,Kota Yogyakarta,Transportasi/keramaian,-7.7902,110.3751
