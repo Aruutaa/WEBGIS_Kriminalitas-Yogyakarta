@@ -1,0 +1,28 @@
+id,nama_lokasi,kabupaten_kota,kategori,latitude,longitude
+1,SMA Negeri 1 Yogyakarta,Kota Yogyakarta,Kampus dan sekolah,-7.7996758,110.3525385
+2,SMA Negeri 3 Yogyakarta,Kota Yogyakarta,Kampus dan sekolah,-7.7860815,110.3736531
+3,SMA Negeri 8 Yogyakarta,Kota Yogyakarta,Kampus dan sekolah,-7.8001524,110.3953743
+4,Universitas Ahmad Dahlan Kampus 1,Kota Yogyakarta,Kampus dan sekolah,-7.7984202,110.3828464
+5,Universitas Ahmad Dahlan Kampus 2,Kota Yogyakarta,Kampus dan sekolah,-7.8197338,110.3879748
+6,Universitas Ahmad Dahlan Kampus 3,Kota Yogyakarta,Kampus dan sekolah,-7.8078904,110.389486
+7,Universitas Ahmad Dahlan Kampus 5,Kota Yogyakarta,Kampus dan sekolah,-7.8261812,110.3800473
+8,Pasar Beringharjo,Kota Yogyakarta,Pasar,-7.7986,110.3672
+9,Pasar Kranggan,Kota Yogyakarta,Pasar,-7.7826,110.3665
+10,Pasar Demangan,Kota Yogyakarta,Pasar,-7.7809309,110.3885432
+11,Pasar Sentul Yogyakarta,Kota Yogyakarta,Pasar,-7.801754,110.3772954
+12,Pasar Prawirotaman,Kota Yogyakarta,Pasar,-7.819936,110.3681618
+13,Malioboro Mall,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7931045,110.3669354
+14,Plaza Malioboro,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7930135,110.3660317
+15,Galeria Mall Yogyakarta,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7820956,110.3787874
+16,Lippo Plaza Jogja,Kota Yogyakarta,Pusat perbelanjaan (mall),-7.7829,110.3909
+17,XT Square Yogyakarta,Kota Yogyakarta,Pusat perbelanjaan/pasar seni,-7.8165805,110.386331
+18,Tugu Pal Putih Yogyakarta,Kota Yogyakarta,Tempat wisata,-7.7829,110.3671
+19,Keraton Yogyakarta,Kota Yogyakarta,Tempat wisata,-7.8053,110.3642
+20,Taman Sari Yogyakarta,Kota Yogyakarta,Tempat wisata,-7.8101,110.3594
+21,Gembira Loka Zoo,Kota Yogyakarta,Tempat wisata,-7.8037231,110.3981351
+22,Taman Pintar Yogyakarta,Kota Yogyakarta,Tempat wisata/edukasi,-7.8013,110.3678
+23,Jalan Malioboro,Kota Yogyakarta,Tempat wisata/pusat komersial,-7.7928,110.3658
+24,Alun-Alun Kidul Yogyakarta,Kota Yogyakarta,Tempat wisata/ruang publik,-7.8117,110.3631
+25,Stasiun Yogyakarta Tugu,Kota Yogyakarta,Transportasi/keramaian,-7.7892,110.3635
+26,Terminal Giwangan,Kota Yogyakarta,Transportasi/keramaian,-7.833898,110.3916893
+27,Stasiun Lempuyangan,Kota Yogyakarta,Transportasi/keramaian,-7.7902,110.3751
