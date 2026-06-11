@@ -1,292 +1,113 @@
-(function () {
-  const PATHS = {
-    incidents: 'assets/data/Data%20Kejahatan%20Klitih.csv',
-    cctvOfficial: 'assets/data/cctv_pemkot_yogyakarta_youtube_links.csv',
-    cctvOsm: 'assets/data/cctv_yogyakarta.csv',
-    crowd: 'assets/data/keramaian.csv',
-    admin: 'assets/data/kota_yogyakarta_admin.geojson',
-    zones: 'assets/data/zona_kerawanan.geojson',
-    weights: 'assets/data/hasil_pembobotan_zona.json'
+
+(function(){
+  const Data={};
+  const DATA_PATHS={
+    incidents:['assets/data/Data Kejahatan Klitih.csv','assets/data/data_kejahatan_klitih.csv','assets/data/kejadian_klitih.csv','assets/data/kejadian.csv'],
+    cctv:['assets/data/cctv_pemkot_yogyakarta_youtube_links.csv','assets/data/cctv.csv'],
+    crowd:['assets/data/titik_keramaian.csv','assets/data/keramaian.csv'],
+    zones:['assets/data/zona_kerawanan.geojson'],
+    admin:['assets/data/batas_administrasi.geojson','assets/data/admin.geojson']
   };
-
-  const CCTV_COORDS = {
-    'SIMPANG JOKTENG WETAN (PTZ)': { lat: -7.813764, lng: 110.370091, accuracy: 'estimasi lokasi simpang' },
-    'SIMPANG JOKTENG WETAN V. TIMUR': { lat: -7.813693, lng: 110.370222, accuracy: 'estimasi lokasi simpang' },
-    'SIMPANG TUGU': { lat: -7.78293, lng: 110.36707, accuracy: 'estimasi landmark' },
-    'NOL KM - UTARA': { lat: -7.801372, lng: 110.364775, accuracy: 'estimasi kawasan nol kilometer' },
-    'NOL KM (PTZ)': { lat: -7.80135, lng: 110.36472, accuracy: 'estimasi kawasan nol kilometer' },
-    'NOL KM - GEDUNG AGUNG': { lat: -7.80113, lng: 110.36412, accuracy: 'estimasi sisi Gedung Agung' },
-    'SIMPANG BALAIKOTA V. UTARA-BARAT': { lat: -7.79815, lng: 110.39379, accuracy: 'estimasi kompleks Balai Kota' },
-    'SIMPANG WIROBRAJAN (PTZ)': { lat: -7.80127, lng: 110.34986, accuracy: 'estimasi lokasi simpang' },
-    'SIMPANG GRAMEDIA V. UTARA-TIMUR': { lat: -7.78374, lng: 110.37789, accuracy: 'estimasi lokasi simpang' },
-    'SIMPANG GRAMEDIA (PTZ)': { lat: -7.78369, lng: 110.37782, accuracy: 'estimasi lokasi simpang' },
-    'SIMPANG GRAMEDIA V. TIMUR': { lat: -7.78379, lng: 110.37796, accuracy: 'estimasi lokasi simpang' },
-    'SIMPANG MELIA PUROSANI (PTZ)': { lat: -7.79528, lng: 110.36715, accuracy: 'estimasi sekitar Melia Purosani' },
-    'SIMPANG MENTERI SUPENO V. TIMUR': { lat: -7.81318, lng: 110.37536, accuracy: 'estimasi koridor Menteri Supeno' },
-    'DEPAN DPRD V. UTARA': { lat: -7.79755, lng: 110.39495, accuracy: 'estimasi depan DPRD/Balai Kota' },
-    'KOTABARU - JL. YOS SUDARSO': { lat: -7.7865, lng: 110.3744, accuracy: 'estimasi ruas Kotabaru' },
-    'KOTABARU - JL. SAJIONO': { lat: -7.7861, lng: 110.3731, accuracy: 'estimasi ruas Kotabaru' },
-    'KOTABARU - JL. WARDHANI': { lat: -7.78655, lng: 110.3729, accuracy: 'estimasi ruas Kotabaru' },
-    'MARGO UTOMO - OPTIC TUGU': { lat: -7.78424, lng: 110.36692, accuracy: 'estimasi koridor Margo Utomo' },
-    'JL. MAS SUHARTO V. SELATAN': { lat: -7.78835, lng: 110.36946, accuracy: 'estimasi ruas Mas Suharto' },
-    'SIMPANG GALERIA (PTZ)': { lat: -7.78272, lng: 110.37866, accuracy: 'estimasi Simpang Galeria' },
-    'SIMPANG BOROBUDUR PLAZA V. UTARA': { lat: -7.77268, lng: 110.36367, accuracy: 'estimasi koridor utara kota' }
-  };
-
-  const ZONE_SCORE = { 'aman': 25, 'rawan': 65, 'sangat rawan': 90 };
-  const ZONE_COLOR = { 'aman': '#6dd5a5', 'rawan': '#f7cca9', 'sangat rawan': '#b33d38' };
-
-  function $(id) { return document.getElementById(id); }
-  function escapeHtml(value) {
-    return String(value ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  }
-  function normalizeKey(value) {
-    return String(value ?? '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ');
-  }
-  function parseNumber(value) {
-    if (value === null || value === undefined) return NaN;
-    if (typeof value === 'number') return value;
-    let s = String(value).trim().replace(/^\uFEFF/, '');
-    if (!s) return NaN;
-    if (s.includes(',') && !s.includes('.')) s = s.replace(',', '.');
-    s = s.replace(/[^0-9.+-]/g, '');
-    const n = Number(s);
-    return Number.isFinite(n) ? n : NaN;
-  }
-  function normalizeLatitude(value) {
-    let n = parseNumber(value);
-    if (Number.isFinite(n) && n > 0 && n >= 6 && n <= 9) n = -n;
-    return n;
-  }
-  function isUrl(value) { return /^https?:\/\//i.test(String(value || '').trim()); }
-  function sourceLabel(value) {
-    const v = String(value || '').trim();
-    if (!v) return 'Sumber tidak tertulis';
-    try { return isUrl(v) ? new URL(v).hostname.replace(/^www\./, '') : v.split('–')[0].slice(0, 52); } catch { return v.slice(0, 52); }
-  }
-  function categoryClass(category) {
-    const key = normalizeKey(category);
-    if (key.includes('sangat') || key.includes('tinggi')) return 'high';
-    if (key.includes('rawan') || key.includes('sedang')) return 'med';
-    return 'low';
-  }
-  function zoneLabel(props) {
-    return props?.Klasifikas || props?.Klasifikasi || props?.klasifikasi || props?.kategori || props?.Kategori || props?.gridcode || 'Tidak diketahui';
-  }
-  function zoneScore(label) { return ZONE_SCORE[normalizeKey(label)] ?? 55; }
-  function zoneColor(label) { return ZONE_COLOR[normalizeKey(label)] ?? '#ae995b'; }
-  function riskLevelFromScore(score) { return score >= 80 ? 'Sangat Rawan' : score >= 50 ? 'Rawan' : 'Aman'; }
-  function formatNum(n) { return Number(n || 0).toLocaleString('id-ID'); }
-  function haversineMeters(lat1, lng1, lat2, lng2) {
-    const R = 6371000;
-    const toRad = (d) => d * Math.PI / 180;
-    const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
-    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  }
-  function formatDistance(m) { return m >= 1000 ? `${(m / 1000).toFixed(2)} km` : `${Math.round(m)} m`; }
-
-  async function fetchText(path) {
-    const res = await fetch(path, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`Gagal membaca ${path}`);
-    return res.text();
-  }
-  async function fetchJson(path) {
-    const res = await fetch(path, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`Gagal membaca ${path}`);
-    return res.json();
-  }
-  function splitDelimitedLine(line, delimiter) {
-    const out = [];
-    let cur = '', inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') {
-        if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
-        else inQuotes = !inQuotes;
-      } else if (ch === delimiter && !inQuotes) { out.push(cur); cur = ''; }
-      else cur += ch;
+  async function fetchFirst(paths,type='text'){
+    for(const path of paths){
+      try{ const res=await fetch(path,{cache:'no-store'}); if(res.ok){ return {path, data:type==='json'?await res.json():await res.text()}; } }catch(e){}
     }
-    out.push(cur);
-    return out;
+    return {path:null,data:type==='json'?null:''};
   }
-  function parseDelimited(text) {
-    const clean = String(text || '').replace(/^\uFEFF/, '').replace(/\r/g, '');
-    const lines = clean.split('\n').filter((line) => line.trim().length);
-    if (!lines.length) return [];
-    const first = lines[0];
-    const delimiter = (first.match(/;/g) || []).length >= (first.match(/,/g) || []).length ? ';' : ',';
-    const headers = splitDelimitedLine(first, delimiter).map((h) => h.trim().replace(/^\uFEFF/, ''));
-    return lines.slice(1).map((line, index) => {
-      const cells = splitDelimitedLine(line, delimiter);
-      const row = { _row: index + 2 };
-      headers.forEach((h, i) => { if (h) row[h] = (cells[i] ?? '').trim(); });
-      return row;
-    });
-  }
-  async function loadCsv(path) { return parseDelimited(await fetchText(path)); }
-
-  async function loadIncidents() {
-    const rows = await loadCsv(PATHS.incidents);
-    return rows.map((row, index) => {
-      const lng = parseNumber(row.Bujur ?? row.bujur ?? row.longitude ?? row.lng ?? row.lon);
-      const lat = normalizeLatitude(row.Lintang ?? row.lintang ?? row.latitude ?? row.lat);
-      const date = String(row.Tanggal_up || row.tanggal || row.date || '').trim();
-      const year = /^\d{4}/.test(date) ? date.slice(0, 4) : 'Tidak diketahui';
-      return {
-        id: row.No || `K-${index + 1}`,
-        url: row.URL || row.url || '',
-        source: sourceLabel(row.URL || row.url),
-        title: isUrl(row.URL) ? sourceLabel(row.URL) : (row.URL || 'Kejadian klitih'),
-        date,
-        year,
-        lng,
-        lat,
-        kecamatan: String(row.Kecamatan || row.kecamatan || 'Tidak diketahui').trim() || 'Tidak diketahui',
-        valid: Number.isFinite(lat) && Number.isFinite(lng) && lat > -10 && lat < -5 && lng > 108 && lng < 113,
-        raw: row
-      };
-    }).filter((item) => item.valid);
-  }
-
-  async function loadCctv() {
-    const officialRows = await loadCsv(PATHS.cctvOfficial).catch(() => []);
-    const official = officialRows.map((row, index) => {
-      const name = row.nama_cctv || row.nama || `CCTV Pemkot ${index + 1}`;
-      const coord = CCTV_COORDS[name] || (() => {
-        const angle = index * 1.91;
-        return { lat: -7.7972 + Math.sin(angle) * 0.018, lng: 110.3688 + Math.cos(angle) * 0.018, accuracy: 'fallback otomatis - perlu validasi koordinat' };
-      })();
-      return {
-        id: `official-${row.id || index + 1}`,
-        name,
-        lat: coord.lat,
-        lng: coord.lng,
-        type: /ptz/i.test(row.jenis_view || name) ? 'PTZ' : 'Fixed',
-        group: row.playlist_group || 'CCTV Pemkot',
-        url: row.youtube_watch_url || row.channel_streams_url || '',
-        embed: row.youtube_nocookie_embed_url || row.youtube_embed_url || '',
-        source: 'Pemkot YouTube',
-        accuracy: coord.accuracy
-      };
-    }).filter((c) => Number.isFinite(c.lat) && Number.isFinite(c.lng));
-
-    const osmRows = await loadCsv(PATHS.cctvOsm).catch(() => []);
-    const osm = osmRows.map((row, index) => ({
-      id: `osm-${row.osm_id || index + 1}`,
-      name: row.nama_jalan && row.nama_jalan !== 'Nama jalan tidak diketahui' ? row.nama_jalan : (row.alamat_lengkap || `CCTV OSM ${index + 1}`),
-      lat: parseNumber(row.latitude),
-      lng: parseNumber(row.longitude),
-      type: 'CCTV',
-      group: row.kecamatan || row.kota_kab || 'OSM',
-      url: '',
-      embed: '',
-      source: 'OSM/CSV',
-      accuracy: 'koordinat dari CSV'
-    })).filter((c) => Number.isFinite(c.lat) && Number.isFinite(c.lng));
-    return [...official, ...osm];
-  }
-
-  async function loadCrowd() {
-    const rows = await loadCsv(PATHS.crowd).catch(() => []);
-    return rows.map((row, index) => ({
-      id: row.id || index + 1,
-      name: row.nama_lokasi || 'Titik keramaian',
-      category: row.kategori || 'Keramaian',
-      city: row.kabupaten_kota || '',
-      lat: parseNumber(row.latitude),
-      lng: parseNumber(row.longitude)
-    })).filter((c) => Number.isFinite(c.lat) && Number.isFinite(c.lng));
-  }
-
-  async function loadZones() {
-    const geojson = await fetchJson(PATHS.zones);
-    const features = (geojson.features || []).map((feature, index) => {
-      const props = feature.properties || {};
-      const klas = String(zoneLabel(props));
-      return {
-        ...feature,
-        id: props.OBJECTID || props.id || index + 1,
-        properties: {
-          ...props,
-          _zoneId: props.OBJECTID || props.id || index + 1,
-          _label: klas,
-          _score: zoneScore(klas),
-          _color: zoneColor(klas),
-          _riskClass: riskLevelFromScore(zoneScore(klas))
-        }
-      };
-    });
-    return { ...geojson, features };
-  }
-  async function loadAdmin() { return fetchJson(PATHS.admin).catch(() => null); }
-  async function loadWeights() { return fetchJson(PATHS.weights).catch(() => ({ zones: [] })); }
-
-  function pointInRing(point, ring) {
-    const x = point[0], y = point[1];
-    let inside = false;
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      const xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
-      const intersect = ((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / ((yj - yi) || 1e-12) + xi);
-      if (intersect) inside = !inside;
+  function parseCSV(text){
+    if(!text||!text.trim()) return [];
+    text=text.replace(/^\uFEFF/,'');
+    const rows=[]; let row=[], cur='', q=false;
+    for(let i=0;i<text.length;i++){
+      const c=text[i], n=text[i+1];
+      if(c==='"'&&q&&n==='"'){cur+='"';i++;continue}
+      if(c==='"'){q=!q;continue}
+      if(c===','&&!q){row.push(cur.trim());cur='';continue}
+      if((c==='\n'||c==='\r')&&!q){ if(c==='\r'&&n==='\n') i++; row.push(cur.trim()); if(row.some(x=>x!=='')) rows.push(row); row=[]; cur=''; continue; }
+      cur+=c;
     }
-    return inside;
+    row.push(cur.trim()); if(row.some(x=>x!=='')) rows.push(row);
+    if(rows.length<2) return [];
+    const head=rows[0].map(h=>h.trim());
+    return rows.slice(1).map(r=>{ const o={}; head.forEach((h,i)=>o[h]=r[i]??''); return o; });
   }
-  function pointInPolygon(point, polygon) {
-    if (!polygon || !polygon.length) return false;
-    if (!pointInRing(point, polygon[0])) return false;
-    for (let i = 1; i < polygon.length; i++) if (pointInRing(point, polygon[i])) return false;
-    return true;
+  function keyMap(row){ const m={}; Object.keys(row||{}).forEach(k=>m[k.toLowerCase().replace(/[\s_\-().]/g,'')]=k); return m; }
+  function pick(row, names){ const m=keyMap(row); for(const n of names){ const k=m[n.toLowerCase().replace(/[\s_\-().]/g,'')]; if(k && row[k]!==undefined && String(row[k]).trim()!=='') return row[k]; } return ''; }
+  function toNum(v){ if(v===undefined||v===null) return null; const s=String(v).replace(',','.').replace(/[^0-9.\-]/g,''); const n=parseFloat(s); return Number.isFinite(n)?n:null; }
+  function findLatLon(row){
+    let lat=toNum(pick(row,['lat','latitude','lintang','y','koordinat_y']));
+    let lon=toNum(pick(row,['lon','lng','long','longitude','bujur','x','koordinat_x']));
+    if((lat===null||lon===null)){
+      const combined=pick(row,['koordinat','coordinates','coord','lokasi koordinat']);
+      const nums=String(combined).match(/-?\d+(?:[\.,]\d+)?/g)?.map(toNum)||[];
+      if(nums.length>=2){
+        const a=nums[0], b=nums[1];
+        if(Math.abs(a)<=11 && Math.abs(b)>90){ lat=a; lon=b; }
+        else if(Math.abs(b)<=11 && Math.abs(a)>90){ lon=a; lat=b; }
+      }
+    }
+    return {lat,lon};
   }
-  function pointInFeature(lng, lat, feature) {
-    const geom = feature?.geometry;
-    if (!geom) return false;
-    const point = [lng, lat];
-    if (geom.type === 'Polygon') return pointInPolygon(point, geom.coordinates);
-    if (geom.type === 'MultiPolygon') return geom.coordinates.some((poly) => pointInPolygon(point, poly));
-    return false;
+  function sourceType(src){ const s=String(src||'').toLowerCase(); if(!s) return 'Judul/referensi'; if(/instagram|tiktok|twitter|x\.com|facebook|fb\.|youtube|youtu\.be|threads/.test(s)) return 'Media sosial'; if(/^https?:\/\//.test(s)) return 'Berita online'; return 'Judul/referensi'; }
+  function domainOf(url){ try{ if(/^https?:\/\//i.test(url)) return new URL(url).hostname.replace(/^www\./,''); }catch(e){} return ''; }
+  function parseDate(v){ const s=String(v||'').trim(); if(!s) return {text:'-',year:'-'}; const nums=s.match(/\d{4}/); let d=null; if(/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/.test(s)){ const p=s.split(/[\/\-]/).map(Number); const y=p[2]<100?2000+p[2]:p[2]; d=new Date(y,p[1]-1,p[0]); } else { const t=Date.parse(s); if(Number.isFinite(t)) d=new Date(t); } const year=d&&!Number.isNaN(d)?String(d.getFullYear()):(nums?nums[0]:'-'); return {text:s, year}; }
+  function riskFromZone(z){ const s=String(z||'').toLowerCase(); if(s.includes('sangat')) return {label:'Sangat Rawan',score:90,cls:'danger'}; if(s.includes('rawan')) return {label:'Rawan',score:65,cls:'warn'}; if(s.includes('aman')) return {label:'Aman',score:30,cls:'safe'}; return {label:z||'Tidak diketahui',score:0,cls:'med'}; }
+  function normalizeIncident(row,idx){
+    const {lat,lon}=findLatLon(row); const date=parseDate(pick(row,['tanggal','tgl','date','waktu','tahun']));
+    const source=pick(row,['url','link','sumber','berita','referensi','judul berita','source']);
+    const title=pick(row,['judul','kejadian','kasus','lokasi','keterangan','nama','deskripsi']) || `Kejadian ${idx+1}`;
+    const zone=pick(row,['zona','klasifikasi','klasifikas','kelas','kerawanan']) || '';
+    const kec=pick(row,['kecamatan','kapanewon','wilayah','kelurahan','lokasi kecamatan']) || '';
+    const location=pick(row,['lokasi','alamat','tempat','jalan','ruas jalan']) || title;
+    const img=pick(row,['gambar','image','foto','thumbnail','thumb','og_image']);
+    const corridor=extractCorridor([location,title,source,kec].join(' '));
+    return {id:`inc-${idx}`,raw:row,lat,lon,title,location,kecamatan:kec,date:date.text,year:date.year,source,domain:domainOf(source),sourceType:sourceType(source),image:img,zone,corridor};
   }
-  function zoneForPoint(lng, lat, zoneGeojson) {
-    return (zoneGeojson?.features || []).find((feature) => pointInFeature(lng, lat, feature)) || null;
+  function normalizeCctv(row,idx){ const {lat,lon}=findLatLon(row); const name=pick(row,['nama','nama cctv','cctv','lokasi','name','title']) || `CCTV ${idx+1}`; const type=pick(row,['jenis','tipe','type','kategori'])||'CCTV'; const source=pick(row,['sumber','source','url','link'])||''; return {id:`cam-${idx}`,raw:row,lat,lon,name,type,source,domain:domainOf(source),location:pick(row,['lokasi','alamat','jalan'])||name}; }
+  function normalizeCrowd(row,idx){ const {lat,lon}=findLatLon(row); const name=pick(row,['nama','lokasi','tempat','name','title']) || `Keramaian ${idx+1}`; return {id:`crowd-${idx}`,raw:row,lat,lon,name,location:pick(row,['lokasi','alamat','jalan'])||name}; }
+  function extractCorridor(text){
+    const s=String(text||'').replace(/\s+/g,' ');
+    const patterns=[/(?:Jl\.?|Jalan)\s+([A-Za-zÀ-ÿ0-9 .'-]{3,42})/i,/(Ring\s*Road\s*(?:Utara|Selatan|Barat|Timur)?)/i,/(Malioboro|Tugu|Gejayan|Seturan|Babarsari|Kaliurang|Magelang|Solo|Parangtritis|Imogiri|Godean|Wonosari|Palagan|Monjali)/i];
+    for(const p of patterns){ const m=s.match(p); if(m){ let val=(m[1]||m[0]).trim(); val=val.replace(/[,;:|].*$/,'').replace(/\b(kecamatan|kelurahan|kota|kabupaten|yogyakarta|sleman|bantul).*$/i,'').trim(); if(!/^jalan/i.test(val)&&!/^ring/i.test(val)&&!['Malioboro','Tugu'].includes(val)) val='Jalan '+val; return val; }}
+    return '';
   }
-  function summarizeZones(zoneGeojson, incidents, cctv) {
-    return (zoneGeojson?.features || []).map((feature) => {
-      const label = feature.properties._label;
-      const score = feature.properties._score;
-      const inside = incidents.filter((inc) => pointInFeature(inc.lng, inc.lat, feature));
-      const cctvInside = cctv.filter((cam) => pointInFeature(cam.lng, cam.lat, feature));
-      const nearestDistances = inside.map((inc) => {
-        const distances = cctv.map((cam) => haversineMeters(inc.lat, inc.lng, cam.lat, cam.lng));
-        return distances.length ? Math.min(...distances) : Infinity;
-      });
-      const covered = nearestDistances.filter((d) => d <= 500).length;
-      return {
-        id: feature.properties._zoneId,
-        label,
-        score,
-        color: feature.properties._color,
-        category: feature.properties._riskClass,
-        incidents: inside,
-        incidentCount: inside.length,
-        cctvCount: cctvInside.length,
-        covered500: covered,
-        blindspot: Math.max(0, inside.length - covered),
-        feature
-      };
-    }).sort((a, b) => b.score - a.score || b.incidentCount - a.incidentCount);
+  function haversine(a,b){ if(!a||!b||a.lat==null||a.lon==null||b.lat==null||b.lon==null) return Infinity; const R=6371000, toRad=x=>x*Math.PI/180; const dLat=toRad(b.lat-a.lat), dLon=toRad(b.lon-a.lon); const lat1=toRad(a.lat), lat2=toRad(b.lat); const h=Math.sin(dLat/2)**2+Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2; return 2*R*Math.asin(Math.sqrt(h)); }
+  function nearest(point, list){ let best=null, dist=Infinity; for(const item of list||[]){ const d=haversine(point,item); if(d<dist){dist=d;best=item;} } return {item:best,distance:dist}; }
+  function pointInRing(point, ring){ let x=point.lon,y=point.lat,inside=false; for(let i=0,j=ring.length-1;i<ring.length;j=i++){ const xi=ring[i][0], yi=ring[i][1], xj=ring[j][0], yj=ring[j][1]; const intersect=((yi>y)!=(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi); if(intersect) inside=!inside; } return inside; }
+  function pointInFeature(point, feature){ try{ const g=feature.geometry; if(!g) return false; if(g.type==='Polygon') return g.coordinates.some(r=>pointInRing(point,r)); if(g.type==='MultiPolygon') return g.coordinates.some(poly=>poly.some(r=>pointInRing(point,r))); }catch(e){} return false; }
+  function centroidFeature(feature){ let pts=[]; const g=feature.geometry; if(!g) return null; const addRing=r=>r.forEach(p=>pts.push(p)); if(g.type==='Polygon') g.coordinates.forEach(addRing); if(g.type==='MultiPolygon') g.coordinates.forEach(poly=>poly.forEach(addRing)); if(!pts.length) return null; const avg=pts.reduce((a,p)=>[a[0]+p[0],a[1]+p[1]],[0,0]); return {lat:avg[1]/pts.length,lon:avg[0]/pts.length}; }
+  function getZoneName(feature){ const p=feature?.properties||{}; return p.Klasifikas||p.klasifikas||p.Klasifikasi||p.klasifikasi||p.zona||p.Zona||p.kelas||p.Kelas||'Tidak diketahui'; }
+  function getFeatureLabel(feature){ const p=feature?.properties||{}; return p.NAMOBJ||p.nama||p.Nama||p.kecamatan||p.Kecamatan||p.WADMKC||p.DESA||p.KALURAHAN||getZoneName(feature); }
+  function enrich(incidents,cctv,zones){
+    incidents.forEach(i=>{ const inZone=(zones?.features||[]).find(f=>i.lat!=null&&pointInFeature(i,f)); if(inZone&&!i.zone) i.zone=getZoneName(inZone); i.zone=i.zone||'Tidak diketahui'; const near=nearest(i,cctv); i.nearestCctv=near.item; i.nearestCctvDistance=near.distance; i.covered500=near.distance<=500; });
+    return incidents;
   }
-
-  async function loadAll() {
-    const [incidents, cctv, crowd, zones, admin, weights] = await Promise.all([
-      loadIncidents(), loadCctv(), loadCrowd(), loadZones(), loadAdmin(), loadWeights()
+  function zoneStats(incidents,cctv,zones){
+    const features=zones?.features||[];
+    if(!features.length){
+      const by={}; incidents.forEach(i=>{ const k=i.zone||'Tidak diketahui'; if(!by[k]) by[k]={name:k,label:k,classification:k,incidents:0,cctv:0,covered:0,blind:0,score:riskFromZone(k).score}; by[k].incidents++; if(i.covered500) by[k].covered++; else by[k].blind++; });
+      return Object.values(by).sort((a,b)=>b.score-a.score||b.incidents-a.incidents);
+    }
+    return features.map((f,idx)=>{ const name=getFeatureLabel(f), classification=getZoneName(f), risk=riskFromZone(classification); const inc=incidents.filter(i=>i.lat!=null&&pointInFeature(i,f)); const cams=cctv.filter(c=>c.lat!=null&&pointInFeature(c,f)); return {id:`zone-${idx}`,feature:f,name,label:name,classification,score:risk.score,incidents:inc.length,cctv:cams.length,covered:inc.filter(i=>i.covered500).length,blind:inc.filter(i=>!i.covered500).length}; }).sort((a,b)=>b.score-a.score||b.incidents-a.incidents);
+  }
+  function corridorStats(incidents,cctv){
+    const by={};
+    incidents.forEach(i=>{ const k=i.corridor || extractCorridor([i.location,i.title].join(' ')); if(!k) return; if(!by[k]) by[k]={name:k,incidents:[],zones:{},nearest:Infinity,nearestName:'-'}; by[k].incidents.push(i); by[k].zones[i.zone||'Tidak diketahui']=(by[k].zones[i.zone||'Tidak diketahui']||0)+1; const near=nearest(i,cctv); if(near.distance<by[k].nearest){ by[k].nearest=near.distance; by[k].nearestName=near.item?.name||'-'; } });
+    return Object.values(by).map(c=>{ const dominant=Object.entries(c.zones).sort((a,b)=>b[1]-a[1])[0]?.[0]||'-'; const count=c.incidents.length; const status=count>=3?'Prioritas tinggi':count>=2?'Perlu dipantau':'Indikasi awal'; return {...c,count,dominant,status}; }).sort((a,b)=>b.count-a.count||a.nearest-b.nearest);
+  }
+  async function loadAll(){
+    const [incRaw,cctvRaw,crowdRaw,zonesRaw,adminRaw]=await Promise.all([
+      fetchFirst(DATA_PATHS.incidents),fetchFirst(DATA_PATHS.cctv),fetchFirst(DATA_PATHS.crowd),fetchFirst(DATA_PATHS.zones,'json'),fetchFirst(DATA_PATHS.admin,'json')
     ]);
-    return { incidents, cctv, crowd, zones, admin, weights, zoneStats: summarizeZones(zones, incidents, cctv) };
+    const incidents=parseCSV(incRaw.data).map(normalizeIncident).filter(d=>d.lat!=null&&d.lon!=null);
+    const cctv=parseCSV(cctvRaw.data).map(normalizeCctv).filter(d=>d.lat!=null&&d.lon!=null);
+    const crowd=parseCSV(crowdRaw.data).map(normalizeCrowd).filter(d=>d.lat!=null&&d.lon!=null);
+    const zones=zonesRaw.data || {type:'FeatureCollection',features:[]};
+    const admin=adminRaw.data || {type:'FeatureCollection',features:[]};
+    enrich(incidents,cctv,zones);
+    const meta={incidentsPath:incRaw.path,cctvPath:cctvRaw.path,crowdPath:crowdRaw.path,zonesPath:zonesRaw.path,adminPath:adminRaw.path};
+    return {incidents,cctv,crowd,zones,admin,meta,zoneStats:zoneStats(incidents,cctv,zones),corridors:corridorStats(incidents,cctv)};
   }
-
-  window.GeoSafe = {
-    PATHS, $, escapeHtml, normalizeKey, parseNumber, normalizeLatitude, isUrl, sourceLabel,
-    categoryClass, zoneLabel, zoneScore, zoneColor, riskLevelFromScore, formatNum, haversineMeters, formatDistance,
-    fetchText, fetchJson, loadCsv, loadIncidents, loadCctv, loadCrowd, loadZones, loadAdmin, loadWeights, loadAll,
-    pointInFeature, zoneForPoint, summarizeZones
-  };
+  Object.assign(Data,{loadAll,parseCSV,pick,domainOf,haversine,nearest,pointInFeature,centroidFeature,getZoneName,getFeatureLabel,riskFromZone,extractCorridor,corridorStats});
+  window.GeoSafeData=Data;
 })();

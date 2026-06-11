@@ -1,42 +1,8 @@
-(function () {
-  const G = window.GeoSafe;
-  const $ = G.$;
-  let incidents = [];
-  function filters() { return { q: ($('newsSearch')?.value || '').toLowerCase().trim(), type: $('newsType')?.value || 'all', sort: $('newsSort')?.value || 'date' }; }
-  function rowType(item) {
-    const text = [item.title, item.url, item.source].join(' ').toLowerCase();
-    if (text.includes('twitter') || text.includes('x.com')) return 'Media sosial';
-    if (G.isUrl(item.url)) return 'Berita online';
-    return 'Judul/referensi';
-  }
-  function render() {
-    const f = filters();
-    let rows = incidents.map((item) => ({ ...item, type: rowType(item) })).filter((item) => {
-      const hay = [item.title, item.source, item.kecamatan, item.date, item.type].join(' ').toLowerCase();
-      return (!f.q || hay.includes(f.q)) && (f.type === 'all' || item.type === f.type);
-    });
-    if (f.sort === 'source') rows.sort((a,b)=>a.source.localeCompare(b.source));
-    else if (f.sort === 'kecamatan') rows.sort((a,b)=>a.kecamatan.localeCompare(b.kecamatan));
-    else rows.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
-    $('newsGrid').innerHTML = rows.map((item, index) => `<article class="news-card">
-      <div class="news-poster"><div><div class="source"><span>${G.escapeHtml(item.source)}</span><span>${String(index+1).padStart(2,'0')}</span></div><h3>${G.escapeHtml(item.title || 'Kejadian kriminalitas')}</h3></div></div>
-      <div class="news-body"><div class="news-meta"><span class="pill warning">${G.escapeHtml(item.type)}</span><span class="pill">${G.escapeHtml(item.date || '-')}</span><span class="pill">${G.escapeHtml(item.kecamatan)}</span></div>
-      <p>Referensi ini digunakan sebagai konteks sumber kejadian pada dashboard WebGIS kriminalitas. Buka sumber asli untuk validasi detail peristiwa.</p>
-      <div class="news-footer"><span class="muted">Sumber titik kejadian</span>${G.isUrl(item.url) ? `<a class="btn small primary" href="${G.escapeHtml(item.url)}" target="_blank" rel="noopener">Baca</a>` : `<span class="btn small">Judul saja</span>`}</div></div>
-    </article>`).join('') || '<div class="card wide"><h3>Tidak ada sumber yang cocok</h3><p>Ubah kata kunci atau filter sumber.</p></div>';
-  }
-  async function init() {
-    try {
-      incidents = await G.loadIncidents();
-      ['newsSearch','newsType','newsSort'].forEach((id) => {
-        const el = $(id); if (!el) return;
-        ['input','change'].forEach((evt)=>el.addEventListener(evt, render));
-      });
-      render();
-    } catch (err) {
-      console.error(err);
-      $('newsGrid').innerHTML = `<div class="card wide"><h3>Data berita gagal dimuat</h3><p>${G.escapeHtml(err.message)}. Jalankan melalui Live Server.</p></div>`;
-    }
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+
+(async function(){
+  const $=window.GeoSafeUI?.$ || ((s,r=document)=>r.querySelector(s)); let data, items=[]; const state={q:'',type:'all',sort:'date'}; const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  function render(){ const q=state.q.toLowerCase(); let list=items.filter(i=>(state.type==='all'||i.sourceType===state.type)&&(!q||[i.title,i.location,i.kecamatan,i.domain,i.year,i.sourceType].join(' ').toLowerCase().includes(q))); if(state.sort==='source') list.sort((a,b)=>(a.domain||a.sourceType).localeCompare(b.domain||b.sourceType)); else if(state.sort==='kecamatan') list.sort((a,b)=>(a.kecamatan||'').localeCompare(b.kecamatan||'')); else list.sort((a,b)=>(b.year||'').localeCompare(a.year||'')); $('#newsGrid').innerHTML=list.length?list.map(card).join(''):'<div class="empty-state">Tidak ada sumber yang cocok dengan filter.</div>'; }
+  function thumb(i){ if(i.image) return `<img src="${esc(i.image)}" alt="Gambar berita" onerror="this.remove();this.parentElement.querySelector('.news-fallback').style.display='grid'">`; return ''; }
+  function card(i){ const canOpen=/^https?:/i.test(i.source||''); return `<article class="news-card"><div class="news-image"><span class="domain-badge">${esc(i.domain||i.sourceType)}</span>${thumb(i)}<div class="news-fallback" style="${i.image?'display:none':''}">📰</div></div><div class="news-body"><div class="news-meta"><span class="pill">${esc(i.sourceType)}</span><span class="pill">${esc(i.year)}</span><span class="pill">${esc(i.kecamatan||i.zone||'Lokasi')}</span></div><h3>${esc(i.title)}</h3><p>${esc(i.location||'Lokasi spesifik tidak tercantum.')} ${i.corridor?`Koridor terbaca: <span class="source-highlight">${esc(i.corridor)}</span>.`:''}</p><div class="news-footer"><span>${esc(i.domain||'Referensi internal')}</span>${canOpen?`<a class="btn small primary" href="${esc(i.source)}" target="_blank" rel="noopener">Buka</a>`:'<span class="pill">Tanpa URL</span>'}</div></div></article>`; }
+  data=await GeoSafeData.loadAll(); items=data.incidents.filter(i=>i.source||i.title); $('#newsSearch')?.addEventListener('input',e=>{state.q=e.target.value;render();}); $('#newsType')?.addEventListener('change',e=>{state.type=e.target.value;render();}); $('#newsSort')?.addEventListener('change',e=>{state.sort=e.target.value;render();}); render();
 })();

@@ -1,26 +1,20 @@
-(function () {
-  function initCommon() {
-    const page = document.body.dataset.page;
-    document.querySelectorAll('.navlinks a').forEach((a) => {
-      if (a.dataset.page === page) a.classList.add('active');
-    });
 
-    const mobileToggle = document.getElementById('mobileToggle');
-    const navlinks = document.getElementById('navlinks');
-    if (mobileToggle && navlinks) {
-      mobileToggle.addEventListener('click', () => navlinks.classList.toggle('open'));
-      navlinks.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => navlinks.classList.remove('open')));
+(function(){
+  const $=(sel,root=document)=>root.querySelector(sel);
+  const $$=(sel,root=document)=>Array.from(root.querySelectorAll(sel));
+  window.GeoSafeUI={$, $$};
+  document.addEventListener('DOMContentLoaded',()=>{
+    const page=document.body.dataset.page;
+    $$(`.navlinks a`).forEach(a=>{ if(a.dataset.page===page) a.classList.add('active'); });
+    const mobile=$('#mobileToggle'), nav=$('#navlinks');
+    if(mobile&&nav) mobile.addEventListener('click',()=>nav.classList.toggle('open'));
+    const glow=$('#cursorGlow');
+    if(glow){ document.addEventListener('pointermove',e=>{ glow.style.left=e.clientX+'px'; glow.style.top=e.clientY+'px'; }); }
+    const loader=$('#siteLoader');
+    if(loader){
+      const hide=()=>loader.classList.add('is-hidden');
+      window.addEventListener('load',()=>setTimeout(hide,220));
+      setTimeout(hide,1600);
     }
-
-    const cursorGlow = document.getElementById('cursorGlow');
-    if (cursorGlow && matchMedia('(pointer:fine)').matches) {
-      window.addEventListener('pointermove', (e) => {
-        cursorGlow.style.left = `${e.clientX}px`;
-        cursorGlow.style.top = `${e.clientY}px`;
-      });
-    }
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initCommon);
-  else initCommon();
+  });
 })();
