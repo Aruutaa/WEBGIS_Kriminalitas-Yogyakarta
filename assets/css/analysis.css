@@ -14,23 +14,3 @@
 .narrative-box { border:1px solid var(--line); background:rgba(0,0,0,.20); border-radius:20px; padding:18px; line-height:1.75; }
 .zone-chip-list { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
 @media(max-width: 1100px){ .analysis-hero, .filters, .news-grid, .recommendation-grid { grid-template-columns:1fr; } }
-
-/* =========================================================
-   Analisis tambahan: koridor/jalan rawan tanpa mengubah data
-========================================================= */
-.source-card { border:1px solid var(--line); background:rgba(255,255,255,.035); border-radius:22px; overflow:hidden; display:grid; grid-template-columns:98px 1fr; min-height:150px; }
-.source-thumb { min-height:100%; display:grid; place-items:center; background:linear-gradient(135deg, rgba(179,61,56,.35), rgba(247,204,169,.10)); color:var(--cream); font-size:1.8rem; font-weight:900; }
-.source-thumb img { width:100%; height:100%; object-fit:cover; }
-.source-body { padding:14px; display:grid; gap:8px; align-content:start; }
-.source-body h4 { margin:0; line-height:1.25; }
-.corridor-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:18px; }
-.corridor-card { position:relative; overflow:hidden; border:1px solid var(--line); border-radius:22px; background:rgba(255,255,255,.038); padding:17px; display:grid; gap:8px; }
-.corridor-card::before { content:""; position:absolute; inset:-40% auto auto -12%; width:190px; height:190px; border-radius:999px; background:rgba(247,204,169,.08); pointer-events:none; }
-.corridor-card > * { position:relative; z-index:1; }
-.corridor-card span:first-child { width:max-content; color:var(--cream); border:1px solid rgba(247,204,169,.22); border-radius:999px; padding:6px 9px; font-size:.72rem; font-weight:900; }
-.corridor-card strong { font-size:1.05rem; line-height:1.25; }
-.corridor-card span:last-child { color:#cab7ad; line-height:1.55; font-size:.86rem; }
-.insight-card { border:1px solid var(--line); background:rgba(255,255,255,.035); border-radius:20px; padding:16px; display:grid; gap:7px; }
-.insight-card span { color:#cab7ad; line-height:1.55; font-size:.86rem; }
-.insight-card strong { color:var(--cream); font-size:1.45rem; }
-@media(max-width: 1100px){ .corridor-grid { grid-template-columns:1fr; } .source-card { grid-template-columns:1fr; } .source-thumb { min-height:160px; } }

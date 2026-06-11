@@ -11,12 +11,22 @@
     legend.id=legend.id||'mapLegend';
     if(!legend.querySelector('.legend-head')){
       const h=legend.querySelector('h4');
-      const head=document.createElement('div'); head.className='legend-head';
       const title=document.createElement('h4'); title.textContent=h?h.textContent:'Legenda';
-      const btn=document.createElement('button'); btn.type='button'; btn.className='legend-toggle'; btn.id='legendToggle'; btn.setAttribute('aria-expanded','true'); btn.innerHTML='<span>⌄</span>';
+      const head=document.createElement('div'); head.className='legend-head';
+      const btn=document.createElement('button'); btn.type='button'; btn.className='legend-toggle'; btn.id='legendToggle'; btn.setAttribute('aria-label','Tampilkan/sembunyikan legenda'); btn.innerHTML='<span>⌄</span>';
       if(h) h.remove(); head.append(title,btn); legend.prepend(head);
     }
-    $('#legendToggle')?.addEventListener('click',()=>{ const open=!legend.classList.toggle('collapsed'); $('#legendToggle').setAttribute('aria-expanded',String(open)); $('#legendToggle span').textContent=open?'⌄':'⌃'; });
+    legend.classList.add('collapsed');
+    const btn=$('#legendToggle');
+    if(btn){
+      btn.setAttribute('aria-expanded','false');
+      const span=btn.querySelector('span'); if(span) span.textContent='⌄';
+      btn.addEventListener('click',()=>{
+        const collapsed=legend.classList.toggle('collapsed');
+        btn.setAttribute('aria-expanded',String(!collapsed));
+        const icon=btn.querySelector('span'); if(icon) icon.textContent=collapsed?'⌄':'⌃';
+      });
+    }
   }
   function addCorridorToggle(){
     const list=$('.layer-list'); if(!list||list.querySelector('[data-layer="corridors"]')) return;
@@ -87,6 +97,17 @@
     $$('.layer-toggle input').forEach(inp=>inp.addEventListener('change',()=>{ const l=state.layers[inp.dataset.layer]; if(!l) return; inp.checked?l.addTo(state.map):state.map.removeLayer(l); }));
   }
   if(!window.L||!$('#map')) return;
+  (function forceMapLayout(){
+    const layout=$('#mainLayout');
+    if(!layout) return;
+    Array.from(layout.children).forEach(child=>{
+      if(child.matches && child.matches('aside.panel') && !child.classList.contains('left-panel')){
+        child.hidden=true;
+        child.setAttribute('aria-hidden','true');
+        child.style.display='none';
+      }
+    });
+  })();
   ensureLegendToggle(); addCorridorToggle(); ensureToast();
   state.map=L.map('map',{zoomControl:true}).setView([-7.7956,110.3695],12);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(state.map);
