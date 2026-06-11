@@ -16,6 +16,13 @@
     const feature = G.zoneForPoint(inc.lng, inc.lat, data.zones);
     return feature?.properties?._label || 'Di luar zona';
   }
+  function nearestCctv(inc) {
+    return data.cctv.map((cam) => ({ cam, d: G.haversineMeters(inc.lat, inc.lng, cam.lat, cam.lng) })).sort((a, b) => a.d - b.d)[0] || null;
+  }
+  function relatedIncidents(inc, radius = 1000) {
+    return data.incidents.map((item) => ({ item, d: G.haversineMeters(inc.lat, inc.lng, item.lat, item.lng) }))
+      .filter((x) => String(x.item.id) !== String(inc.id) && x.d <= radius).sort((a,b)=>a.d-b.d);
+  }
   function filteredIncidents() {
     const f = filters();
     return data.incidents.filter((inc) => {
@@ -51,10 +58,11 @@
       <li><b>Zona aktif:</b> ${G.escapeHtml(filters().zone === 'all' ? 'Semua zona' : filters().zone)}</li>
       <li><b>Tahun:</b> ${G.escapeHtml(filters().year === 'all' ? 'Semua tahun' : filters().year)}</li>
       <li><b>Zona prioritas:</b> ${veryRisk ? `Zona ${G.escapeHtml(veryRisk.label)} · skor ${veryRisk.score}` : '-'}</li>
-      <li><b>File klasifikasi:</b> <span class="code">assets/data/zona_kerawanan.geojson</span></li>`;
+      <li><b>Metode:</b> skor zona + titik kejadian + CCTV 500 m + sumber berita.</li>`;
   }
   function destroyCharts() { Object.values(charts).forEach((c) => c?.destroy?.()); charts = {}; }
   function chartDefaults() {
+    if (!window.Chart) return;
     Chart.defaults.color = '#cab7ad';
     Chart.defaults.borderColor = 'rgba(247,204,169,.12)';
     Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
@@ -66,51 +74,67 @@
     const inc = filteredIncidents();
     const zoneLabels = rows.map((z) => z.label);
     const zoneScores = rows.map((z) => z.score);
-    const incidentCounts = rows.map((z) => z.incidentCountFiltered);
-    const zoneColors = rows.map((z) => z.color);
-    const byYear = inc.reduce((acc, item) => { acc[item.year] = (acc[item.year] || 0) + 1; return acc; }, {});
+    const zoneIncidents = rows.map((z) => z.incidentCountFiltered);
+    const byYear = inc.reduce((acc, item)=>{ acc[item.year] = (acc[item.year] || 0) + 1; return acc; }, {});
     const years = Object.keys(byYear).sort();
-    const bySource = inc.reduce((acc, item) => { acc[item.source] = (acc[item.source] || 0) + 1; return acc; }, {});
+    const bySource = inc.reduce((acc, item)=>{ const s = item.source || 'Sumber tidak tertulis'; acc[s] = (acc[s] || 0) + 1; return acc; }, {});
     const sources = Object.entries(bySource).sort((a,b)=>b[1]-a[1]).slice(0,8);
 
-    const riskCtx = $('riskBarChart');
-    if (riskCtx) charts.risk = new Chart(riskCtx, {
-      type: 'bar',
-      data: { labels: zoneLabels, datasets: [{ label: 'Skor zona', data: zoneScores, backgroundColor: zoneColors, borderColor: zoneColors, borderWidth: 1 }, { label: 'Titik kejadian', data: incidentCounts, backgroundColor: 'rgba(247,204,169,.26)', borderColor: '#f7cca9', borderWidth: 1 }] },
-      options: { responsive:true, maintainAspectRatio:false, scales: { y: { beginAtZero:true, max:100 } }, plugins: { legend: { labels: { usePointStyle:true } } } }
-    });
-
+    const barCtx = $('riskBarChart');
+    if (barCtx) charts.risk = new Chart(barCtx, { type:'bar', data:{ labels:zoneLabels, datasets:[{ label:'Skor zona', data:zoneScores, backgroundColor:'rgba(179,61,56,.72)', borderColor:'#b33d38', borderWidth:1 }, { label:'Kejadian', data:zoneIncidents, backgroundColor:'rgba(247,204,169,.34)', borderColor:'#f7cca9', borderWidth:1 }] }, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } } } });
     const donutCtx = $('zoneDonutChart');
-    if (donutCtx) charts.donut = new Chart(donutCtx, {
-      type: 'doughnut',
-      data: { labels: zoneLabels, datasets: [{ data: rows.map((z)=>z.incidentCountFiltered || 1), backgroundColor: zoneColors, borderColor: '#11101a', borderWidth: 2 }] },
-      options: { responsive:true, maintainAspectRatio:false, plugins: { legend: { position:'bottom' } } }
-    });
-
+    if (donutCtx) charts.donut = new Chart(donutCtx, { type:'doughnut', data:{ labels:zoneLabels, datasets:[{ data:zoneIncidents, backgroundColor:rows.map((z)=>z.color || '#ae995b'), borderColor:'rgba(5,5,7,.85)', borderWidth:2 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom' } } } });
     const trendCtx = $('trendLineChart');
-    if (trendCtx) charts.trend = new Chart(trendCtx, {
-      type: 'line',
-      data: { labels: years, datasets: [{ label: 'Jumlah kejadian', data: years.map((y)=>byYear[y]), borderColor:'#f7cca9', backgroundColor:'rgba(247,204,169,.12)', tension:.35, fill:true, pointRadius:4 }] },
-      options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } } }
-    });
-
+    if (trendCtx) charts.trend = new Chart(trendCtx, { type:'line', data:{ labels:years, datasets:[{ label:'Jumlah kejadian', data:years.map((y)=>byYear[y]), borderColor:'#f7cca9', backgroundColor:'rgba(247,204,169,.12)', tension:.35, fill:true, pointRadius:4 }] }, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } } } });
     const sourceCtx = $('sourceBarChart');
-    if (sourceCtx) charts.source = new Chart(sourceCtx, {
-      type: 'bar',
-      data: { labels: sources.map(([s])=>s), datasets: [{ label:'Frekuensi', data:sources.map(([,v])=>v), backgroundColor:'rgba(179,61,56,.72)', borderColor:'#b33d38', borderWidth:1 }] },
-      options: { responsive:true, maintainAspectRatio:false, indexAxis:'y', scales:{ x:{ beginAtZero:true, ticks:{ precision:0 } } }, plugins:{ legend:{ display:false } } }
-    });
+    if (sourceCtx) charts.source = new Chart(sourceCtx, { type:'bar', data:{ labels:sources.map(([s])=>s), datasets:[{ label:'Frekuensi', data:sources.map(([,v])=>v), backgroundColor:'rgba(179,61,56,.72)', borderColor:'#b33d38', borderWidth:1 }] }, options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', scales:{ x:{ beginAtZero:true, ticks:{ precision:0 } } }, plugins:{ legend:{ display:false } } } });
+  }
+  function renderSelectedAnalysis() {
+    const box = $('selectedAnalysis');
+    if (!box) return;
+    const params = new URLSearchParams(location.search);
+    const id = params.get('incident');
+    const inc = data.incidents.find((item)=>String(item.id)===String(id));
+    if (!inc) {
+      const top = [...filteredIncidents()].sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0];
+      box.innerHTML = `<div class="deep-card"><h4>Belum ada titik spesifik dari peta</h4><p>Buka <a href="peta.html" class="code">peta.html</a>, klik titik kejadian, lalu pilih tombol <b>Analisis</b>. Untuk gambaran awal, titik terbaru yang terbaca adalah <b>${top ? G.escapeHtml(top.kecamatan) : '-'}</b>.</p></div>`;
+      return;
+    }
+    const zone = G.zoneForPoint(inc.lng, inc.lat, data.zones);
+    const label = zone?.properties?._label || 'Di luar zona';
+    const zstat = data.zoneStats.find((z)=>String(z.id)===String(zone?.properties?._zoneId));
+    const nearest = nearestCctv(inc);
+    const nearby = relatedIncidents(inc, 1200);
+    const sameDistrict = data.incidents.filter((x)=>G.normalizeKey(x.kecamatan)===G.normalizeKey(inc.kecamatan));
+    const sourceCards = [inc, ...nearby.map((x)=>x.item)].filter((x)=>x.url || x.title).slice(0,3);
+    const blind = !nearest || nearest.d > 500;
+    const score = zone?.properties?._score || G.zoneScore(label);
+    const recommendation = blind
+      ? 'Prioritas verifikasi: cek pencahayaan, rute patroli, dan kemungkinan penambahan kamera atau titik pantau mobile karena CCTV terdekat berada di luar radius 500 meter.'
+      : 'Cakupan CCTV terdekat relatif dekat, sehingga verifikasi utama adalah arah pandang kamera, jam aktif, dan apakah titik kejadian benar terlihat dari posisi kamera.';
+    box.innerHTML = `<div class="metric-strip">
+      <span><b>${G.escapeHtml(label)}</b>Zona titik</span><span><b>${score}</b>Skor zona</span><span><b>${nearest ? G.formatDistance(nearest.d) : '-'}</b>CCTV terdekat</span><span><b>${nearby.length}</b>Kejadian ≤1,2 km</span>
+    </div>
+    <div class="selected-analysis-grid">
+      <article class="deep-card"><h4>${G.escapeHtml(inc.kecamatan)} · ${G.escapeHtml(inc.date || '-')}</h4><p>Titik ini berada pada <b>Zona ${G.escapeHtml(label)}</b>. Di zona yang sama terdapat <b>${zstat?.incidentCount || 0}</b> kejadian historis, <b>${zstat?.cctvCount || 0}</b> CCTV di dalam zona, dan <b>${zstat?.blindspot || 0}</b> titik yang belum tercakup radius CCTV 500 meter. Dengan konteks ini, lokasi tidak hanya dibaca sebagai satu titik mentah, tetapi sebagai bagian dari pola zona, cakupan pengawasan, dan konsentrasi kejadian.</p><p><b>Kesimpulan awal:</b> ${recommendation}</p></article>
+      <article class="deep-card"><h4>Metode pembacaan</h4><ul><li>Overlay titik kejadian terhadap polygon zona kerawanan.</li><li>Jarak titik ke CCTV terdekat dihitung dengan haversine.</li><li>Kejadian sekitar dihitung dalam radius 1,2 km sebagai indikasi klaster lokal.</li><li>Sumber berita ditautkan untuk validasi narasi peristiwa.</li></ul></article>
+    </div>
+    <div class="related-news-grid">${sourceCards.map((item)=>`<article class="related-news-card"><div class="related-news-thumb">${G.escapeHtml(item.source || 'Sumber')}</div><div><h4>${G.escapeHtml(item.title || 'Kejadian kriminalitas')}</h4><p>${G.escapeHtml(item.kecamatan)} · ${G.escapeHtml(item.date || '-')}</p>${G.isUrl(item.url) ? `<a class="btn small primary" href="${G.escapeHtml(item.url)}" target="_blank" rel="noopener">Buka sumber</a>` : '<span class="btn small">Judul/referensi</span>'}</div></article>`).join('')}</div>`;
   }
   function renderNews() {
     const inc = filteredIncidents().filter((i) => i.url || i.title).slice(0, filters().top);
     const grid = $('newsList');
     if (!grid) return;
-    grid.innerHTML = inc.map((item) => `<article class="news-mini">
-      <span class="pill ${G.isUrl(item.url) ? 'warning' : ''}">${G.escapeHtml(item.source)}</span>
-      <h4>${G.escapeHtml(item.title)}</h4>
-      <p>${G.escapeHtml(item.kecamatan)} · ${G.escapeHtml(item.date || '-')} · Zona ${G.escapeHtml(incidentZone(item))}</p>
-      ${G.isUrl(item.url) ? `<br><a class="btn small primary" href="${G.escapeHtml(item.url)}" target="_blank" rel="noopener">Buka sumber</a>` : ''}
-    </article>`).join('') || '<article class="news-mini"><h4>Belum ada data sesuai filter</h4><p>Ubah filter zona, tahun, atau jenis sumber.</p></article>';
+    grid.innerHTML = inc.map((item) => {
+      const near = nearestCctv(item);
+      const label = incidentZone(item);
+      return `<article class="news-mini">
+        <span class="pill ${G.isUrl(item.url) ? 'warning' : ''}">${G.escapeHtml(item.source)}</span>
+        <h4>${G.escapeHtml(item.title)}</h4>
+        <p>${G.escapeHtml(item.kecamatan)} · ${G.escapeHtml(item.date || '-')} · Zona ${G.escapeHtml(label)}. CCTV terdekat ${near ? `${G.escapeHtml(near.cam.name)} (${G.formatDistance(near.d)})` : '-'}.</p>
+        ${G.isUrl(item.url) ? `<br><a class="btn small primary" href="${G.escapeHtml(item.url)}" target="_blank" rel="noopener">Buka sumber</a>` : ''}
+      </article>`;
+    }).join('') || '<article class="news-mini"><h4>Belum ada data sesuai filter</h4><p>Ubah filter zona, tahun, atau jenis sumber.</p></article>';
   }
   function renderInsights() {
     const rows = zoneRows();
@@ -120,8 +144,8 @@
     const blind = [...rows].sort((a,b)=>b.blindspot-a.blindspot)[0];
     const cards = [
       ['Zona paling rawan', topScore ? `Zona <b>${G.escapeHtml(topScore.label)}</b> memiliki skor ${topScore.score}. Klasifikasi ini langsung dibaca dari field <span class="code">Klasifikas</span> pada GeoJSON.` : 'Belum ada zona terbaca.'],
-      ['Konsentrasi kejadian', topIncident ? `Jumlah titik terbanyak pada filter ini berada di <b>Zona ${G.escapeHtml(topIncident.label)}</b> sebanyak ${topIncident.incidentCountFiltered} titik.` : 'Belum ada titik kejadian.'],
-      ['CCTV dan blind spot', blind ? `Zona <b>${G.escapeHtml(blind.label)}</b> memiliki ${blind.blindspot} titik kejadian yang belum tercakup CCTV dalam radius 500 meter.` : 'Belum ada blind spot terbaca.']
+      ['Konsentrasi kejadian', topIncident ? `Jumlah titik terbanyak pada filter ini berada di <b>Zona ${G.escapeHtml(topIncident.label)}</b> sebanyak ${topIncident.incidentCountFiltered} titik. Area ini layak menjadi prioritas observasi jam malam dan validasi sumber.` : 'Belum ada titik kejadian.'],
+      ['CCTV dan blind spot', blind ? `Zona <b>${G.escapeHtml(blind.label)}</b> memiliki ${blind.blindspot} titik kejadian yang belum tercakup CCTV dalam radius 500 meter. Ini adalah sinyal awal, bukan bukti tunggal bahwa area pasti tidak terpantau.` : 'Belum ada blind spot terbaca.']
     ];
     $('insightCards').innerHTML = cards.map(([title, body]) => `<article class="rec-card"><h4>${title}</h4><p>${body}</p></article>`).join('');
   }
@@ -150,11 +174,14 @@
     const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'export_analisis_zona_kerawanan.csv'; a.click(); URL.revokeObjectURL(a.href);
   }
-  function renderAll() { setStatCards(); renderCharts(); renderNews(); renderInsights(); renderTable(); renderNarrative(); }
+  function renderAll() { setStatCards(); renderCharts(); renderSelectedAnalysis(); renderNews(); renderInsights(); renderTable(); renderNarrative(); }
   function populateFilters() {
     const zf = $('filterZone');
     const yf = $('filterYear');
-    if (zf) zf.innerHTML = '<option value="all">Semua zona</option>' + data.zones.features.map((f)=>`<option value="${G.escapeHtml(f.properties._label)}">${G.escapeHtml(f.properties._label)}</option>`).join('');
+    if (zf) {
+      const zones = [...new Set(data.zones.features.map((f)=>f.properties._label))];
+      zf.innerHTML = '<option value="all">Semua zona</option>' + zones.map((z)=>`<option value="${G.escapeHtml(z)}">${G.escapeHtml(z)}</option>`).join('');
+    }
     if (yf) {
       const years = [...new Set(data.incidents.map((i)=>i.year).filter(Boolean))].sort();
       yf.innerHTML = '<option value="all">Semua tahun</option>' + years.map((y)=>`<option value="${G.escapeHtml(y)}">${G.escapeHtml(y)}</option>`).join('');

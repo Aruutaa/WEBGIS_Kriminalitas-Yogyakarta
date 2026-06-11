@@ -1,16 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-label="CCTV Pemantauan">
-<defs>
-  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1f1e2b"/><stop offset=".55" stop-color="#402a20"/><stop offset="1" stop-color="#b33d38"/></linearGradient>
-  <radialGradient id="r" cx="75%" cy="35%" r="65%"><stop offset="0" stop-color="#f7cca9" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
-</defs>
-<rect width="900" height="560" fill="url(#g)"/>
-<rect width="900" height="560" fill="url(#r)"/>
-<path d="M0 430 C220 360 300 530 520 440 C700 365 760 310 900 350 L900 560 L0 560 Z" fill="#0b0a10" opacity=".55"/>
-<circle cx="720" cy="170" r="110" fill="#ae995b" opacity=".22"/>
-<circle cx="225" cy="230" r="95" fill="#c89290" opacity=".25"/>
-<path d="M185 305 L705 305" stroke="#f7cca9" stroke-opacity=".42" stroke-width="4"/>
-<path d="M240 305 L278 245 L316 357 L352 286 L388 305 L430 305 L468 250 L500 336 L540 305" fill="none" stroke="#f7cca9" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity=".88"/>
-<text x="70" y="92" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#f7cca9" letter-spacing="3">GEOSAFE YOGYAKARTA</text>
-<text x="70" y="448" font-family="Inter, Arial, sans-serif" font-size="56" font-weight="900" fill="#fff8ef">CCTV Pemantauan</text>
-<text x="72" y="500" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#c89290">Kamera publik dan blind spot</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420"><rect width="640" height="420" rx="36" fill="#11101a"/><circle cx="500" cy="90" r="140" fill="#ae995b" opacity=".22"/><path d="M90 310 C170 210 250 340 330 230 S500 220 560 120" fill="none" stroke="#ae995b" stroke-width="22" stroke-linecap="round" opacity=".8"/><circle cx="180" cy="230" r="34" fill="#fff8ef" opacity=".9"/><circle cx="360" cy="230" r="34" fill="#ae995b"/><text x="60" y="86" fill="#fff8ef" font-family="Arial" font-size="42" font-weight="800">CCTV</text><text x="60" y="136" fill="#cab7ad" font-family="Arial" font-size="22">GeoSafe Yogyakarta</text></svg>

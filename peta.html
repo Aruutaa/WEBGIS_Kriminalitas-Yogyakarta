@@ -16,24 +16,32 @@
   <div class="map-app">
     <header class="topbar">
       <div class="top-actions">
-        <button class="panel-toggle-btn" id="btnToggleLeft" type="button" title="Sembunyikan panel kiri">×</button>
-        <a href="index.html" class="brand"><div class="brand-logo-box compact"><img src="assets/img/logo/logo-crimescope.png" alt="Logo GeoSafe" class="brand-logo"></div><div><strong>GeoSafe Yogyakarta</strong><span>Peta zona kerawanan kriminalitas</span></div></a>
+        <a href="index.html" class="brand"><div class="brand-logo-box compact"><img src="assets/img/logo/logo-crimescope.svg" alt="Logo GeoSafe" class="brand-logo"></div><div><strong>GeoSafe Yogyakarta</strong><span>Peta zona kerawanan kriminalitas</span></div></a>
       </div>
       <nav class="navlinks" id="navlinks"><a href="index.html" data-page="home">Utama</a><a href="peta.html" data-page="peta">Peta</a><a href="analisis.html" data-page="analisis">Analisis</a><a href="berita.html" data-page="berita">Berita</a></nav>
       <div class="top-actions"><a class="btn" href="analisis.html">Analisis</a><a class="btn primary" href="berita.html">Berita</a><button class="mobile-toggle" id="mobileToggle" type="button">☰</button></div>
     </header>
 
     <main class="map-layout" id="mainLayout">
-      <aside class="panel left-panel">
-        <div class="panel-head"><div><h2>Kontrol Peta</h2><span>Filter zona, kejadian, CCTV, dan layer pendukung</span></div><span class="tag low">GeoJSON</span></div>
-        <div class="panel-body">
-          <div class="stat-grid">
-            <div class="stat"><span>Zona</span><strong id="statZones">0</strong><em>klasifikasi terbaca</em></div>
-            <div class="stat"><span>Kejadian</span><strong id="statIncidents">0</strong><em>sesuai filter</em></div>
-            <div class="stat"><span>CCTV</span><strong id="statCctv">0</strong><em>marker aktif</em></div>
-            <div class="stat"><span>Blind spot</span><strong id="statBlind">0</strong><em>zona prioritas</em></div>
+      <section class="mapbox">
+        <div id="map"></div>
+        <div class="map-top">
+          <div class="status-pill"><span class="pulse-dot"></span><span id="mapStatus">Memuat peta...</span></div>
+          <div class="toolbox">
+            <button id="btnFitMap" type="button" title="Fit zona">⌖</button>
+            <button id="btnToggleControls" type="button" title="Filter dan layer">☰</button>
+            <button id="btnToggleLegend" type="button" title="Tampilkan/sembunyikan legenda">◐</button>
           </div>
-          <div class="form-group"><label for="searchInput">Cari lokasi / CCTV / sumber</label><input class="input" id="searchInput" placeholder="contoh: Jetis, Tugu, Gramedia..." /></div>
+        </div>
+        <div class="map-controls" id="mapControls" aria-label="Panel filter peta">
+          <div class="floating-head"><div><b>Filter & Layer</b><span>Ringkas, bisa dibuka/tutup agar muka peta tetap bersih.</span></div><button id="btnCloseControls" type="button">×</button></div>
+          <div class="stat-grid compact">
+            <div class="stat"><span>Zona</span><strong id="statZones">0</strong><em>fitur</em></div>
+            <div class="stat"><span>Kejadian</span><strong id="statIncidents">0</strong><em>filter</em></div>
+            <div class="stat"><span>CCTV</span><strong id="statCctv">0</strong><em>aktif</em></div>
+            <div class="stat"><span>Blind</span><strong id="statBlind">0</strong><em>500 m</em></div>
+          </div>
+          <div class="form-group"><label for="searchInput">Cari lokasi / CCTV / sumber</label><input class="input" id="searchInput" placeholder="Jetis, Tugu, Gramedia..." /></div>
           <div class="mini-grid">
             <div class="form-group"><label for="zoneFilter">Zona</label><select class="select" id="zoneFilter"><option value="all">Semua zona</option></select></div>
             <div class="form-group"><label for="yearFilter">Tahun</label><select class="select" id="yearFilter"><option value="all">Semua tahun</option></select></div>
@@ -47,26 +55,21 @@
             <label class="layer-toggle"><span>Zona kerawanan</span><input data-layer="zones" type="checkbox" checked></label>
             <label class="layer-toggle"><span>Titik kejadian</span><input data-layer="incidents" type="checkbox" checked></label>
             <label class="layer-toggle"><span>CCTV</span><input data-layer="cctv" type="checkbox" checked></label>
+            <label class="layer-toggle"><span>Koridor jalan rawan</span><input data-layer="roads" type="checkbox" checked></label>
             <label class="layer-toggle"><span>Radius CCTV 500 m</span><input data-layer="buffer" type="checkbox"></label>
             <label class="layer-toggle"><span>Titik keramaian</span><input data-layer="crowd" type="checkbox"></label>
             <label class="layer-toggle"><span>Batas administrasi</span><input data-layer="admin" type="checkbox" checked></label>
           </div>
-          <div class="row-actions"><button class="btn small" id="btnReset" type="button">Reset Filter</button><button class="btn small primary" id="btnFit" type="button">Fit Zona</button></div>
-          <br>
-          <div class="card"><div class="icon">🧩</div><h3>Data zona</h3><p>Layer utama dibaca dari <span class="code">assets/data/zona_kerawanan.geojson</span>. Web membaca field <span class="code">Klasifikas</span> untuk warna Aman, Rawan, dan Sangat Rawan.</p></div>
+          <div class="row-actions"><button class="btn small" id="btnReset" type="button">Reset</button><button class="btn small primary" id="btnFit" type="button">Fit Zona</button></div>
         </div>
-      </aside>
-
-      <section class="mapbox">
-        <div id="map"></div>
-        <div class="map-top"><div class="status-pill"><span class="pulse-dot"></span><span id="mapStatus">Memuat peta...</span></div><div class="toolbox"><button id="btnFitMap" type="button" title="Fit zona">⌖</button></div></div>
-        <div class="legend">
-          <h4>Legenda</h4>
+        <div class="legend is-hidden" id="mapLegend">
+          <div class="legend-head"><h4>Legenda</h4><button id="btnCloseLegend" type="button">×</button></div>
           <div class="legend-row"><span class="dot safe"></span> Zona Aman</div>
           <div class="legend-row"><span class="dot warn"></span> Zona Rawan</div>
           <div class="legend-row"><span class="dot danger"></span> Zona Sangat Rawan</div>
           <div class="legend-row"><span class="dot incident"></span> Titik kejadian klitih</div>
           <div class="legend-row"><span class="dot cctv"></span> CCTV / kamera publik</div>
+          <div class="legend-row"><span class="dot road"></span> Koridor jalan rawan</div>
           <div class="legend-row"><span class="dot warn"></span> Radius CCTV 500 m</div>
           <div class="legend-row"><span class="dot crowd"></span> Titik keramaian</div>
         </div>
@@ -80,6 +83,8 @@
           <h3>Ringkasan Zona</h3><div class="zone-summary" id="zoneSummary"></div>
           <br>
           <h3>Kejadian Terfilter</h3><div class="incident-list" id="incidentList"></div>
+          <br>
+          <h3>Koridor Jalan Rawan</h3><div class="road-list" id="roadList"></div>
           <br>
           <h3>CCTV Terfilter</h3><div class="camera-list" id="cctvList"></div>
         </div>
