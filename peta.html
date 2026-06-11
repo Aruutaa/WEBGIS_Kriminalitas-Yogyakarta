@@ -18,15 +18,30 @@
     <header class="topbar">
       <div class="top-actions">
         <button class="panel-toggle-btn" id="btnToggleLeft" type="button" title="Sembunyikan panel kiri">×</button>
-        <a href="index.html" class="brand"><div class="brand-logo-box compact"><img src="assets/img/logo/logo-crimescope.png" alt="Logo GeoSafe" class="brand-logo"></div><div><strong>GeoSafe Yogyakarta</strong><span>Peta zona kerawanan kriminalitas</span></div></a>
+        <a href="index.html" class="brand">
+          <div class="brand-logo-box compact"><img src="assets/img/logo/logo-crimescope.png" alt="Logo GeoSafe" class="brand-logo"></div>
+          <div><strong>GeoSafe Yogyakarta</strong><span>Peta zona kerawanan kriminalitas</span></div>
+        </a>
       </div>
-      <nav class="navlinks" id="navlinks"><a href="index.html" data-page="home">Utama</a><a href="peta.html" data-page="peta">Peta</a><a href="analisis.html" data-page="analisis">Analisis</a><a href="berita.html" data-page="berita">Berita</a></nav>
-      <div class="top-actions"><a class="btn" href="analisis.html">Analisis</a><a class="btn primary" href="berita.html">Berita</a><button class="mobile-toggle" id="mobileToggle" type="button">☰</button></div>
+      <nav class="navlinks" id="navlinks">
+        <a href="index.html" data-page="home">Utama</a>
+        <a href="peta.html" data-page="peta">Peta</a>
+        <a href="analisis.html" data-page="analisis">Analisis</a>
+        <a href="berita.html" data-page="berita">Berita</a>
+      </nav>
+      <div class="top-actions">
+        <a class="btn" href="analisis.html">Analisis</a>
+        <a class="btn primary" href="berita.html">Berita</a>
+        <button class="mobile-toggle" id="mobileToggle" type="button">☰</button>
+      </div>
     </header>
 
     <main class="map-layout" id="mainLayout">
       <aside class="panel left-panel">
-        <div class="panel-head"><div><h2>Kontrol Peta</h2><span>Filter zona, kejadian, CCTV, koridor, dan layer pendukung</span></div><span class="tag low">DATA</span></div>
+        <div class="panel-head">
+          <div><h2>Kontrol Peta</h2><span>Filter data, basemap, layer, dan kelompok analisis</span></div>
+          <span class="tag low">DATA</span>
+        </div>
         <div class="panel-body">
           <div class="stat-grid">
             <div class="stat"><span>Zona</span><strong id="statZones">0</strong><em>klasifikasi terbaca</em></div>
@@ -34,45 +49,74 @@
             <div class="stat"><span>CCTV</span><strong id="statCctv">0</strong><em>marker aktif</em></div>
             <div class="stat"><span>Blind spot</span><strong id="statBlind">0</strong><em>indikator 500 m</em></div>
           </div>
+
           <div class="form-group"><label for="searchInput">Cari lokasi / jalan / CCTV / sumber</label><input class="input" id="searchInput" placeholder="contoh: Malioboro, Gejayan, CCTV..." /></div>
           <div class="mini-grid">
-            <div class="form-group"><label for="zoneFilter">Zona</label><select class="select" id="zoneFilter"><option value="all">Semua zona</option></select></div>
+            <div class="form-group"><label for="zoneFilter">Zona / kelas</label><select class="select" id="zoneFilter"><option value="all">Semua zona</option></select></div>
             <div class="form-group"><label for="yearFilter">Tahun</label><select class="select" id="yearFilter"><option value="all">Semua tahun</option></select></div>
           </div>
           <div class="mini-grid">
             <div class="form-group"><label for="cctvTypeFilter">Jenis CCTV</label><select class="select" id="cctvTypeFilter"><option value="all">Semua</option></select></div>
             <div class="form-group"><label for="cctvSourceFilter">Sumber CCTV</label><select class="select" id="cctvSourceFilter"><option value="all">Semua</option></select></div>
           </div>
+          <div class="form-group"><label for="baseMapSelect">Basemap</label><select class="select" id="baseMapSelect"><option value="osm">OpenStreetMap</option><option value="cartoLight">Carto Light</option><option value="cartoDark">Carto Dark</option><option value="esriImagery">Esri Satellite</option><option value="topo">OpenTopoMap</option></select></div>
           <div class="form-group"><label for="zoneOpacity">Opasitas zona</label><input id="zoneOpacity" class="input" type="range" min="0.18" max="0.82" step="0.04" value="0.58"></div>
+
+          <h3 class="panel-subtitle">Layer peta</h3>
           <div class="layer-list">
             <label class="layer-toggle"><span>Zona kerawanan</span><input data-layer="zones" type="checkbox" checked></label>
             <label class="layer-toggle"><span>Titik kejadian</span><input data-layer="incidents" type="checkbox" checked></label>
             <label class="layer-toggle"><span>CCTV</span><input data-layer="cctv" type="checkbox" checked></label>
             <label class="layer-toggle"><span>Radius CCTV 500 m</span><input data-layer="buffer" type="checkbox"></label>
             <label class="layer-toggle"><span>Titik keramaian</span><input data-layer="crowd" type="checkbox"></label>
+            <label class="layer-toggle"><span>Lampu penerangan / PJU</span><input data-layer="lighting" type="checkbox"></label>
             <label class="layer-toggle"><span>Batas administrasi</span><input data-layer="admin" type="checkbox" checked></label>
-            <label class="layer-toggle"><span>Koridor jalan rawan</span><input data-layer="corridors" type="checkbox" checked></label>
+            <label class="layer-toggle"><span>Koridor jalan rawan</span><input data-layer="corridors" type="checkbox"></label>
           </div>
+
+          <h3 class="panel-subtitle">Kelompok analisis</h3>
+          <div class="analysis-button-grid">
+            <button class="analysis-chip" id="btnShowCorridors" type="button">🛣️ Koridor rawan</button>
+            <button class="analysis-chip" id="btnShowLighting" type="button">💡 Penerangan</button>
+            <button class="analysis-chip" id="btnShowRiskZones" type="button">🧩 Zona kelas</button>
+            <button class="analysis-chip" id="btnShowCctvCoverage" type="button">📹 Cakupan CCTV</button>
+            <button class="analysis-chip" id="btnShowAdmin" type="button">🏙️ Batas admin</button>
+            <a class="analysis-chip primary" href="analisis.html">📊 Halaman analisis</a>
+          </div>
+
+          <h3 class="panel-subtitle">Fokus kelas zona</h3>
+          <div class="zone-focus-grid">
+            <button class="zone-focus" data-zone-focus="all" type="button">Semua</button>
+            <button class="zone-focus safe" data-zone-focus="Aman" type="button">Aman</button>
+            <button class="zone-focus warn" data-zone-focus="Rawan" type="button">Rawan</button>
+            <button class="zone-focus danger" data-zone-focus="Sangat Rawan" type="button">Sangat Rawan</button>
+          </div>
+
           <div class="row-actions"><button class="btn small" id="btnReset" type="button">Reset Filter</button><button class="btn small primary" id="btnFit" type="button">Fit Data</button></div>
           <br>
-          <div class="card"><div class="icon">🧩</div><h3>File data dibaca</h3><p><span class="code">Data Kriminalitas.csv</span>, <span class="code">cctv_yogyakarta.csv</span>, <span class="code">cctv_pemkot_yogyakarta_youtube_links.csv</span>, <span class="code">keramaian.csv</span>, <span class="code">zona_kerawanan.geojson</span>, dan <span class="code">kota_yogyakarta_admin.geojson</span>.</p></div>
+          <div class="card"><div class="icon">🧩</div><h3>File data dibaca</h3><p><span class="code">Data Kejahatan Klitih.csv</span>, <span class="code">cctv_yogyakarta.csv</span>, <span class="code">cctv_pemkot_yogyakarta_youtube_links.csv</span>, <span class="code">keramaian.csv</span>, <span class="code">zona_kerawanan.geojson</span>, <span class="code">kota_yogyakarta_admin.geojson</span>, dan data pendukung bila memiliki koordinat.</p></div>
         </div>
       </aside>
 
       <section class="mapbox">
         <div id="map"></div>
-        <div class="map-top"><div class="status-pill"><span class="pulse-dot"></span><span id="mapStatus">Memuat peta...</span></div><div class="toolbox"><button id="btnLegendMap" type="button" title="On/off legenda">☷</button><button id="btnFitMap" type="button" title="Fit data">⌖</button></div></div>
+        <div class="map-top">
+          <div class="status-pill"><span class="pulse-dot"></span><span id="mapStatus">Memuat peta...</span></div>
+          <div class="toolbox"><button id="btnLegendMap" type="button" title="On/off legenda">☷</button><button id="btnFitMap" type="button" title="Fit data">⌖</button></div>
+        </div>
         <div class="legend is-collapsed" id="mapLegend">
           <div class="legend-head"><h4>Legenda</h4><button class="legend-toggle" id="btnLegend" type="button" title="Tampilkan/sembunyikan legenda">⌄</button></div>
           <div class="legend-body">
             <div class="legend-row"><span class="dot safe"></span> Zona Aman</div>
             <div class="legend-row"><span class="dot warn"></span> Zona Rawan</div>
             <div class="legend-row"><span class="dot danger"></span> Zona Sangat Rawan</div>
-            <div class="legend-row"><span class="dot incident"></span> Titik Kejadian Kejahatan</div>
+            <div class="legend-row"><span class="dot incident"></span> Titik kejadian klitih</div>
             <div class="legend-row"><span class="dot cctv"></span> CCTV / kamera publik</div>
             <div class="legend-row"><span class="dot warn"></span> Radius CCTV 500 m</div>
             <div class="legend-row"><span class="dot crowd"></span> Titik keramaian</div>
-            <div class="legend-row"><span class="dot warn"></span> Koridor jalan rawan</div>
+            <div class="legend-row"><span class="dot lighting"></span> Lampu penerangan / PJU</div>
+            <div class="legend-row"><span class="dot admin"></span> Batas administrasi</div>
+            <div class="legend-row"><span class="dot corridor"></span> Koridor jalan rawan</div>
           </div>
         </div>
       </section>
