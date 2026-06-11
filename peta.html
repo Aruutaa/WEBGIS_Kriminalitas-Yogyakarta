@@ -144,6 +144,20 @@
     .road-card{border:1px solid var(--stroke);background:rgba(255,255,255,.045);border-radius:16px;padding:11px;display:grid;gap:7px}
     .road-card .line{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px}.road-card b{font-size:13px}.road-card small{color:var(--muted);line-height:1.45}.road-card .meter{height:7px}
 
+  
+
+    /* Soft Emotion Palette Override untuk halaman peta */
+    :root{--bg:#fff8eb;--panel:rgba(255,255,255,.90);--panel2:rgba(255,255,255,.96);--stroke:rgba(35,46,74,.13);--text:#24304f;--muted:#66718e;--cyan:#74b9ff;--blue:#8d7bff;--green:#52d99b;--yellow:#ffd166;--red:#ff6b6b;--shadow:0 20px 60px rgba(84,66,36,.16);--radius:24px;}
+    html,body{background:radial-gradient(circle at 10% 6%,rgba(255,209,102,.34),transparent 32%),radial-gradient(circle at 84% 10%,rgba(141,123,255,.22),transparent 32%),radial-gradient(circle at 20% 88%,rgba(82,217,155,.20),transparent 30%),radial-gradient(circle at 80% 78%,rgba(255,107,107,.16),transparent 32%),var(--bg)!important;color:var(--text)!important;}
+    .app:before{background:linear-gradient(rgba(255,248,235,.66),rgba(255,248,235,.88)),url("assets/img/map-overlay.svg") center/cover no-repeat!important;opacity:.9!important;}
+    .topbar,.panel,.legend,.status-pill,.toolbox button,.stat,.analysis-box,.risk-method,.district-risk-card,.road-card,.camera-card,.incident-card,.selected-camera-card,.selected-incident-card,.warning{background:var(--panel)!important;border-color:var(--stroke)!important;box-shadow:var(--shadow)!important;color:var(--text)!important;}
+    .topbar{backdrop-filter:blur(18px)!important;}.brand span,.panel-head span,.stat span,.camera-dropdown-note,.data-note,.district-risk-card small,.road-card small,.analysis-box p,.warning,.popup-meta{color:var(--muted)!important;}
+    .navlinks a,.btn,.panel-toggle-btn,.input,.select,.quick-actions a,.quick-actions button,.popup-actions a,.popup-actions button{background:rgba(255,255,255,.74)!important;border-color:var(--stroke)!important;color:var(--text)!important;}
+    .btn.primary,.navlinks a.active,.quick-actions a.primary,.popup-actions .primary{background:linear-gradient(135deg,rgba(255,209,102,.86),rgba(255,143,171,.62))!important;border-color:rgba(255,184,77,.55)!important;color:#24304f!important;}
+    #map{background:#eaf4ff!important;}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:rgba(255,255,255,.97)!important;color:var(--text)!important;border-color:var(--stroke)!important;box-shadow:var(--shadow)!important;}.leaflet-control-zoom a{background:#fff!important;color:#24304f!important;border-color:rgba(35,46,74,.16)!important;}
+    .tag{background:rgba(255,255,255,.70)!important;border-color:var(--stroke)!important;color:#4f5b77!important;}.tag.high{background:rgba(255,107,107,.14)!important;border-color:rgba(255,107,107,.42)!important;color:#bd3f45!important;}.tag.med{background:rgba(255,209,102,.18)!important;border-color:rgba(255,184,77,.48)!important;color:#95620f!important;}.tag.low,.tag.live{background:rgba(82,217,155,.16)!important;border-color:rgba(82,217,155,.42)!important;color:#1f7f59!important;}.tag.ptz{background:rgba(116,185,255,.16)!important;border-color:rgba(116,185,255,.42)!important;color:#2f6396!important;}
+    .meter{background:rgba(36,48,79,.10)!important;}.meter i{background:linear-gradient(90deg,#52d99b,#ffd166,#ff6b6b)!important;}.cam-icon.ptz{background:linear-gradient(135deg,#74b9ff,#8d7bff)!important;color:#fff!important;}.cam-icon.fixed{background:linear-gradient(135deg,#52d99b,#ffd166)!important;color:#24304f!important;}.incident-icon{background:linear-gradient(135deg,#ff6b6b,#ffd166)!important;}
+
   </style>
 </head>
 <body data-page="peta">
@@ -197,7 +211,7 @@
 
           <div class="risk-method">
             <h4>Model analisis spasial</h4>
-            <p>Skor peta dihitung dari kepadatan kejadian, kedekatan terhadap CCTV, jumlah kejadian sekitar radius 1 km, serta status cakupan kamera. Layer batas administrasi diberi warna seperti choropleth agar pola prioritas per kecamatan langsung terbaca.</p>
+            <p>Skor peta memakai hasil pembobotan zona dari <b>assets/data/hasil_pembobotan_zona.json</b>: 45% indeks kejadian, 20% kepadatan penduduk, 20% gap/blindspot CCTV, dan 15% keragaman sumber. Layer batas administrasi diberi warna choropleth agar prioritas per kecamatan langsung terbaca.</p>
           </div>
           <div class="risk-summary" id="districtRiskSummary"></div>
 
@@ -877,6 +891,7 @@
     const INCIDENT_CSV_PATH = "assets/data/Data%20Kejahatan%20Klitih.csv";
     const AUTO_LOAD_INCIDENTS = true;
     const SOCIO_ECON_CSV_PATH = "assets/data/Data%20Pendukung%20-%20Sosial%20dan%20Ekonomi.csv";
+    const ZONE_WEIGHT_PATH = "assets/data/hasil_pembobotan_zona.json";
     const ROAD_CORRIDOR_DEFINITIONS = [
       {
         id:"jokteng_wetan",
@@ -1490,6 +1505,8 @@
 
     let map, activeBasemap, cctvRows = [], incidentRows = [], socioRows = [], markersLayer, buffersLayer, incidentLayer, incidentBuffersLayer, roadNetworkLayer, jogjaBoundaryLayer;
     let districtRiskLookup = new Map();
+    let zoneWeightLookup = new Map();
+    let zoneWeightMeta = null;
     let socioLookup = new Map();
     let currentRoadNetwork = [];
     let currentFiltered = [], currentIncidentFiltered = [];
@@ -1723,6 +1740,29 @@
       }
     }
 
+
+
+    async function loadZoneWeights(){
+      try{
+        const res = await fetch(ZONE_WEIGHT_PATH, { cache:"no-store" });
+        if(!res.ok) throw new Error("File pembobotan zona tidak ditemukan di " + ZONE_WEIGHT_PATH);
+        const data = await res.json();
+        zoneWeightMeta = data;
+        zoneWeightLookup = new Map((data.zones || []).map(zone => [canonicalKecamatan(zone.kecamatan), zone]));
+        return data;
+      }catch(err){
+        console.warn(err.message);
+        zoneWeightMeta = null;
+        zoneWeightLookup = new Map();
+        return null;
+      }
+    }
+
+    function categoryFromScore(score){
+      const n = Number(score || 0);
+      return n >= 70 ? "Tinggi" : n >= 45 ? "Sedang" : "Rendah";
+    }
+
     function getRoadBufferRadius(){
       return Number(document.getElementById("roadBufferRadius")?.value || 300);
     }
@@ -1857,7 +1897,7 @@
     function roadRiskColor(category){
       if(category === "Tinggi") return "#ff3f68";
       if(category === "Sedang") return "#ffd166";
-      return "#70ffb8";
+      return "#52d99b";
     }
 
     function roadPopupHtml(row){
@@ -2069,13 +2109,46 @@
     }
 
     function riskColor(category){
-      if(category === "Tinggi") return "#ff6b8b";
+      if(category === "Tinggi") return "#ff6b6b";
       if(category === "Sedang") return "#ffd166";
-      if(category === "Rendah") return "#70ffb8";
-      return "#7aa7ff";
+      if(category === "Rendah") return "#52d99b";
+      return "#74b9ff";
     }
 
     function buildDistrictRiskLookup(rows = currentIncidentFiltered){
+      const activeByKec = new Map();
+      rows.forEach(row => {
+        const key = canonicalKecamatan(row._kecamatan);
+        if(!activeByKec.has(key)) activeByKec.set(key, { activeCount:0, activeCovered:0, activeNoCoverage:0 });
+        const item = activeByKec.get(key);
+        item.activeCount += 1;
+        if(row._analysis?.cctv500 > 0) item.activeCovered += 1;
+        else item.activeNoCoverage += 1;
+      });
+
+      if(zoneWeightLookup && zoneWeightLookup.size){
+        const grouped = new Map();
+        zoneWeightLookup.forEach((zone, key) => {
+          const active = activeByKec.get(key) || { activeCount:0, activeCovered:0, activeNoCoverage:0 };
+          const score = Number(zone.skor_akhir ?? zone.skor_final ?? zone.score ?? 0);
+          const category = zone.kategori || categoryFromScore(score);
+          grouped.set(key, {
+            kecamatan:key,
+            count:Number(zone.jumlah_kejadian || 0),
+            activeCount:active.activeCount,
+            high:category === "Tinggi" ? Number(zone.jumlah_kejadian || 0) : 0,
+            covered:Number(zone.kejadian_tercakup_cctv_500m || 0),
+            noCoverage:Number(zone.blindspot_kejadian || 0),
+            score,
+            category,
+            zone,
+            source:"hasil_pembobotan"
+          });
+        });
+        districtRiskLookup = grouped;
+        return grouped;
+      }
+
       const grouped = new Map();
       rows.forEach(row => {
         const key = canonicalKecamatan(row._kecamatan);
@@ -2123,8 +2196,8 @@
         const kec = canonicalKecamatan(props.WADMKC || props.NAMOBJ || "-");
         const risk = districtRiskLookup.get(kec);
         const riskHtml = risk
-          ? `<br/><b>Skor prioritas:</b> ${risk.score}/100 (${risk.category})<br/><b>Titik aktif:</b> ${risk.count} · Blind spot: ${risk.noCoverage}`
-          : `<br/><b>Skor prioritas:</b> belum ada titik aktif pada filter ini`;
+          ? `<br/><b>Skor pembobotan:</b> ${risk.score}/100 (${risk.category})<br/><b>Kejadian data:</b> ${risk.count} · aktif di filter: ${risk.activeCount ?? risk.count}<br/><b>CCTV 500 m:</b> ${risk.covered} tercakup · blind spot: ${risk.noCoverage}`
+          : `<br/><b>Skor pembobotan:</b> belum tersedia`;
         layer.bindPopup(`<b>${kel}</b><br/>Kecamatan: ${kec}${riskHtml}`);
       });
     }
@@ -2132,17 +2205,18 @@
     function renderDistrictRiskSummary(){
       const box = document.getElementById("districtRiskSummary");
       if(!box) return;
-      const items = [...buildDistrictRiskLookup().values()].sort((a,b) => b.score - a.score || b.count - a.count).slice(0,4);
+      const items = [...buildDistrictRiskLookup().values()].sort((a,b) => b.score - a.score || b.count - a.count).slice(0,5);
       if(!items.length){
-        box.innerHTML = `<div class="district-risk-card"><small>Belum ada titik kejadian yang lolos filter. Ubah filter kecamatan/tahun atau aktifkan semua kejadian.</small></div>`;
+        box.innerHTML = `<div class="district-risk-card"><small>Belum ada data pembobotan zona. Sistem memakai skor dinamis dari titik kejadian aktif.</small></div>`;
         return;
       }
       box.innerHTML = items.map(item => {
         const cls = item.category === "Tinggi" ? "high" : item.category === "Sedang" ? "med" : "low";
+        const z = item.zone || {};
         return `<div class="district-risk-card">
-          <div class="line"><b>${escapeHtml(item.kecamatan)}</b><span class="tag ${cls}">${item.category}</span></div>
-          <div class="meter"><i style="width:${item.score}%;background:linear-gradient(90deg,#70ffb8,#ffd166,#ff6b8b)"></i></div>
-          <small>${item.count} titik aktif · ${item.covered} dekat CCTV ≤500 m · ${item.noCoverage} blind spot relatif</small>
+          <div class="line"><b>${escapeHtml(item.kecamatan)}</b><span class="tag ${cls}">${item.score}/100 · ${item.category}</span></div>
+          <div class="meter"><i style="width:${item.score}%;background:linear-gradient(90deg,#52d99b,#ffd166,#ff6b6b)"></i></div>
+          <small>${item.count} kejadian · ${item.covered} tercakup CCTV ≤500 m · ${item.noCoverage} blind spot · kepadatan ${Number(z.kepadatan_jiwa_km2 || 0).toLocaleString("id-ID")} jiwa/km²</small>
         </div>`;
       }).join("");
     }
@@ -2533,7 +2607,7 @@
           const sumber = normalized._sourceLayer || JOGJA_BOUNDARY_LAYER_KEYWORD;
           const risk = districtRiskLookup.get(kec);
           const riskText = risk
-            ? `<br/>Skor prioritas: <b>${risk.score}/100 (${risk.category})</b><br/>Titik aktif: ${risk.count} · Blind spot: ${risk.noCoverage}`
+            ? `<br/>Skor pembobotan: <b>${risk.score}/100 (${risk.category})</b><br/>Kejadian data: ${risk.count} · aktif filter: ${risk.activeCount ?? risk.count} · Blind spot: ${risk.noCoverage}`
             : `<br/>Skor prioritas: belum ada titik aktif pada filter ini`;
           layer.bindPopup(`<b>${kel}</b><br/>Kecamatan: ${kec}<br/>Layer: ${sumber}${riskText}`);
         }
@@ -2685,6 +2759,7 @@
       cctvRows = enrichRows(raw);
       currentFiltered = [...cctvRows];
       await loadSocioRows();
+      await loadZoneWeights();
       const rawIncidents = AUTO_LOAD_INCIDENTS ? await loadIncidentRows() : [];
       enrichIncidentRows(rawIncidents);
       currentIncidentFiltered = [...incidentRows];
@@ -2732,6 +2807,7 @@
         const raw = await loadCsvRows();
         cctvRows = enrichRows(raw);
         await loadSocioRows();
+        await loadZoneWeights();
         const rawIncidents = AUTO_LOAD_INCIDENTS ? await loadIncidentRows() : [];
         enrichIncidentRows(rawIncidents);
         populateFilters();

@@ -5,6 +5,7 @@
 // ============================================================
 
 const INCIDENT_CSV_PATH = "assets/data/Data%20Kejahatan%20Klitih.csv";
+const ZONE_WEIGHT_PATH = "assets/data/hasil_pembobotan_zona.json";
 const FALLBACK_INCIDENT_ROWS = [
   {
     "No": "1",
@@ -492,7 +493,10 @@ const state = {
   filtered: [],
   areaStats: [],
   newsStats: [],
-  charts: {}
+  charts: {},
+  zoneWeights: [],
+  zoneWeightLookup: new Map(),
+  zoneWeightMeta: null
 };
 
 function cleanText(value) {
@@ -673,6 +677,28 @@ function readFiltersFromUrl() {
   };
 }
 
+
+async function loadZoneWeights() {
+  try {
+    const res = await fetch(ZONE_WEIGHT_PATH, { cache:"no-store" });
+    if(!res.ok) throw new Error("File pembobotan zona tidak ditemukan");
+    const data = await res.json();
+    state.zoneWeightMeta = data;
+    state.zoneWeights = data.zones || [];
+    state.zoneWeightLookup = new Map(state.zoneWeights.map(zone => [normalizeKecamatan(zone.kecamatan), zone]));
+  } catch (err) {
+    console.warn(err.message);
+    state.zoneWeightMeta = null;
+    state.zoneWeights = [];
+    state.zoneWeightLookup = new Map();
+  }
+}
+
+function fallbackCategory(score) {
+  const n = Number(score || 0);
+  return n >= 70 ? "Tinggi" : n >= 45 ? "Sedang" : "Rendah";
+}
+
 function populateFilters() {
   const urlFilters = readFiltersFromUrl();
   const kecamatanList = [...new Set(state.incidents.map(r => r.kecamatan).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
@@ -720,30 +746,51 @@ function buildAreaStats(rows) {
       map.set(key, { kecamatan:key, count:0, kotaYogya:isKotaYogya(key), years:new Set(), sources:new Map(), validCoords:0, rows:[] });
     }
     const item = map.get(key);
-    item.count++;
+    item.count += 1;
     item.rows.push(row);
-    if(row.validCoord) item.validCoords++;
     if(row.tahun) item.years.add(row.tahun);
-    const src = row.domain || "Tanpa sumber";
+    if(row.validCoord) item.validCoords += 1;
+    const src = sourceLabel(row.source);
     item.sources.set(src, (item.sources.get(src) || 0) + 1);
   });
-  const stats = [...map.values()].map(item => {
+
+  // Saat file pembobotan tersedia, tampilkan semua 14 kecamatan agar output analisis lengkap,
+  // bukan hanya kecamatan yang lolos filter aktif.
+  if(state.zoneWeightLookup && state.zoneWeightLookup.size) {
+    state.zoneWeightLookup.forEach((zone, key) => {
+      if(!map.has(key)) {
+        map.set(key, { kecamatan:key, count:0, kotaYogya:isKotaYogya(key), years:new Set(), sources:new Map(), validCoords:0, rows:[] });
+      }
+    });
+  }
+
+  return [...map.values()].map(item => {
     const uniqueSources = item.sources.size;
-    const repeatFactor = Math.max(0, item.count - 1) * 8;
-    const sourceFactor = Math.min(20, uniqueSources * 4);
-    const cityFactor = item.kotaYogya ? 8 : 0;
-    const coordFactor = item.validCoords ? 5 : 0;
-    const score = Math.min(100, Math.round(28 + repeatFactor + sourceFactor + cityFactor + coordFactor));
-    const category = score >= 75 ? "Tinggi" : score >= 55 ? "Sedang" : "Rendah";
     const dominantSource = [...item.sources.entries()].sort((a,b)=>b[1]-a[1])[0]?.[0] || "-";
-    const direction = category === "Tinggi"
-      ? "Prioritas validasi lapangan, pengecekan titik rawan, dan evaluasi keterjangkauan CCTV/patroli."
+    const repeatFactor = Math.min(35, item.count * 4);
+    const sourceFactor = Math.min(20, uniqueSources * 4);
+    const cityFactor = item.kotaYogya ? 12 : 5;
+    const coordFactor = item.count ? Math.round((item.validCoords / item.count) * 5) : 0;
+    const fallbackScore = Math.min(100, Math.round(28 + repeatFactor + sourceFactor + cityFactor + coordFactor));
+    const zone = state.zoneWeightLookup.get(normalizeKecamatan(item.kecamatan));
+    const score = zone ? Number(zone.skor_akhir ?? zone.skor_final ?? fallbackScore) : fallbackScore;
+    const category = zone ? (zone.kategori || fallbackCategory(score)) : (score >= 75 ? "Tinggi" : score >= 55 ? "Sedang" : "Rendah");
+    const direction = zone?.rekomendasi || (category === "Tinggi"
+      ? "Prioritaskan validasi lapangan, overlay CCTV, dan pengecekan jam rawan."
       : category === "Sedang"
-        ? "Perlu monitoring berkala dan korelasi dengan waktu kejadian serta titik CCTV sekitar."
-        : "Cukup menjadi arsip pembanding, tetapi tetap dicek bila muncul pengulangan kejadian baru.";
-    return { ...item, uniqueSources, score, category, dominantSource, direction, years:[...item.years].sort().join(", ") };
-  });
-  return stats.sort((a,b)=>b.score-a.score || b.count-a.count || a.kecamatan.localeCompare(b.kecamatan));
+        ? "Pantau tren dan hubungkan dengan titik CCTV/keramaian."
+        : "Gunakan sebagai pembanding; validasi ulang sebelum dijadikan prioritas utama.");
+    return {
+      ...item,
+      uniqueSources,
+      score,
+      category,
+      dominantSource,
+      direction,
+      zone,
+      years:[...item.years].sort().join(", ") || (zone ? "-" : "")
+    };
+  }).sort((a,b)=>b.score-a.score || b.count-a.count || a.kecamatan.localeCompare(b.kecamatan));
 }
 
 function buildNewsStats(rows) {
@@ -825,7 +872,7 @@ function renderCharts() {
   destroyChart("riskBarChart");
   state.charts.riskBarChart = new Chart(document.getElementById("riskBarChart"), {
     type:"bar",
-    data:{ labels:areaTop.map(x=>x.kecamatan), datasets:[{ label:"Skor risiko", data:areaTop.map(x=>x.score), borderWidth:1, borderRadius:10, backgroundColor:"rgba(98,230,255,.55)", borderColor:"rgba(98,230,255,.95)" }] },
+    data:{ labels:areaTop.map(x=>x.kecamatan), datasets:[{ label:"Skor risiko", data:areaTop.map(x=>x.score), borderWidth:1, borderRadius:10, backgroundColor:"rgba(255,200,87,.72)", borderColor:"rgba(255,184,77,.95)" }] },
     options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:"#dbeafe" } } }, scales:{ x:{ ticks:{ color:"#9fb0c8" }, grid:{ color:"rgba(255,255,255,.06)" } }, y:{ beginAtZero:true, max:100, ticks:{ color:"#9fb0c8" }, grid:{ color:"rgba(255,255,255,.06)" } } } }
   });
 
@@ -834,7 +881,7 @@ function renderCharts() {
   destroyChart("scopeDonutChart");
   state.charts.scopeDonutChart = new Chart(document.getElementById("scopeDonutChart"), {
     type:"doughnut",
-    data:{ labels:["Kota Yogyakarta", "Luar Kota Yogyakarta"], datasets:[{ data:[kota, luar], backgroundColor:["rgba(112,255,184,.72)", "rgba(255,209,102,.72)"], borderColor:["rgba(112,255,184,.95)", "rgba(255,209,102,.95)"], borderWidth:1 }] },
+    data:{ labels:["Kota Yogyakarta", "Luar Kota Yogyakarta"], datasets:[{ data:[kota, luar], backgroundColor:["rgba(82,217,155,.72)", "rgba(141,123,255,.60)"], borderColor:["rgba(82,217,155,.95)", "rgba(141,123,255,.88)"], borderWidth:1 }] },
     options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ color:"#dbeafe" } } } }
   });
 
@@ -842,7 +889,7 @@ function renderCharts() {
   destroyChart("trendLineChart");
   state.charts.trendLineChart = new Chart(document.getElementById("trendLineChart"), {
     type:"line",
-    data:{ labels:trend.map(x=>x[0]), datasets:[{ label:"Jumlah titik", data:trend.map(x=>x[1]), tension:.35, fill:true, backgroundColor:"rgba(122,167,255,.16)", borderColor:"rgba(122,167,255,.95)", pointBackgroundColor:"rgba(122,167,255,.95)" }] },
+    data:{ labels:trend.map(x=>x[0]), datasets:[{ label:"Jumlah titik", data:trend.map(x=>x[1]), tension:.35, fill:true, backgroundColor:"rgba(116,185,255,.18)", borderColor:"rgba(116,185,255,.95)", pointBackgroundColor:"rgba(116,185,255,.95)" }] },
     options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:"#dbeafe" } } }, scales:{ x:{ ticks:{ color:"#9fb0c8", maxRotation:45, minRotation:0 }, grid:{ color:"rgba(255,255,255,.06)" } }, y:{ beginAtZero:true, ticks:{ color:"#9fb0c8", precision:0 }, grid:{ color:"rgba(255,255,255,.06)" } } } }
   });
 
@@ -850,7 +897,7 @@ function renderCharts() {
   destroyChart("sourceBarChart");
   state.charts.sourceBarChart = new Chart(document.getElementById("sourceBarChart"), {
     type:"bar",
-    data:{ labels:sources.map(x=>x.domain.length>20 ? x.domain.slice(0,20)+"…" : x.domain), datasets:[{ label:"Jumlah titik", data:sources.map(x=>x.count), borderWidth:1, borderRadius:10, backgroundColor:"rgba(255,107,139,.55)", borderColor:"rgba(255,107,139,.95)" }] },
+    data:{ labels:sources.map(x=>x.domain.length>20 ? x.domain.slice(0,20)+"…" : x.domain), datasets:[{ label:"Jumlah titik", data:sources.map(x=>x.count), borderWidth:1, borderRadius:10, backgroundColor:"rgba(255,107,107,.58)", borderColor:"rgba(255,107,107,.95)" }] },
     options:{ indexAxis:"y", responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:"#dbeafe" } } }, scales:{ x:{ beginAtZero:true, ticks:{ color:"#9fb0c8", precision:0 }, grid:{ color:"rgba(255,255,255,.06)" } }, y:{ ticks:{ color:"#9fb0c8" }, grid:{ color:"rgba(255,255,255,.06)" } } } }
   });
 }
@@ -890,8 +937,8 @@ function renderInsights() {
   const latestYear = years[years.length-1] || "-";
   const topNews = state.newsStats[0];
   document.getElementById("insightCards").innerHTML = `
-    <div class="rec-card"><h4>Wilayah paling prioritas</h4><p>${top ? `<b>${escapeHtml(top.kecamatan)}</b> memiliki skor tertinggi (${top.score}) dengan ${top.count} titik dan ${top.uniqueSources} sumber.` : "Belum ada data untuk filter aktif."}</p></div>
-    <div class="rec-card"><h4>Konsentrasi risiko</h4><p>Terdapat <b>${highAreas}</b> kecamatan kategori tinggi. Wilayah kategori tinggi lebih cocok dijadikan fokus validasi lapangan dan overlay CCTV.</p></div>
+    <div class="rec-card"><h4>Wilayah paling prioritas</h4><p>${top ? `<b>${escapeHtml(top.kecamatan)}</b> memiliki skor pembobotan tertinggi (${top.score}) dengan ${top.zone?.jumlah_kejadian ?? top.count} kejadian data dan ${top.zone?.jumlah_sumber_unik ?? top.uniqueSources} sumber.` : "Belum ada data untuk filter aktif."}</p></div>
+    <div class="rec-card"><h4>Konsentrasi risiko</h4><p>Terdapat <b>${highAreas}</b> kecamatan kategori tinggi. Wilayah kategori tinggi lebih cocok dijadikan fokus validasi lapangan, pengecekan blind spot, dan overlay CCTV.</p></div>
     <div class="rec-card"><h4>Kualitas sumber</h4><p>Dari data aktif, <b>${urlCount}</b> titik punya tautan berita/medsos dan <b>${titleCount}</b> titik berupa judul/sumber teks tanpa link.</p></div>
     <div class="rec-card"><h4>Periode terbaru</h4><p>Tahun terbaru dalam filter aktif adalah <b>${escapeHtml(latestYear)}</b>. Tren perlu dibaca sebagai data berbasis unggahan/sumber, bukan statistik resmi kepolisian.</p></div>
     <div class="rec-card"><h4>Sumber dominan</h4><p>${topNews ? `<b>${escapeHtml(topNews.domain)}</b> menjadi sumber paling sering muncul dengan ${topNews.count} titik.` : "Tidak ada sumber dominan."}</p></div>
@@ -906,13 +953,19 @@ function renderTable() {
   }
   tbody.innerHTML = state.areaStats.map((row, idx) => {
     const tagClass = row.category === "Tinggi" ? "high" : row.category === "Sedang" ? "med" : "low";
+    const z = row.zone || {};
+    const jumlahTitik = z.jumlah_kejadian ?? row.count;
+    const detail = row.zone
+      ? `Kejadian ${z.indeks_kejadian} · Kepadatan ${z.indeks_kepadatan} · CCTV ${z.indeks_blindspot_cctv} · Sumber ${z.indeks_sumber}`
+      : `Skor dinamis dari ${row.count} titik aktif`;
     return `<tr>
       <td>${idx+1}</td>
       <td><b>${escapeHtml(row.kecamatan)}</b><br><span class="muted">${row.kotaYogya ? "Kota Yogyakarta" : "Luar Kota Yogyakarta/DIY"}</span></td>
-      <td>${row.count}</td>
+      <td>${jumlahTitik}<br><span class="muted">aktif filter: ${row.count}</span></td>
       <td><b>${row.score}</b>/100</td>
       <td><span class="tag ${tagClass}">${row.category}</span></td>
-      <td>${escapeHtml(row.dominantSource)}<br><span class="muted">${row.uniqueSources} sumber · tahun ${escapeHtml(row.years || "-")}</span></td>
+      <td>${escapeHtml(row.dominantSource)}<br><span class="muted">${z.jumlah_sumber_unik ?? row.uniqueSources} sumber · tahun ${escapeHtml(row.years || "-")}</span></td>
+      <td>${escapeHtml(detail)}<br><span class="muted">${z.kejadian_tercakup_cctv_500m ?? 0} tercakup CCTV ≤500 m · ${z.blindspot_kejadian ?? 0} blind spot</span></td>
       <td>${escapeHtml(row.direction)}</td>
     </tr>`;
   }).join("");
@@ -934,21 +987,26 @@ function renderNarrative() {
   }
 
   document.getElementById("narrative").innerHTML = `
-    <p>Berdasarkan filter aktif, sistem membaca <b>${rows.length} titik kejadian klitih</b> dari data CSV. Sebanyak <b>${kota}</b> titik masuk ke kecamatan Kota Yogyakarta, sedangkan <b>${luar}</b> titik berada di luar Kota Yogyakarta atau wilayah DIY lain. Rentang tahun yang terbaca adalah <b>${escapeHtml(years.join(", ") || "tidak diketahui")}</b>.</p>
-    <p>Wilayah dengan prioritas tertinggi adalah <b>${escapeHtml(top?.kecamatan || "-")}</b>${second ? `, disusul <b>${escapeHtml(second.kecamatan)}</b>` : ""}. Skor tinggi tidak otomatis berarti wilayah tersebut paling berbahaya secara resmi, tetapi menunjukkan adanya pengulangan titik, keragaman sumber, dan relevansi spasial yang lebih kuat dalam data yang digunakan.</p>
+    <p>Berdasarkan filter aktif, sistem membaca <b>${rows.length} titik kejadian klitih</b> dari data CSV dan menggabungkannya dengan <b>${state.zoneWeights.length || state.areaStats.length} hasil pembobotan zona</b>. Sebanyak <b>${kota}</b> titik masuk ke kecamatan Kota Yogyakarta, sedangkan <b>${luar}</b> titik berada di luar Kota Yogyakarta atau wilayah DIY lain. Rentang tahun yang terbaca adalah <b>${escapeHtml(years.join(", ") || "tidak diketahui")}</b>.</p>
+    <p>Wilayah dengan prioritas tertinggi adalah <b>${escapeHtml(top?.kecamatan || "-")}</b>${second ? `, disusul <b>${escapeHtml(second.kecamatan)}</b>` : ""}. Skor tinggi tidak otomatis berarti wilayah tersebut paling berbahaya secara resmi, tetapi menunjukkan kombinasi kejadian, kepadatan penduduk, gap/blind spot CCTV, dan keragaman sumber yang lebih kuat dalam data yang digunakan.</p>
     <p>Daftar berita menunjukkan <b>${sourceUrl}</b> titik memiliki tautan langsung ke sumber berita atau media sosial. Sumber tanpa tautan tetap ditampilkan sebagai rujukan, tetapi perlu divalidasi kembali bila analisis akan dipakai untuk laporan resmi atau pengambilan keputusan operasional.</p>
     <p>Arahan awal dari hasil ini adalah memprioritaskan <b>${high.length}</b> kecamatan kategori tinggi untuk dicek pada peta, dibandingkan dengan sebaran CCTV, koridor jalan, dan titik keramaian. Analisis berikutnya sebaiknya menambahkan waktu kejadian, jenis korban, jenis pelaku, kondisi jalan, dan status penanganan kasus agar hasil tidak hanya berbasis jumlah titik.</p>`;
 }
 
 function exportCsv() {
   const rows = state.areaStats;
-  const header = ["peringkat", "kecamatan", "jumlah_titik", "skor_risiko", "kategori", "sumber_dominan", "tahun", "arahan_analisis"];
+  const header = ["peringkat", "kecamatan", "jumlah_titik", "aktif_filter", "skor_pembobotan", "kategori", "indeks_kejadian", "indeks_kepadatan", "indeks_blindspot_cctv", "indeks_sumber", "sumber_dominan", "tahun", "arahan_analisis"];
   const lines = [header.join(",")].concat(rows.map((r, idx) => [
     idx+1,
     r.kecamatan,
+    (r.zone?.jumlah_kejadian ?? r.count),
     r.count,
     r.score,
     r.category,
+    (r.zone?.indeks_kejadian ?? ""),
+    (r.zone?.indeks_kepadatan ?? ""),
+    (r.zone?.indeks_blindspot_cctv ?? ""),
+    (r.zone?.indeks_sumber ?? ""),
     r.dominantSource,
     r.years,
     r.direction
@@ -965,6 +1023,7 @@ function exportCsv() {
 }
 
 async function boot() {
+  await loadZoneWeights();
   state.rawRows = await loadIncidentRows();
   state.incidents = enrichRows(state.rawRows);
   populateFilters();
