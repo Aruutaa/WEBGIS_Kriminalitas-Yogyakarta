@@ -59,7 +59,7 @@ body.map-page { overflow: hidden; }
 .zone-focus.safe{border-color:rgba(109,213,165,.35)}.zone-focus.warn{border-color:rgba(247,204,169,.42)}.zone-focus.danger{border-color:rgba(179,61,56,.44)}
 .dot.lighting{background:#ffd469}.dot.admin{background:#fff8ef;border:2px solid #402a20}.dot.corridor{background:#402a20}
 .geo-marker.lighting{background:#ffd469;border-color:#402a20}.geo-marker.corridor-node{background:#402a20;border-color:#f7cca9}
-.popup-card a{color:var(--cream);font-weight:850}.popup-card ul{margin:7px 0 0 18px}.popup-card li{color:#cab7ad;line-height:1.55;font-size:.82rem;margin:4px 0}.leaflet-popup-content{width:auto!important;min-width:310px;max-width:430px}.custom-popup .leaflet-popup-content-wrapper{border-radius:20px}
+.popup-card a{color:var(--cream);font-weight:850}.popup-card ul{margin:7px 0 0 18px}.popup-card li{color:#cab7ad;line-height:1.55;font-size:.82rem;margin:4px 0}.leaflet-popup-content{width:auto!important;min-width:310px;max-width:560px}.custom-popup .leaflet-popup-content-wrapper{border-radius:20px}
 .leaflet-pane.adminPane svg path{filter:drop-shadow(0 1px 2px rgba(0,0,0,.65))}.leaflet-pane.corridorPane svg path{filter:drop-shadow(0 2px 4px rgba(0,0,0,.45))}
 @media(max-width:1180px){.analysis-button-grid,.zone-focus-grid{grid-template-columns:1fr}.leaflet-popup-content{min-width:270px;max-width:340px}}
 
@@ -177,3 +177,13 @@ body.map-page { overflow: hidden; }
 .cctv-popup .popup-title {
   color:#e8f8ff;
 }
+
+/* CCTV live popup v4 */
+.leaflet-popup-content{width:auto!important;min-width:330px;max-width:560px}
+.cctv-popup{min-width:500px;max-width:560px}
+.cctv-live-preview{border-color:rgba(56,189,248,.38);box-shadow:0 18px 40px rgba(0,0,0,.30)}
+.cctv-live-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.cctv-live-actions a{display:flex;align-items:center;justify-content:center;min-height:38px;border:1px solid rgba(56,189,248,.35);background:rgba(56,189,248,.10);color:#e0f2fe!important;border-radius:12px;font-size:.78rem;font-weight:900;text-align:center}
+.popup-streams.compact{margin-top:10px}
+.popup-streams.compact a{font-size:.76rem;padding:8px 9px}
+@media(max-width:720px){.leaflet-popup-content{min-width:260px;max-width:330px}.cctv-popup{min-width:260px;max-width:330px}.cctv-live-actions{grid-template-columns:1fr}}

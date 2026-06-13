@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-label="BERITA ONLINE">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#0f172a"/><stop offset="1" stop-color="#020617"/></linearGradient>
+    <radialGradient id="r" cx="78%" cy="18%" r="60%"><stop offset="0" stop-color="#38bdf8" stop-opacity=".42"/><stop offset="1" stop-color="#38bdf8" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#g)"/>
+  <rect width="960" height="540" fill="url(#r)"/>
+  <g opacity=".18" stroke="#e2e8f0" stroke-width="2"><path d="M0 405C185 340 272 465 461 388s310-155 499-88" fill="none"/><path d="M0 170C210 92 305 208 502 144s302-88 458-50" fill="none"/></g>
+  <circle cx="756" cy="128" r="82" fill="#38bdf8" opacity=".28"/>
+  <rect x="62" y="62" width="836" height="416" rx="42" fill="#020617" opacity=".48" stroke="#e2e8f0" stroke-opacity=".14"/>
+  <g transform="translate(92 116)">
+    <rect x="0" y="0" width="92" height="92" rx="26" fill="#38bdf8" opacity=".95"/>
+    <path d="M31 27h34v38H31zM65 36l18-11v50L65 64z" fill="#fff" opacity=".92"/>
+    <text x="0" y="168" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="54" font-weight="900" letter-spacing="1">BERITA ONLINE</text>
+    <text x="0" y="220" fill="#cbd5e1" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="700">Sumber kejadian</text>
+    <rect x="0" y="258" width="540" height="14" rx="7" fill="#38bdf8" opacity=".55"/>
+    <rect x="0" y="290" width="390" height="12" rx="6" fill="#e2e8f0" opacity=".24"/>
+  </g>
+  <text x="92" y="430" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="700">GeoSafe Yogyakarta</text>
+</svg>

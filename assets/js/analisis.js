@@ -377,7 +377,7 @@ const FALLBACK_INCIDENT_ROWS = [
   },
   {
     "No": "35",
-    "URL": "https://jogja.idntimes.com/news/jogja/tunggul-damarjati/pelaku-klitih-tewaskan-pelajar-ngaku-korban-salah-tangkap?utm_source=chatgpt.com",
+    "URL": "https://jogja.idntimes.com/news/jogja/tunggul-damarjati/pelaku-klitih-tewaskan-pelajar-ngaku-korban-salah-tangkap",
     "Tanggal_up": "2022-6-28",
     "Bujur": "110.3995595",
     "Lintang": "-7.8113361",
@@ -385,7 +385,7 @@ const FALLBACK_INCIDENT_ROWS = [
   },
   {
     "No": "36",
-    "URL": "https://www.suara.com/news/2022/01/02/084315/klitih-kembali-teror-warga-yogyakarta-pemuda-jadi-korban-pembacokan?utm_source=chatgpt.com",
+    "URL": "https://www.suara.com/news/2022/01/02/084315/klitih-kembali-teror-warga-yogyakarta-pemuda-jadi-korban-pembacokan",
     "Tanggal_up": "2022-01-02",
     "Bujur": "110.3668117",
     "Lintang": "-7.7926923",
@@ -393,7 +393,7 @@ const FALLBACK_INCIDENT_ROWS = [
   },
   {
     "No": "37",
-    "URL": "https://www.youtube.com/watch?v=6FmtzQ7_IPo&utm_source=chatgpt.com",
+    "URL": "https://www.youtube.com/watch?v=6FmtzQ7_IPo",
     "Tanggal_up": "2022-02-07",
     "Bujur": "110.367631",
     "Lintang": "-7.801324",
@@ -417,7 +417,7 @@ const FALLBACK_INCIDENT_ROWS = [
   },
   {
     "No": "40",
-    "URL": "https://news.okezone.com/read/2023/03/24/510/2786735/klitih-terjadi-saat-ramadhan-di-yogyakarta-korban-seorang-pelajar?utm_source=chatgpt.com",
+    "URL": "https://news.okezone.com/read/2023/03/24/510/2786735/klitih-terjadi-saat-ramadhan-di-yogyakarta-korban-seorang-pelajar",
     "Tanggal_up": "2023-03-24",
     "Bujur": "110.3549897",
     "Lintang": "-7.7859238",
@@ -425,7 +425,7 @@ const FALLBACK_INCIDENT_ROWS = [
   },
   {
     "No": "42",
-    "URL": "https://jogja.suara.com/read/2023/10/01/140000/klitih-di-kota-jogja-satu-orang-luka-polisi-dalami-identitas-pelaku?utm_source=chatgpt.com",
+    "URL": "https://jogja.suara.com/read/2023/10/01/140000/klitih-di-kota-jogja-satu-orang-luka-polisi-dalami-identitas-pelaku",
     "Tanggal_up": "2023-10-01",
     "Bujur": "110.3421526",
     "Lintang": "-7.8460639",
@@ -441,7 +441,7 @@ const FALLBACK_INCIDENT_ROWS = [
   },
   {
     "No": "44",
-    "URL": "https://kumparan.com/tugujogja/angka-kriminalitas-di-kota-yogyakarta-meningkat-selama-2022-1zWQPgOGDCk?utm_source=chatgpt.com",
+    "URL": "https://kumparan.com/tugujogja/angka-kriminalitas-di-kota-yogyakarta-meningkat-selama-2022-1zWQPgOGDCk",
     "Tanggal_up": "2023-05-27",
     "Bujur": "110.3888633",
     "Lintang": "-7.8020861",
@@ -449,7 +449,7 @@ const FALLBACK_INCIDENT_ROWS = [
   },
   {
     "No": "45",
-    "URL": "https://jogja.suara.com/read/2023/10/01/140000/klitih-di-kota-jogja-satu-orang-luka-polisi-dalami-identitas-pelaku?utm_source=chatgpt.com",
+    "URL": "https://jogja.suara.com/read/2023/10/01/140000/klitih-di-kota-jogja-satu-orang-luka-polisi-dalami-identitas-pelaku",
     "Tanggal_up": "2023-10-01",
     "Bujur": "110.3421526",
     "Lintang": "-7.8460639",
@@ -457,7 +457,7 @@ const FALLBACK_INCIDENT_ROWS = [
   },
   {
     "No": "48",
-    "URL": "https://www.polresjogja.com/2022/01/konferensi-pers-polsek-umbulharjo.html?utm_source=chatgpt.com",
+    "URL": "https://www.polresjogja.com/2022/01/konferensi-pers-polsek-umbulharjo.html",
     "Tanggal_up": "2022-01-12",
     "Bujur": "110.393103",
     "Lintang": "-7.809574",
@@ -465,7 +465,7 @@ const FALLBACK_INCIDENT_ROWS = [
   },
   {
     "No": "49",
-    "URL": "https://www.benggala.com/2023/08/korban-sempat-diteriaki-klitih-polisi.html?utm_source=chatgpt.com",
+    "URL": "https://www.benggala.com/2023/08/korban-sempat-diteriaki-klitih-polisi.html",
     "Tanggal_up": "2023-07-09",
     "Bujur": "110.3583665",
     "Lintang": "-7.7863631",
@@ -473,7 +473,7 @@ const FALLBACK_INCIDENT_ROWS = [
   },
   {
     "No": "50",
-    "URL": "https://bacajogja.id/2023/03/26/kronologi-klitih-bumijo-yogyakarta-polisi-tangkap-15-pelaku/?utm_source=chatgpt.com",
+    "URL": "https://bacajogja.id/2023/03/26/kronologi-klitih-bumijo-yogyakarta-polisi-tangkap-15-pelaku/",
     "Tanggal_up": "2023-03-26",
     "Bujur": "110.360645",
     "Lintang": "-7.783339",

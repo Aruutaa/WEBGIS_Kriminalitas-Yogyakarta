@@ -28,3 +28,7 @@
 .news-mini .row-actions{margin-top:12px}
 @media(max-width:1100px){.filters,.method-card .method-grid{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
 @media(max-width:720px){.filters,.method-card .method-grid,.grid-4,.grid-2{grid-template-columns:1fr}.h2{font-size:2.15rem}}
+
+/* Analisis tanpa berita: filter lebih lega */
+.filters{grid-template-columns:minmax(260px,1.6fr) minmax(160px,.8fr) minmax(160px,.8fr)}
+@media(max-width:900px){.filters{grid-template-columns:1fr}}

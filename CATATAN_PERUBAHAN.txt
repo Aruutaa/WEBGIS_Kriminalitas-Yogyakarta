@@ -25,3 +25,9 @@ CATATAN PERUBAHAN WEBGIS
 5. Data tambahan
 - assets/data/cctv_pemkot_yogyakarta_geocoded.csv: titik live CCTV Pemkot dengan koordinat perkiraan untuk kebutuhan visualisasi.
 - assets/data/pju_yogyakarta.csv: titik PJU/prioritas penerangan berbasis titik kejadian yang perlu diverifikasi.
+
+Revisi tambahan:
+- analisis.html tidak lagi memuat daftar berita agar informasi tidak dobel dengan berita.html.
+- berita.html memakai thumbnail otomatis: YouTube memakai thumbnail video, sumber lain memakai gambar lokal kategori agar gambar utama/kartu tidak kosong.
+- popup CCTV menampilkan iframe live YouTube/YouTube-nocookie jika link tersedia, plus tombol fallback ke YouTube/portal resmi ketika embed diblokir oleh browser atau pemilik platform.
+- data-loader.js menyimpan field watch/embed/nocookie/video_id CCTV agar popup peta bisa menampilkan pratinjau live.
