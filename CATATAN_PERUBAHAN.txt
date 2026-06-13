@@ -1,0 +1,27 @@
+CATATAN PERUBAHAN WEBGIS
+
+1. Peta
+- CCTV difilter ke area Kota Yogyakarta.
+- Titik live CCTV Pemkot Yogyakarta ditambahkan koordinat perkiraan agar tampil di peta.
+- Layer PJU/prioritas penerangan aktif secara default.
+- Popup CCTV, titik kejadian, PJU, zona, dan koridor terhubung ke halaman analisis.
+- URL peta mendukung parameter q/lokasi, zona, tahun, layer, dan showPju=1.
+
+2. Analisis
+- Halaman analisis menerima parameter dari peta.html.
+- Ditambahkan filter pencarian lokasi/CCTV/PJU/koridor.
+- Ditambahkan metode pembobotan detail: 35% intensitas kejadian, 25% kelas zona, 25% blind spot CCTV, 15% keramaian/PJU.
+- Tabel prioritas berisi komponen I, K, B, L, skor akhir, CCTV, PJU, blind spot, dan tombol kembali ke peta.
+- Export CSV sudah memakai skor berbobot.
+
+3. Berita
+- Layout diubah menjadi galeri bergaya kanal berita: headline utama, daftar samping, dan grid kartu.
+- Setiap kartu bisa membuka sumber atau kembali ke peta dengan filter lokasi/zona.
+
+4. Tampilan
+- Warna tetap gelap, tetapi kontras teks, panel, tombol, input, tabel, dan kartu dibuat lebih mudah dibaca.
+- Penjelasan file/sumber data yang terlalu teknis di halaman utama dan peta diringkas/dihilangkan.
+
+5. Data tambahan
+- assets/data/cctv_pemkot_yogyakarta_geocoded.csv: titik live CCTV Pemkot dengan koordinat perkiraan untuk kebutuhan visualisasi.
+- assets/data/pju_yogyakarta.csv: titik PJU/prioritas penerangan berbasis titik kejadian yang perlu diverifikasi.

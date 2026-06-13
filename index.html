@@ -38,16 +38,16 @@
         <div class="hero-content">
           <div class="eyebrow"><span class="pulse-dot"></span> Dashboard kriminalitas berbasis lokasi</div>
           <h1><span class="red">Zona</span><br><span class="cream">rawan</span><br>Jogja</h1>
-          <p class="lead">WebGIS ini membaca data kejadian, CCTV, keramaian, batas administrasi, dan zona kerawanan yang sudah kamu simpan di folder <span class="code">assets/data</span>. Tampilan utama diarahkan untuk masuk cepat ke peta, analisis, dan galeri sumber berita.</p>
+          <p class="lead">WebGIS ini dibuat untuk membantu pengguna melihat zona rawan, titik kejadian, CCTV Kota Yogyakarta, PJU/prioritas penerangan, dan galeri berita dalam satu alur yang mudah dipakai.</p>
           <div class="hero-actions">
             <a class="btn primary" href="peta.html">Mulai dari Peta</a>
             <a class="btn" href="analisis.html">Lihat Hasil Analisis</a>
             <a class="btn" href="berita.html">Galeri Berita</a>
           </div>
           <div class="feature-strip">
-            <div class="strip-card"><strong>Zona</strong><span>membaca <span class="code">zona_kerawanan.geojson</span> dan hasil pembobotan</span></div>
-            <div class="strip-card"><strong>Kejadian</strong><span>membaca <span class="code">Data Kejahatan Klitih.csv</span></span></div>
-            <div class="strip-card"><strong>Peta</strong><span>popup analitis, filter layer, legend on/off, dan koridor rawan</span></div>
+            <div class="strip-card"><strong>Zona</strong><span>klasifikasi aman, rawan, dan sangat rawan</span></div>
+            <div class="strip-card"><strong>CCTV & PJU</strong><span>boundary Kota Yogyakarta dan prioritas penerangan</span></div>
+            <div class="strip-card"><strong>Peta</strong><span>popup analitis, filter layer, legenda, dan koridor rawan</span></div>
           </div>
         </div>
         <figure class="hero-media" aria-label="Gambar latar WebGIS"><img src="assets/img/background-webgis.jpeg" alt="Latar WebGIS GeoSafe" /></figure>
@@ -55,13 +55,13 @@
 
       <section class="section compact">
         <div class="section-head">
-          <div><div class="eyebrow"><span class="pulse-dot"></span> Data yang dibaca</div><h2>Struktur sudah disesuaikan dengan folder data dan gambar yang kamu punya.</h2></div>
-          <p>Web tidak membuat data baru. Semua visualisasi mengambil file yang sudah tersedia di <span class="code">assets/data</span> dan gambar di <span class="code">assets/img</span>.</p>
+          <div><div class="eyebrow"><span class="pulse-dot"></span> Fitur utama</div><h2>Langsung fokus ke peta, analisis, berita, dan rekomendasi.</h2></div>
+          <p>Bagian utama web dibuat lebih singkat supaya pengguna langsung memahami apa yang bisa dilakukan: membuka peta, membaca analisis, mengecek CCTV/PJU, dan melihat galeri berita.</p>
         </div>
         <div class="data-path-grid">
-          <div class="data-path"><strong>Kejadian kriminalitas</strong><span>Data Kejahatan Klitih.csv, sumber berita, tanggal, lokasi, dan koordinat.</span></div>
-          <div class="data-path"><strong>CCTV dan keramaian</strong><span>cctv_yogyakarta.csv, cctv_pemkot_yogyakarta_youtube_links.csv, dan keramaian.csv.</span></div>
-          <div class="data-path"><strong>Zona dan admin</strong><span>zona_kerawanan.geojson, hasil_pembobotan_zona, dan kota_yogyakarta_admin.geojson.</span></div>
+          <div class="data-path"><strong>Boundary CCTV</strong><span>Titik kamera dibatasi ke Kota Yogyakarta dan titik luar kota disaring otomatis.</span></div>
+          <div class="data-path"><strong>PJU/prioritas penerangan</strong><span>Layer penerangan tampil di peta dan terhubung ke halaman analisis.</span></div>
+          <div class="data-path"><strong>Analisis berbobot</strong><span>Skor prioritas memakai kejadian, zona, blind spot CCTV, dan keramaian/PJU.</span></div>
         </div>
       </section>
 
@@ -71,17 +71,17 @@
           <p>Tujuannya bukan sekadar menampilkan titik, tetapi membantu pengguna memahami wilayah yang perlu dipantau, titik yang berpotensi blind spot CCTV, dan sumber berita yang perlu divalidasi.</p>
         </div>
         <div class="grid-4">
-          <article class="card"><div class="icon">🗺️</div><h3>Peta Kerawanan</h3><p>Menampilkan zona, kejadian, CCTV, keramaian, batas administrasi, dan koridor rawan dari data yang tersedia.</p><br><a class="btn small primary" href="peta.html">Buka Peta</a></article>
+          <article class="card"><div class="icon">🗺️</div><h3>Peta Kerawanan</h3><p>Menampilkan zona, kejadian, CCTV, PJU/prioritas penerangan, batas administrasi, dan koridor rawan.</p><br><a class="btn small primary" href="peta.html">Buka Peta</a></article>
           <article class="card"><div class="icon">⚠️</div><h3>Kejadian Klitih</h3><p>Titik kejadian dikaitkan dengan zona, CCTV terdekat, sumber berita, dan status cakupan 500 meter.</p><br><a class="btn small" href="analisis.html">Lihat Analisis</a></article>
-          <article class="card"><div class="icon">📹</div><h3>CCTV & Blind Spot</h3><p>CCTV publik dibaca dari dua sumber CSV dan dipakai untuk indikator cakupan radius.</p><br><a class="btn small" href="peta.html">Cek CCTV</a></article>
+          <article class="card"><div class="icon">📹</div><h3>CCTV & Blind Spot</h3><p>CCTV dibatasi ke Kota Yogyakarta dan dipakai untuk indikator cakupan radius 500 meter.</p><br><a class="btn small" href="peta.html">Cek CCTV</a></article>
           <article class="card"><div class="icon">📰</div><h3>Galeri Berita</h3><p>Berita ditampilkan seperti galeri kartu dari data kejadian, bukan daftar monoton.</p><br><a class="btn small" href="berita.html">Buka Berita</a></article>
         </div>
       </section>
 
       <section class="section">
         <div class="section-head">
-          <div><div class="eyebrow"><span class="pulse-dot"></span> Galeri konteks</div><h2>Gambar tetap memakai aset milikmu.</h2></div>
-          <p>Bagian ini memakai file di <span class="code">assets/img/gallery</span>, sehingga kamu bisa mengganti visual tanpa mengubah kode data.</p>
+          <div><div class="eyebrow"><span class="pulse-dot"></span> Galeri konteks</div><h2>Tampilan dibuat sebagai konteks visual.</h2></div>
+          <p>Kartu visual membantu pengguna memahami fungsi peta, analisis, berita, CCTV, PJU, dan rekomendasi tanpa teks teknis yang panjang.</p>
         </div>
         <div class="gallery-grid">
           <article class="gallery-card"><img src="assets/img/gallery/kejadian-kriminal.svg" alt="Ilustrasi titik kejadian kriminalitas"><div><h3>Titik kejadian</h3><p>Konteks persebaran kejadian yang dianalisis.</p></div></article>
@@ -94,7 +94,7 @@
       </section>
 
       <footer class="footer">
-        <div class="footer-top"><div><strong>GeoSafe Yogyakarta</strong><p class="muted">Dashboard WebGIS zona rawan kriminalitas Yogyakarta berbasis data milikmu.</p></div><a class="btn primary" href="peta.html">Mulai Peta →</a></div>
+        <div class="footer-top"><div><strong>GeoSafe Yogyakarta</strong><p class="muted">Dashboard WebGIS zona rawan kriminalitas Yogyakarta.</p></div><a class="btn primary" href="peta.html">Mulai Peta →</a></div>
       </footer>
     </main>
   </div>
