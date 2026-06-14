@@ -1,8 +1,8 @@
 body.map-page { overflow: hidden; }
 .map-app { height:100vh; display:grid; grid-template-rows: 82px minmax(0,1fr); }
 .map-app .topbar { position:relative; top:0; margin-top:0; width:100%; border-radius:0; border-left:0; border-right:0; }
-.map-layout { height:calc(100vh - 82px); display:grid; grid-template-columns: 352px minmax(0,1fr) 390px; gap:16px; padding:16px; }
-.map-layout.left-collapsed { grid-template-columns: minmax(0,1fr) 390px; }
+.map-layout { height:calc(100vh - 82px); display:grid; grid-template-columns: 352px minmax(0,1fr); gap:16px; padding:16px; }
+.map-layout.left-collapsed { grid-template-columns: minmax(0,1fr); }
 .map-layout.left-collapsed .left-panel { display:none; }
 .panel {
   min-height:0; overflow:hidden; display:flex; flex-direction:column;
@@ -48,175 +48,156 @@ body.map-page { overflow: hidden; }
 .video-wrap{width:100%;aspect-ratio:16/9;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#050507;margin:12px 0}.video-wrap iframe{width:100%;height:100%;border:0;display:block}
 @media (max-width: 1180px) { body.map-page { overflow:auto; } .map-app { height:auto; min-height:100vh; } .map-layout, .map-layout.left-collapsed { height:auto; grid-template-columns:1fr; padding:12px; } .map-layout.left-collapsed .left-panel { display:flex; } .mapbox { height:70vh; min-height:520px; } }
 
-/* =========================================================
-   HARD FIX PETA - jangan hapus
-   Tujuan: panel kanan disembunyikan total, peta kembali full-height,
-   detail dibaca dari popup di titik/zona/CCTV.
-========================================================= */
-body.map-page {
-  height: 100vh !important;
-  overflow: hidden !important;
-}
-.map-page .map-app {
-  height: 100vh !important;
-  min-height: 100vh !important;
-  display: grid !important;
-  grid-template-rows: 82px minmax(0, 1fr) !important;
-}
-.map-page #mainLayout.map-layout {
-  height: calc(100vh - 82px) !important;
-  min-height: 0 !important;
-  display: grid !important;
-  grid-template-columns: minmax(320px, 352px) minmax(0, 1fr) !important;
-  grid-template-rows: minmax(0, 1fr) !important;
-  gap: 16px !important;
-  padding: 16px !important;
-  overflow: hidden !important;
-  align-items: stretch !important;
-}
-.map-page #mainLayout.map-layout > .left-panel {
-  display: flex !important;
-  grid-column: 1 !important;
-  grid-row: 1 !important;
-  min-height: 0 !important;
-  height: 100% !important;
-}
-.map-page #mainLayout.map-layout > .mapbox {
-  display: block !important;
-  grid-column: 2 !important;
-  grid-row: 1 !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  height: 100% !important;
-}
-.map-page #mainLayout.map-layout > aside.panel:not(.left-panel),
-.map-page #mainLayout.map-layout > aside.panel:nth-of-type(2),
-.map-page #mainLayout.map-layout > aside.panel:last-child:not(.left-panel) {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-.map-page #mainLayout.map-layout.left-collapsed,
-.map-page .map-app.panel-collapsed #mainLayout.map-layout {
-  grid-template-columns: minmax(0, 1fr) !important;
-}
-.map-page #mainLayout.map-layout.left-collapsed > .left-panel,
-.map-page .map-app.panel-collapsed #mainLayout.map-layout > .left-panel {
-  display: none !important;
-}
-.map-page #mainLayout.map-layout.left-collapsed > .mapbox,
-.map-page .map-app.panel-collapsed #mainLayout.map-layout > .mapbox {
-  grid-column: 1 !important;
-}
-.map-page #map,
-.map-page .leaflet-container {
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 0 !important;
-}
 
-/* Legenda dibuat ringkas dan default-nya tidak menutupi muka peta */
-.map-page .legend {
-  left: auto !important;
-  right: 22px !important;
-  bottom: 22px !important;
-  width: min(290px, calc(100% - 44px)) !important;
-  max-height: min(62vh, 430px) !important;
-  overflow: hidden !important;
-  transition: max-height .22s ease, padding .22s ease, opacity .22s ease, transform .22s ease !important;
+/* Peta fix v2: panel kiri, basemap, kelompok analisis, dan popup semua layer */
+.panel-subtitle{margin:16px 0 10px;color:var(--cream);font-size:.86rem;letter-spacing:.02em}
+.analysis-button-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px}
+.analysis-chip,.zone-focus{border:1px solid var(--line);background:rgba(255,255,255,.045);color:var(--ink);border-radius:15px;padding:10px 11px;font-weight:850;font-size:.78rem;text-align:left;transition:.18s ease;display:inline-flex;align-items:center;gap:7px;min-height:42px}
+.analysis-chip:hover,.zone-focus:hover{transform:translateY(-1px);border-color:rgba(247,204,169,.38);background:rgba(247,204,169,.09)}
+.analysis-chip.primary{background:linear-gradient(135deg,var(--red),#7f2928);color:#fffaf5;border-color:rgba(247,204,169,.24)}
+.zone-focus-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 16px}
+.zone-focus.safe{border-color:rgba(109,213,165,.35)}.zone-focus.warn{border-color:rgba(247,204,169,.42)}.zone-focus.danger{border-color:rgba(179,61,56,.44)}
+.dot.lighting{background:#ffd469}.dot.admin{background:#fff8ef;border:2px solid #402a20}.dot.corridor{background:#402a20}
+.geo-marker.lighting{background:#ffd469;border-color:#402a20}.geo-marker.corridor-node{background:#402a20;border-color:#f7cca9}
+.popup-card a{color:var(--cream);font-weight:850}.popup-card ul{margin:7px 0 0 18px}.popup-card li{color:#cab7ad;line-height:1.55;font-size:.82rem;margin:4px 0}.leaflet-popup-content{width:auto!important;min-width:310px;max-width:560px}.custom-popup .leaflet-popup-content-wrapper{border-radius:20px}
+.leaflet-pane.adminPane svg path{filter:drop-shadow(0 1px 2px rgba(0,0,0,.65))}.leaflet-pane.corridorPane svg path{filter:drop-shadow(0 2px 4px rgba(0,0,0,.45))}
+@media(max-width:1180px){.analysis-button-grid,.zone-focus-grid{grid-template-columns:1fr}.leaflet-popup-content{min-width:270px;max-width:340px}}
+
+
+/* =========================================================
+   CCTV Marker Fix - simbol lebih jelas dan tidak ketutup titik kejadian
+========================================================= */
+.geo-marker {
+  width: 26px !important;
+  height: 26px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  border: 2px solid #fffaf5 !important;
+  box-shadow:
+    0 7px 18px rgba(0,0,0,.42),
+    0 0 0 4px rgba(255,255,255,.16) !important;
+  position: relative !important;
+  transform: translateZ(0) !important;
 }
-.map-page .legend-head {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 10px !important;
-  margin-bottom: 8px !important;
+.geo-marker::after {
+  content:"";
+  position:absolute;
+  inset:-5px;
+  border-radius:inherit;
+  border:1px solid currentColor;
+  opacity:.34;
 }
-.map-page .legend-head h4 { margin: 0 !important; }
-.map-page .legend-toggle {
+.geo-marker svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  display:block;
+}
+.geo-marker.incident {
+  background:#f3393f !important;
+  color:#ff4b4f !important;
+}
+.geo-marker.incident .symbol-core {
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:#fffaf5;
+  box-shadow:0 0 0 5px rgba(255,255,255,.12);
+}
+.geo-marker.cctv {
   width: 34px !important;
   height: 34px !important;
-  display: grid !important;
-  place-items: center !important;
-  border: 1px solid var(--line) !important;
-  border-radius: 12px !important;
-  background: rgba(255,255,255,.08) !important;
-  color: var(--ink) !important;
-  font-weight: 900 !important;
-  line-height: 1 !important;
+  border-radius: 13px !important;
+  background: linear-gradient(135deg,#0b5f8c,#27b7ff) !important;
+  color: #ffffff !important;
+  border: 2px solid #e8f8ff !important;
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.48),
+    0 0 0 4px rgba(39,183,255,.22),
+    0 0 24px rgba(39,183,255,.48) !important;
 }
-.map-page .legend.collapsed {
-  max-height: 58px !important;
-  padding-bottom: 12px !important;
-  opacity: .96 !important;
+.geo-marker.cctv::before {
+  content:"";
+  position:absolute;
+  right:-4px;
+  top:-4px;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background:#7fffd1;
+  border:2px solid #073247;
 }
-.map-page .legend.collapsed .legend-row {
-  display: none !important;
+.geo-marker.crowd {
+  background:#ae995b !important;
+  color:#ae995b !important;
 }
-.map-page .map-top {
-  left: 16px !important;
-  right: 16px !important;
+.geo-marker.crowd .symbol-core,
+.geo-marker.lighting .symbol-core,
+.geo-marker.corridor-node .symbol-core {
+  width:9px;
+  height:9px;
+  border-radius:999px;
+  background:#fffaf5;
 }
-.map-page .status-pill {
-  max-width: min(720px, calc(100vw - 430px)) !important;
+.geo-marker.lighting {
+  background:#ffd469 !important;
+  color:#ffd469 !important;
+  border-color:#402a20 !important;
+}
+.geo-marker.corridor-node {
+  background:#402a20 !important;
+  color:#402a20 !important;
+  border-color:#f7cca9 !important;
+}
+.leaflet-pane.cctvPane {
+  z-index: 650 !important;
+}
+.popup-streams {
+  display:grid;
+  gap:8px;
+  margin-top:8px;
+}
+.popup-streams a {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 10px;
+  border:1px solid rgba(82,169,255,.34);
+  border-radius:12px;
+  color:#e8f8ff !important;
+  background:rgba(82,169,255,.10);
+  font-weight:850;
+}
+.popup-note {
+  color:#c9b8ae !important;
+  font-size:.82rem !important;
+  line-height:1.55 !important;
+}
+.cctv-popup .popup-title {
+  color:#e8f8ff;
 }
 
-/* Popup lebih lebar, tapi tetap aman di layar kecil */
-.map-page .leaflet-popup-content {
-  width: min(440px, 78vw) !important;
-}
-.map-page .popup-grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 8px !important;
-}
+/* CCTV live popup v4 */
+.leaflet-popup-content{width:auto!important;min-width:330px;max-width:560px}
+.cctv-popup{min-width:500px;max-width:560px}
+.cctv-live-preview{border-color:rgba(56,189,248,.38);box-shadow:0 18px 40px rgba(0,0,0,.30)}
+.cctv-live-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.cctv-live-actions a{display:flex;align-items:center;justify-content:center;min-height:38px;border:1px solid rgba(56,189,248,.35);background:rgba(56,189,248,.10);color:#e0f2fe!important;border-radius:12px;font-size:.78rem;font-weight:900;text-align:center}
+.popup-streams.compact{margin-top:10px}
+.popup-streams.compact a{font-size:.76rem;padding:8px 9px}
+@media(max-width:720px){.leaflet-popup-content{min-width:260px;max-width:330px}.cctv-popup{min-width:260px;max-width:330px}.cctv-live-actions{grid-template-columns:1fr}}
 
-@media (max-width: 1180px) {
-  body.map-page {
-    height: auto !important;
-    overflow: auto !important;
-  }
-  .map-page .map-app {
-    height: auto !important;
-  }
-  .map-page #mainLayout.map-layout,
-  .map-page #mainLayout.map-layout.left-collapsed {
-    height: auto !important;
-    min-height: calc(100vh - 82px) !important;
-    grid-template-columns: 1fr !important;
-    grid-template-rows: 70vh auto !important;
-    overflow: visible !important;
-  }
-  .map-page #mainLayout.map-layout > .mapbox,
-  .map-page #mainLayout.map-layout.left-collapsed > .mapbox {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-    min-height: 520px !important;
-  }
-  .map-page #mainLayout.map-layout > .left-panel,
-  .map-page #mainLayout.map-layout.left-collapsed > .left-panel {
-    display: flex !important;
-    grid-column: 1 !important;
-    grid-row: 2 !important;
-    height: auto !important;
-    max-height: none !important;
-  }
-  .map-page .status-pill {
-    max-width: calc(100vw - 100px) !important;
-  }
+/* Pos polisi layer */
+.dot.police{background:#9ee7ff;border:2px solid #073247}
+.geo-marker.police{
+  width:34px!important;
+  height:34px!important;
+  border-radius:13px!important;
+  background:linear-gradient(135deg,#12364d,#58d5ff)!important;
+  color:#ffffff!important;
+  border-color:rgba(255,255,255,.7)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.42),0 0 0 4px rgba(88,213,255,.2)!important;
 }
-@media (max-width: 720px) {
-  .map-page #mainLayout.map-layout {
-    padding: 10px !important;
-    gap: 10px !important;
-  }
-  .map-page .legend {
-    left: 10px !important;
-    right: 10px !important;
-    bottom: 10px !important;
-    width: auto !important;
-  }
-  .map-page .popup-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
+.geo-marker.police svg{width:19px;height:19px;fill:currentColor}
+.popup-news-item.no-thumb{padding-left:10px}

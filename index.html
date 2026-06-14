@@ -34,7 +34,7 @@
     </header>
 
     <main class="container">
-      <section class="hero">
+      <section class="hero hero-full-bg">
         <div class="hero-content">
           <div class="eyebrow"><span class="pulse-dot"></span> Dashboard kriminalitas berbasis lokasi</div>
           <h1><span class="red">Zona</span><br><span class="cream">rawan</span><br>Jogja</h1>
@@ -46,7 +46,7 @@
           </div>
           <div class="feature-strip">
             <div class="strip-card"><strong>Zona</strong><span>klasifikasi aman, rawan, dan sangat rawan</span></div>
-            <div class="strip-card"><strong>CCTV & PJU</strong><span>boundary Kota Yogyakarta dan prioritas penerangan</span></div>
+            <div class="strip-card"><strong>CCTV, PJU & Pos Pol</strong><span>boundary Kota Yogyakarta, pos polisi, dan prioritas penerangan</span></div>
             <div class="strip-card"><strong>Peta</strong><span>popup analitis, filter layer, legenda, dan koridor rawan</span></div>
           </div>
         </div>
@@ -61,7 +61,7 @@
         <div class="data-path-grid">
           <div class="data-path"><strong>Boundary CCTV</strong><span>Titik kamera dibatasi ke Kota Yogyakarta dan titik luar kota disaring otomatis.</span></div>
           <div class="data-path"><strong>PJU/prioritas penerangan</strong><span>Layer penerangan tampil di peta dan terhubung ke halaman analisis.</span></div>
-          <div class="data-path"><strong>Analisis berbobot</strong><span>Skor prioritas memakai kejadian, zona, blind spot CCTV, dan keramaian/PJU.</span></div>
+          <div class="data-path"><strong>Analisis AHP</strong><span>Bobot sesuai PPT: kriminalitas, keramaian, kepadatan, CCTV, dan pos polisi.</span></div>
         </div>
       </section>
 
@@ -71,9 +71,9 @@
           <p>Tujuannya bukan sekadar menampilkan titik, tetapi membantu pengguna memahami wilayah yang perlu dipantau, titik yang berpotensi blind spot CCTV, dan sumber berita yang perlu divalidasi.</p>
         </div>
         <div class="grid-4">
-          <article class="card"><div class="icon">🗺️</div><h3>Peta Kerawanan</h3><p>Menampilkan zona, kejadian, CCTV, PJU/prioritas penerangan, batas administrasi, dan koridor rawan.</p><br><a class="btn small primary" href="peta.html">Buka Peta</a></article>
+          <article class="card"><div class="icon">🗺️</div><h3>Peta Kerawanan</h3><p>Menampilkan zona, kejadian, CCTV, pos polisi, PJU/prioritas penerangan, batas administrasi, dan koridor rawan.</p><br><a class="btn small primary" href="peta.html">Buka Peta</a></article>
           <article class="card"><div class="icon">⚠️</div><h3>Kejadian Klitih</h3><p>Titik kejadian dikaitkan dengan zona, CCTV terdekat, sumber berita, dan status cakupan 500 meter.</p><br><a class="btn small" href="analisis.html">Lihat Analisis</a></article>
-          <article class="card"><div class="icon">📹</div><h3>CCTV & Blind Spot</h3><p>CCTV dibatasi ke Kota Yogyakarta dan dipakai untuk indikator cakupan radius 500 meter.</p><br><a class="btn small" href="peta.html">Cek CCTV</a></article>
+          <article class="card"><div class="icon">📹</div><h3>CCTV & Blind Spot</h3><p>CCTV dan pos polisi dipakai untuk membaca cakupan, jarak, dan prioritas validasi lapangan.</p><br><a class="btn small" href="peta.html">Cek CCTV</a></article>
           <article class="card"><div class="icon">📰</div><h3>Galeri Berita</h3><p>Berita ditampilkan seperti galeri kartu dari data kejadian, bukan daftar monoton.</p><br><a class="btn small" href="berita.html">Buka Berita</a></article>
         </div>
       </section>

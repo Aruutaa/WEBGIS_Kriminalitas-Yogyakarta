@@ -14,3 +14,21 @@
 .narrative-box { border:1px solid var(--line); background:rgba(0,0,0,.20); border-radius:20px; padding:18px; line-height:1.75; }
 .zone-chip-list { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
 @media(max-width: 1100px){ .analysis-hero, .filters, .news-grid, .recommendation-grid { grid-template-columns:1fr; } }
+
+/* Analisis v3: metode, koneksi peta, dan keterbacaan */
+.summary-list{margin:14px 0 0 18px;color:var(--muted-readable);line-height:1.85;font-size:.92rem}
+.filters{display:grid;grid-template-columns:minmax(240px,1.4fr) repeat(4,minmax(140px,.8fr));gap:12px;align-items:end;margin-top:18px}
+.method-card .method-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+.method-grid article{border:1px solid var(--line);background:rgba(255,255,255,.035);border-radius:20px;padding:16px}
+.method-grid h4{font-size:.95rem;margin-bottom:8px;color:var(--cream)}
+.formula-box{border:1px solid rgba(108,166,255,.26);background:rgba(108,166,255,.08);color:#edf5ff;border-radius:16px;padding:14px;font-weight:900;font-size:1.08rem;margin:8px 0 10px}
+.mini-metrics{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.mini-metrics span{display:inline-flex;flex-direction:column;gap:2px;min-width:86px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.045);padding:9px;color:var(--muted-readable);font-size:.72rem}
+.mini-metrics b{font-size:1.05rem;color:var(--cream)}
+.news-mini .row-actions{margin-top:12px}
+@media(max-width:1100px){.filters,.method-card .method-grid{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.filters,.method-card .method-grid,.grid-4,.grid-2{grid-template-columns:1fr}.h2{font-size:2.15rem}}
+
+/* Analisis tanpa berita: filter lebih lega */
+.filters{grid-template-columns:minmax(260px,1.6fr) minmax(160px,.8fr) minmax(160px,.8fr)}
+@media(max-width:900px){.filters{grid-template-columns:1fr}}
