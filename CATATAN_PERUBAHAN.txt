@@ -36,3 +36,10 @@ CATATAN REVISI FINAL GEOSAFE YOGYAKARTA
 
 7. Validasi:
    - File JS utama sudah dicek sintaks dengan node --check: data-loader.js, map.js, analysis.js, dan news.js.
+
+
+UPDATE DASHBOARD INDEX.HTML:
+- Halaman utama dirombak ulang dengan struktur landing page: hero teks kiri, preview peta kanan, strip data, kartu fitur, insight AHP, dan galeri konteks.
+- UI mengadaptasi pola landing page profesional seperti referensi MAPID: headline ringkas, CTA jelas, panel visual, data strip, dan card solution.
+- Tone warna tetap mengikuti GeoSafe sebelumnya: dark teal/navy, aksen kuning, merah, dan biru.
+- Elemen lama tidak dihapus: link peta, analisis, berita, data kejadian, CCTV, PJU, pos polisi, AHP, dan galeri tetap tersedia.
