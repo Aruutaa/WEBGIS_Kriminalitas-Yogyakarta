@@ -63,16 +63,16 @@
           <div class="form-group"><label for="zoneOpacity">Opasitas zona</label><input id="zoneOpacity" class="input" type="range" min="0.18" max="0.82" step="0.04" value="0.58"></div>
 
           <h3 class="panel-subtitle">Layer peta</h3>
-          <div class="layer-list">
-            <label class="layer-toggle"><span>Zona kerawanan</span><input data-layer="zones" type="checkbox" checked></label>
-            <label class="layer-toggle"><span>Titik kejadian</span><input data-layer="incidents" type="checkbox" checked></label>
-            <label class="layer-toggle"><span>CCTV</span><input data-layer="cctv" type="checkbox" checked></label>
-            <label class="layer-toggle"><span>Radius CCTV 500 m</span><input data-layer="buffer" type="checkbox"></label>
-            <label class="layer-toggle"><span>Titik keramaian</span><input data-layer="crowd" type="checkbox"></label>
-            <label class="layer-toggle"><span>Lampu penerangan / PJU</span><input data-layer="lighting" type="checkbox" checked></label>
-            <label class="layer-toggle"><span>Pos polisi</span><input data-layer="police" type="checkbox" checked></label>
-            <label class="layer-toggle"><span>Batas administrasi</span><input data-layer="admin" type="checkbox" checked></label>
-            <label class="layer-toggle"><span>Koridor jalan rawan</span><input data-layer="corridors" type="checkbox"></label>
+          <div class="layer-list icon-layer-list">
+            <label class="layer-toggle"><span><i class="layer-ico zone">▦</i> Zona kerawanan</span><input data-layer="zones" type="checkbox" checked></label>
+            <label class="layer-toggle"><span><i class="layer-ico incident">⚠</i> Titik kejadian</span><input data-layer="incidents" type="checkbox" checked></label>
+            <label class="layer-toggle"><span><i class="layer-ico cctv">▣</i> CCTV / kamera publik</span><input data-layer="cctv" type="checkbox" checked></label>
+            <label class="layer-toggle"><span><i class="layer-ico radius">◌</i> Radius CCTV 500 m</span><input data-layer="buffer" type="checkbox"></label>
+            <label class="layer-toggle"><span><i class="layer-ico crowd">👥</i> Titik keramaian</span><input data-layer="crowd" type="checkbox"></label>
+            <label class="layer-toggle"><span><i class="layer-ico lighting">💡</i> Lampu penerangan / PJU</span><input data-layer="lighting" type="checkbox" checked></label>
+            <label class="layer-toggle"><span><i class="layer-ico police">🛡</i> Pos polisi</span><input data-layer="police" type="checkbox" checked></label>
+            <label class="layer-toggle"><span><i class="layer-ico admin">□</i> Batas administrasi</span><input data-layer="admin" type="checkbox" checked></label>
+            <label class="layer-toggle"><span><i class="layer-ico corridor">━</i> Koridor jalan rawan</span><input data-layer="corridors" type="checkbox"></label>
           </div>
 
           <h3 class="panel-subtitle">Kelompok analisis</h3>
@@ -108,18 +108,18 @@
         </div>
         <div class="legend is-collapsed" id="mapLegend">
           <div class="legend-head"><h4>Legenda</h4><button class="legend-toggle" id="btnLegend" type="button" title="Tampilkan/sembunyikan legenda">⌄</button></div>
-          <div class="legend-body">
-            <div class="legend-row"><span class="dot safe"></span> Zona Aman</div>
-            <div class="legend-row"><span class="dot warn"></span> Zona Rawan</div>
-            <div class="legend-row"><span class="dot danger"></span> Zona Sangat Rawan</div>
-            <div class="legend-row"><span class="dot incident"></span> Titik kejadian klitih</div>
-            <div class="legend-row"><span class="dot cctv"></span> CCTV / kamera publik</div>
-            <div class="legend-row"><span class="dot warn"></span> Radius CCTV 500 m</div>
-            <div class="legend-row"><span class="dot crowd"></span> Titik keramaian</div>
-            <div class="legend-row"><span class="dot lighting"></span> Lampu penerangan / PJU</div>
-            <div class="legend-row"><span class="dot police"></span> Pos polisi</div>
-            <div class="legend-row"><span class="dot admin"></span> Batas administrasi</div>
-            <div class="legend-row"><span class="dot corridor"></span> Koridor jalan rawan</div>
+          <div class="legend-body icon-legend">
+            <div class="legend-row"><span class="legend-symbol zone-safe">▦</span> Zona Aman</div>
+            <div class="legend-row"><span class="legend-symbol zone-warn">▦</span> Zona Rawan</div>
+            <div class="legend-row"><span class="legend-symbol zone-danger">▦</span> Zona Sangat Rawan</div>
+            <div class="legend-row"><span class="legend-symbol incident">⚠</span> Titik kejadian kriminal</div>
+            <div class="legend-row"><span class="legend-symbol cctv">▣</span> CCTV / kamera publik</div>
+            <div class="legend-row"><span class="legend-symbol radius">◌</span> Radius CCTV 500 m</div>
+            <div class="legend-row"><span class="legend-symbol crowd">👥</span> Titik keramaian</div>
+            <div class="legend-row"><span class="legend-symbol lighting">💡</span> Lampu penerangan / PJU</div>
+            <div class="legend-row"><span class="legend-symbol police">🛡</span> Pos polisi</div>
+            <div class="legend-row"><span class="legend-symbol admin">□</span> Batas administrasi</div>
+            <div class="legend-row"><span class="legend-symbol corridor">━</span> Koridor jalan rawan</div>
           </div>
         </div>
       </section>

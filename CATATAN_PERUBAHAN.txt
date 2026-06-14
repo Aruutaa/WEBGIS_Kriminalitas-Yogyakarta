@@ -43,3 +43,10 @@ UPDATE DASHBOARD INDEX.HTML:
 - UI mengadaptasi pola landing page profesional seperti referensi MAPID: headline ringkas, CTA jelas, panel visual, data strip, dan card solution.
 - Tone warna tetap mengikuti GeoSafe sebelumnya: dark teal/navy, aksen kuning, merah, dan biru.
 - Elemen lama tidak dihapus: link peta, analisis, berita, data kejadian, CCTV, PJU, pos polisi, AHP, dan galeri tetap tersedia.
+
+UPDATE DASHBOARD MAPID ANIMASI + SIMBOL PETA:
+- index.html dibuat ulang lagi dengan hero lebih dekat ke pola MAPID: headline besar, CTA, panel preview peta kanan, data strip berjalan, product cards, dan panel insight.
+- Ditambah animasi CSS: grid bergerak, floating dashboard, scan line, pin bouncing, orbit data, card reveal, marquee strip, dan hover card.
+- Tone tetap GeoSafe: dark teal/navy dengan aksen kuning, merah, biru, dan glassmorphism.
+- peta.html diperbarui pada layer list dan legenda agar simbolnya sesuai jenis lokasi: kejadian, CCTV, radius CCTV, keramaian, PJU, pos polisi, batas admin, koridor, dan zona.
+- assets/js/map.js diperbarui agar marker Leaflet memakai ikon SVG berbeda per layer, bukan bulatan generik.

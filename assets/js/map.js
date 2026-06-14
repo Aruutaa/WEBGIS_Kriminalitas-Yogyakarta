@@ -17,17 +17,18 @@
   function toast(msg){ let el=$('#toastNote'); if(!el){ el=document.createElement('div'); el.id='toastNote'; el.className='toast-note'; document.body.appendChild(el); } el.textContent=msg; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),2600); }
   function icon(cls){
     const svg={
-      cctv:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5c0-1.1.9-2 2-2h8.6c1.1 0 2 .9 2 2v.7l2.8-1.6c.7-.4 1.6.1 1.6.9v8c0 .8-.9 1.3-1.6.9l-2.8-1.6v.7c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2v-8Zm3.2 1.1a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Z"/></svg>`,
-      incident:`<span class="symbol-core"></span>`,
-      crowd:`<span class="symbol-core"></span>`,
-      lighting:`<span class="symbol-core"></span>`,
-      police:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 5 5v5.8c0 4.2 2.8 8.1 7 10.2 4.2-2.1 7-6 7-10.2V5l-7-3Zm0 4 4 1.6v3.1c0 2.6-1.5 5.1-4 6.8-2.5-1.7-4-4.2-4-6.8V7.6L12 6Z"/></svg>`,
-      'corridor-node':`<span class="symbol-core"></span>`
+      cctv:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.2C4 7 5 6 6.2 6h7.9c1.2 0 2.2 1 2.2 2.2v.5l3.1-1.7c.7-.4 1.6.1 1.6.9v8.2c0 .8-.9 1.3-1.6.9l-3.1-1.7v.5c0 1.2-1 2.2-2.2 2.2H6.2C5 18 4 17 4 15.8V8.2Zm3.3 1.1a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8Zm4.1 6.9 2.7 3.2h-5.4l2.7-3.2Z"/></svg>`,
+      incident:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 22 20H2L12 2.8Zm-1 6.2v5.5h2V9h-2Zm0 7.2v2.1h2v-2.1h-2Z"/></svg>`,
+      crowd:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 11.2a3.1 3.1 0 1 0 0-6.2 3.1 3.1 0 0 0 0 6.2Zm7.6 0a3.1 3.1 0 1 0 0-6.2 3.1 3.1 0 0 0 0 6.2ZM8.2 12.8c-3.5 0-6.2 1.7-6.2 3.8V19h12.4v-2.4c0-2.1-2.7-3.8-6.2-3.8Zm7.6.2c-.7 0-1.4.1-2 .2 1.5.8 2.5 1.9 2.5 3.4V19H22v-2.2c0-2.1-2.7-3.8-6.2-3.8Z"/></svg>`,
+      lighting:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21h6v-2H9v2Zm3-19a6.8 6.8 0 0 0-4.6 11.8c.7.6 1.1 1.4 1.3 2.2h6.6c.2-.8.7-1.6 1.3-2.2A6.8 6.8 0 0 0 12 2Zm2.8 10.3c-.9.8-1.5 1.7-1.8 2.7h-2c-.3-1-.9-2-1.8-2.7A4.4 4.4 0 0 1 12 4.4a4.4 4.4 0 0 1 2.8 7.9Z"/></svg>`,
+      police:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 5 5v5.8c0 4.2 2.8 8.1 7 10.2 4.2-2.1 7-6 7-10.2V5l-7-3Zm0 3.1 4.6 1.8v3.7c0 3-1.7 5.8-4.6 7.6-2.9-1.8-4.6-4.6-4.6-7.6V6.9L12 5.1Zm0 2.3 1.2 2.5 2.7.4-2 1.9.5 2.7-2.4-1.3-2.4 1.3.5-2.7-2-1.9 2.7-.4L12 7.4Z"/></svg>`,
+      'corridor-node':`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4a3 3 0 0 1 3 3c0 2.2-3 5.5-3 5.5S3 9.2 3 7a3 3 0 0 1 3-3Zm12 7a3 3 0 0 1 3 3c0 2.2-3 5.5-3 5.5S15 16.2 15 14a3 3 0 0 1 3-3ZM8.7 8.2l5.1 3.4-1.1 1.7-5.2-3.4 1.2-1.7Z"/></svg>`
     };
-    const size=cls==='cctv'||cls==='police'?[34,34]:[26,26];
-    const anchor=cls==='cctv'||cls==='police'?[17,17]:[13,13];
-    return L.divIcon({className:'',html:`<span class="geo-marker ${cls}">${svg[cls]||'<span class="symbol-core"></span>'}</span>`,iconSize:size,iconAnchor:anchor,popupAnchor:[0,-10]});
-  }
+    const label={incident:'Titik kejadian',cctv:'CCTV',crowd:'Keramaian',lighting:'PJU',police:'Pos polisi','corridor-node':'Koridor'}[cls]||'Marker';
+    const size=(cls==='cctv'||cls==='police'||cls==='lighting'||cls==='crowd')?[38,38]:[34,34];
+    const anchor=[Math.round(size[0]/2),Math.round(size[1]/2)];
+    return L.divIcon({className:'',html:`<span class="geo-marker ${cls}" title="${label}" aria-label="${label}">${svg[cls]||'<span class="symbol-core"></span>'}</span>`,iconSize:size,iconAnchor:anchor,popupAnchor:[0,-14]});
+}
   function videoId(url){ const s=String(url||''); const m=s.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{6,})/); return m?m[1]:''; }
   function imageOf(i){ if(i?.image && /^https?:\/\//i.test(i.image)) return i.image; const id=videoId(i?.source); if(id) return `https://img.youtube.com/vi/${id}/hqdefault.jpg`; if(i?.source && /^https?:\/\//i.test(i.source)) return `https://image.thum.io/get/width/900/crop/600/${i.source}`; return ''; }
   function analysisLink(params={}){ const q=new URLSearchParams(params).toString(); return `analisis.html${q?'?'+q:''}`; }
